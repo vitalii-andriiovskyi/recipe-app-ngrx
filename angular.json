@@ -2,13 +2,145 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "",
-  "projects": {},
+  "projects": {
+    "recipe-app": {
+      "root": "apps/recipe-app/",
+      "sourceRoot": "apps/recipe-app/src",
+      "projectType": "application",
+      "prefix": "rcp",
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/recipe-app",
+            "index": "apps/recipe-app/src/index.html",
+            "main": "apps/recipe-app/src/main.ts",
+            "polyfills": "apps/recipe-app/src/polyfills.ts",
+            "tsConfig": "apps/recipe-app/tsconfig.app.json",
+            "assets": [
+              "apps/recipe-app/src/favicon.ico",
+              "apps/recipe-app/src/assets"
+            ],
+            "styles": [
+              "apps/recipe-app/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/recipe-app/src/environments/environment.ts",
+                  "with": "apps/recipe-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "recipe-app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "recipe-app:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "recipe-app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/recipe-app/src/test.ts",
+            "polyfills": "apps/recipe-app/src/polyfills.ts",
+            "tsConfig": "apps/recipe-app/tsconfig.spec.json",
+            "karmaConfig": "apps/recipe-app/karma.conf.js",
+            "styles": [
+              "apps/recipe-app/src/styles.scss"
+            ],
+            "scripts": [],
+            "assets": [
+              "apps/recipe-app/src/favicon.ico",
+              "apps/recipe-app/src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/recipe-app/tsconfig.app.json",
+              "apps/recipe-app/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "recipe-app-e2e": {
+      "root": "apps/recipe-app-e2e",
+      "projectType": "application",
+      "prefix": "",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "apps/recipe-app-e2e/protractor.conf.js",
+            "devServerTarget": "recipe-app:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "recipe-app:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "apps/recipe-app-e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "warnings": {
       "typescriptMismatch": false,
       "versionMismatch": false
     },
     "defaultCollection": "@nrwl/schematics"
-    
-  }
+  },
+  "defaultProject": "recipe-app"
 }
