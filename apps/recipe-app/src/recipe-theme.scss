@@ -1,0 +1,17 @@
+@import '~@angular/material/theming';
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$recipe-app-primary: mat-palette($mat-yellow, A400, 100, A700);
+$recipe-app-accent: mat-palette($mat-amber, 800, 500, 900);
+
+// The warn palette is optional (defaults to red).
+$recipe-app-warn: mat-palette($mat-red, 700);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$recipe-app-theme: mat-light-theme($recipe-app-primary, $recipe-app-accent, $recipe-app-warn);
+
+$accent: map-get($recipe-app-theme, accent);
+$primary: map-get($recipe-app-theme, primary);
+$warn: map-get($recipe-app-theme, warn);
+
