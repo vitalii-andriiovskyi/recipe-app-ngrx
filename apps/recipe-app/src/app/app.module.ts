@@ -9,8 +9,9 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 import { storeFreeze } from 'ngrx-store-freeze';
+import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +25,9 @@ import { storeFreeze } from 'ngrx-store-freeze';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     StoreRouterConnectingModule
   ],
-  providers: [],
+  providers: [
+    { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
