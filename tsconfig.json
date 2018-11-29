@@ -16,6 +16,9 @@
     ],
     "baseUrl": ".",
     "paths": {
+      "@recipe-app-ngrx/utils": [
+        "libs/utils/src/index.ts"
+      ]
     }
   },
   "exclude": [
