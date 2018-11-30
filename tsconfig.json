@@ -18,6 +18,9 @@
     "paths": {
       "@recipe-app-ngrx/utils": [
         "libs/utils/src/index.ts"
+      ],
+      "@recipe-app-ngrx/auth/state": [
+        "libs/auth/state/src/index.ts"
       ]
     }
   },

@@ -161,6 +161,34 @@
           }
         }
       }
+    },
+    "auth-state": {
+      "root": "libs/auth/state",
+      "sourceRoot": "libs/auth/state/src",
+      "projectType": "library",
+      "prefix": "recipe-app-ngrx",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/auth/state/src/test.ts",
+            "tsConfig": "libs/auth/state/tsconfig.spec.json",
+            "karmaConfig": "libs/auth/state/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/auth/state/tsconfig.lib.json",
+              "libs/auth/state/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
