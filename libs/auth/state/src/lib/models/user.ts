@@ -1,4 +1,4 @@
-export interface AuthenticateVW {
+export interface AuthUserVW {
   username:string;
   password: string;
 }
