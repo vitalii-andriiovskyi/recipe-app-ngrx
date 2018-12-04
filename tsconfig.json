@@ -21,6 +21,9 @@
       ],
       "@recipe-app-ngrx/auth/state": [
         "libs/auth/state/src/index.ts"
+      ],
+      "@recipe-app-ngrx/models": [
+        "libs/models/src/index.ts"
       ]
     }
   },

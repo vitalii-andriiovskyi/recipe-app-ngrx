@@ -19,6 +19,9 @@
     },
     "auth-state": {
       "tags": []
+    },
+    "models": {
+      "tags": []
     }
   }
 }
