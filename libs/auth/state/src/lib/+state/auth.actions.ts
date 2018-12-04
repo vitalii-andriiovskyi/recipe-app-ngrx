@@ -1,30 +1,51 @@
 import { Action } from '@ngrx/store';
-import { Entity } from './auth.reducer';
+import { User, AuthenticateVW } from '../models/user';
 
 export enum AuthActionTypes {
-  LoadAuth = '[Auth] Load Auth',
-  AuthLoaded = '[Auth] Auth Loaded',
-  AuthLoadError = '[Auth] Auth Load Error'
+  Login = '[Login Page] Login',
+  Logout = '[User Page] Logout',
+  LoginSuccess = '[Auth API] Login Success',
+  LoginFailure = '[Auth API] Login Failure',
+  LoginRedirect = '[Auth API] Login Redirect'
 }
 
-export class LoadAuth implements Action {
-  readonly type = AuthActionTypes.LoadAuth;
+export class Login implements Action {
+  readonly type = AuthActionTypes.Login;
+
+  constructor(public payload: AuthenticateVW) {}
 }
 
-export class AuthLoadError implements Action {
-  readonly type = AuthActionTypes.AuthLoadError;
+export class LoginSuccess implements Action {
+  readonly type = AuthActionTypes.LoginSuccess;
+
+  constructor(public payload: { user: User }) {}
+}
+
+export class LoginFailure implements Action {
+  readonly type = AuthActionTypes.LoginFailure;
+
   constructor(public payload: any) {}
 }
 
-export class AuthLoaded implements Action {
-  readonly type = AuthActionTypes.AuthLoaded;
-  constructor(public payload: Entity[]) {}
+export class LoginRedirect implements Action {
+  readonly type = AuthActionTypes.LoginRedirect;
 }
 
-export type AuthAction = LoadAuth | AuthLoaded | AuthLoadError;
+export class Logout implements Action {
+  readonly type = AuthActionTypes.Logout;
+}
+
+export type AuthAction =
+  | Login
+  | LoginSuccess
+  | LoginFailure
+  | LoginRedirect
+  | Logout;
 
 export const fromAuthActions = {
-  LoadAuth,
-  AuthLoaded,
-  AuthLoadError
+  Login,
+  LoginSuccess,
+  LoginFailure,
+  LoginRedirect,
+  Logout
 };
