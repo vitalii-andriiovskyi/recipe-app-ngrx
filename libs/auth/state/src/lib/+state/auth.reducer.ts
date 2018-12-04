@@ -1,4 +1,5 @@
 import { AuthAction, AuthActionTypes } from './auth.actions';
+import { User } from '../models/user';
 
 export const AUTH_FEATURE_KEY = 'auth';
 
@@ -11,13 +12,11 @@ export const AUTH_FEATURE_KEY = 'auth';
  */
 
 /* tslint:disable:no-empty-interface */
-export interface Entity {}
-
 export interface AuthState {
-  list: Entity[]; // list of Auth; analogous to a sql normalized table
-  selectedId?: string | number; // which Auth record has been selected
-  loaded: boolean; // has the Auth list been loaded
-  error?: any; // last none error (if any)
+  loggedIn: boolean;
+  user: User | null;
+  pending: boolean;
+  error: string | null; // last none error (if any)
 }
 
 export interface AuthPartialState {
@@ -25,8 +24,10 @@ export interface AuthPartialState {
 }
 
 export const initialState: AuthState = {
-  list: [],
-  loaded: false
+  loggedIn: false,
+  user: null,
+  error: null,
+  pending: false
 };
 
 export function authReducer(
@@ -34,12 +35,37 @@ export function authReducer(
   action: AuthAction
 ): AuthState {
   switch (action.type) {
-    case AuthActionTypes.AuthLoaded: {
+    case AuthActionTypes.Login: {
       state = {
         ...state,
-        list: action.payload,
-        loaded: true
+        error: null,
+        pending: true,
       };
+      break;
+    }
+
+    case AuthActionTypes.LoginSuccess: {
+      state = {
+        ...state,
+        loggedIn: true,
+        user: action.payload.user,
+        error: null,
+        pending: false,
+      };
+      break;
+    }
+
+    case AuthActionTypes.LoginFailure: {
+      state = {
+        ...state,
+        error: action.payload.error,
+        pending: false,
+      };
+      break;
+    }
+
+    case AuthActionTypes.LogoutConfirmation: {
+      state = initialState;
       break;
     }
   }
