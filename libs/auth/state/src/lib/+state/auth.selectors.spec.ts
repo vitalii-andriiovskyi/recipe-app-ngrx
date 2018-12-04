@@ -1,57 +1,52 @@
-import { Entity, AuthState } from './auth.reducer';
+import { AuthState } from './auth.reducer';
 import { authQuery } from './auth.selectors';
 
 describe('Auth Selectors', () => {
   const ERROR_MSG = 'No Error Available';
-  const getAuthId = it => it['id'];
 
-  let storeState;
+  let storeState: { auth: AuthState };
 
   beforeEach(() => {
-    const createAuth = (id: string, name = ''): Entity => ({
-      id,
-      name: name || `name-${id}`
-    });
     storeState = {
       auth: {
-        list: [
-          createAuth('PRODUCT-AAA'),
-          createAuth('PRODUCT-BBB'),
-          createAuth('PRODUCT-CCC')
-        ],
-        selectedId: 'PRODUCT-BBB',
+        loggedIn: true,
+        user: {
+          _id: '',
+          username: 'test_name',
+          password: '',
+          firstName: '',
+          lastName: '',
+          email: ''
+        },
+        pending: true,
         error: ERROR_MSG,
-        loaded: true
       }
     };
   });
-
+  
   describe('Auth Selectors', () => {
-    it('getAllAuth() should return the list of Auth', () => {
-      const results = authQuery.getAllAuth(storeState);
-      const selId = getAuthId(results[1]);
+    it('getUser() should return the user of Auth', () => {
+      const user = authQuery.getUser(storeState);
 
-      expect(results.length).toBe(3);
-      expect(selId).toBe('PRODUCT-BBB');
+      expect(user.username).toBe('test_name');
     });
 
-    it('getSelectedAuth() should return the selected Entity', () => {
-      const result = authQuery.getSelectedAuth(storeState);
-      const selId = getAuthId(result);
+    it('getLoggedIn() should return the current \'loggedIn\' storeState', () => {
+      const loggedIn = authQuery.getLoggedIn(storeState);
 
-      expect(selId).toBe('PRODUCT-BBB');
+      expect(loggedIn).toBeTruthy('is logged');
     });
 
-    it("getLoaded() should return the current 'loaded' status", () => {
-      const result = authQuery.getLoaded(storeState);
+    it("getAuthError() should return the current 'error' storeState", () => {
+      const error = authQuery.getAuthError(storeState);
 
-      expect(result).toBe(true);
+      expect(error).toBe(ERROR_MSG, ERROR_MSG);
     });
 
-    it("getError() should return the current 'error' storeState", () => {
-      const result = authQuery.getError(storeState);
+    it("getAuthPending() should return the current 'error' storeState", () => {
+      const pending = authQuery.getAuthPending(storeState);
 
-      expect(result).toBe(ERROR_MSG);
+      expect(pending).toBeTruthy('is pending');
     });
   });
 });
