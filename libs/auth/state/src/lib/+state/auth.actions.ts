@@ -14,7 +14,7 @@ export enum AuthActionTypes {
 export class Login implements Action {
   readonly type = AuthActionTypes.Login;
 
-  constructor(public payload: AuthUserVW) {}
+  constructor(public payload: { authUser: AuthUserVW }) {}
 }
 
 export class LoginSuccess implements Action {
@@ -26,7 +26,7 @@ export class LoginSuccess implements Action {
 export class LoginFailure implements Action {
   readonly type = AuthActionTypes.LoginFailure;
 
-  constructor(public payload: any) {}
+  constructor(public payload: { error: any} ) {}
 }
 
 export class LoginRedirect implements Action {
