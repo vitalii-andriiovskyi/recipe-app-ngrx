@@ -5,7 +5,7 @@ import {
   LogoutConfirmation
 } from './auth.actions';
 import { AuthState, initialState, authReducer } from './auth.reducer';
-import { User, AuthUserVW } from '../models/user';
+import { User, AuthUserVW } from '@recipe-app-ngrx/models';
 
 describe('AuthReducer', () => {
   describe('unknown action', () => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { AuthUserVW, User } from '@recipe-app-ngrx/auth/state'
+import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 
 @Injectable({
   providedIn: 'root'

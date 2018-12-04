@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { User, AuthUserVW } from '../models/user';
+import { User, AuthUserVW } from '@recipe-app-ngrx/models';
 
 export enum AuthActionTypes {
   Login = '[Login Page] Login',

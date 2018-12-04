@@ -1,5 +1,5 @@
 import { AuthAction, AuthActionTypes } from './auth.actions';
-import { User } from '../models/user';
+import { User } from '@recipe-app-ngrx/models';
 
 export const AUTH_FEATURE_KEY = 'auth';
 
