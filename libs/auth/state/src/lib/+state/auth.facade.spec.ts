@@ -11,8 +11,12 @@ import { AuthEffects } from './auth.effects';
 import { AuthFacade } from './auth.facade';
 
 import { authQuery } from './auth.selectors';
-import { LoadAuth, AuthLoaded } from './auth.actions';
-import { AuthState, Entity, initialState, authReducer } from './auth.reducer';
+import { Login, Logout } from './auth.actions';
+import { AuthState, initialState, authReducer } from './auth.reducer';
+import { AuthService } from '@recipe-app-ngrx/utils';
+import { MatDialog } from '@angular/material';
+import { User } from '@recipe-app-ngrx/models';
+import { of, throwError } from 'rxjs';
 
 interface TestSchema {
   auth: AuthState;
@@ -21,23 +25,38 @@ interface TestSchema {
 describe('AuthFacade', () => {
   let facade: AuthFacade;
   let store: Store<TestSchema>;
-  let createAuth;
-
-  beforeEach(() => {
-    createAuth = (id: string, name = ''): Entity => ({
-      id,
-      name: name || `name-${id}`
-    });
-  });
+  let getLoginSpy: jasmine.Spy;
+  let getLogoutSpy: jasmine.Spy;
+  let getMatDialogOpenSpy: jasmine.Spy;
+  const userTest = {
+    _id: '',
+    username: 'test_name',
+    password: '',
+    firstName: '',
+    lastName: '',
+    email: ''
+  } as User;
+  const errorMessage = 'ERROR: no access';
 
   describe('used in NgModule', () => {
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
+    getLoginSpy = authServiceSpy.login;
+    getLogoutSpy = authServiceSpy.logout;
+
+    const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+    getMatDialogOpenSpy = matDialogSpy.open;
+
     beforeEach(() => {
       @NgModule({
         imports: [
           StoreModule.forFeature('auth', authReducer, { initialState }),
           EffectsModule.forFeature([AuthEffects])
         ],
-        providers: [AuthFacade]
+        providers: [
+          AuthFacade,
+          { provide: AuthService, useValue: authServiceSpy},
+          { provide: MatDialog, useValue: matDialogSpy }
+        ]
       })
       class CustomFeatureModule {}
 
@@ -56,54 +75,187 @@ describe('AuthFacade', () => {
       facade = TestBed.get(AuthFacade);
     });
 
-    /**
-     * The initially generated facade::loadAll() returns empty array
-     */
-    it('loadAll() should return empty list with loaded == true', async done => {
+    it('login() should return user and state with prop loggedIn == true', async done => {
       try {
-        let list = await readFirst(facade.allAuth$);
-        let isLoaded = await readFirst(facade.loaded$);
+        let loggedIn = await readFirst(facade.loggedIn$);
+        let user = await readFirst(facade.authencticatedUser$);
+        let pending = await readFirst(facade.pending$);
+        let error = await readFirst(facade.error$);
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
 
-        facade.loadAll();
+        getLoginSpy.and.returnValue(of(userTest));
 
-        list = await readFirst(facade.allAuth$);
-        isLoaded = await readFirst(facade.loaded$);
+        facade.login({username: 'test', password: ''});
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(true);
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeTruthy('loggedIn=true');
+        expect(user).toBeTruthy('there\'s user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
 
         done();
       } catch (err) {
         done.fail(err);
       }
     });
+
+    it('login() should return error', async done => {
+      try {
+        let loggedIn = await readFirst(facade.loggedIn$);
+        let user = await readFirst(facade.authencticatedUser$);
+        let pending = await readFirst(facade.pending$);
+        let error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        getLoginSpy.and.returnValue(throwError(errorMessage));
+
+        facade.login({username: 'test', password: ''});
+
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBe(errorMessage);
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    });
+
+    it(`loggout() should return initialState`, async done => {
+      try {
+        let loggedIn = await readFirst(facade.loggedIn$);
+        let user = await readFirst(facade.authencticatedUser$);
+        let pending = await readFirst(facade.pending$);
+        let error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        getLoginSpy.and.returnValue(of(userTest));
+
+        facade.login({username: 'test', password: ''});
+
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeTruthy('loggedIn=true');
+        expect(user).toBeTruthy('there\'s user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        const afterClosedMethod = () => of(true);
+        getMatDialogOpenSpy.and.returnValue({afterClosed: afterClosedMethod});
+
+        facade.logout();
+
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    });
+
+    it(`should cancel loggout() and return user and state with prop loggedIn == true`, async done => {
+      try {
+        let loggedIn = await readFirst(facade.loggedIn$);
+        let user = await readFirst(facade.authencticatedUser$);
+        let pending = await readFirst(facade.pending$);
+        let error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeFalsy('loggedIn=false');
+        expect(user).toBeFalsy('there\'s no user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        getLoginSpy.and.returnValue(of(userTest));
+
+        facade.login({username: 'test', password: ''});
+
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeTruthy('loggedIn=true');
+        expect(user).toBeTruthy('there\'s user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        const afterClosedMethod = () => of(false);
+        getMatDialogOpenSpy.and.returnValue({afterClosed: afterClosedMethod});
+
+        facade.logout();
+
+        loggedIn = await readFirst(facade.loggedIn$);
+        user = await readFirst(facade.authencticatedUser$);
+        pending = await readFirst(facade.pending$);
+        error = await readFirst(facade.error$);
+
+        expect(loggedIn).toBeTruthy('loggedIn=true');
+        expect(user).toBeTruthy('there\'s user');
+        expect(pending).toBeFalsy('pending=false');
+        expect(error).toBeFalsy('error=null');
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    })
 
     /**
      * Use `AuthLoaded` to manually submit list for state management
      */
-    it('allAuth$ should return the loaded list; and loaded flag == true', async done => {
-      try {
-        let list = await readFirst(facade.allAuth$);
-        let isLoaded = await readFirst(facade.loaded$);
+    // it('allAuth$ should return the loaded list; and loaded flag == true', async done => {
+    //   try {
+    //     let list = await readFirst(facade.allAuth$);
+    //     let isLoaded = await readFirst(facade.loaded$);
 
-        expect(list.length).toBe(0);
-        expect(isLoaded).toBe(false);
+    //     expect(list.length).toBe(0);
+    //     expect(isLoaded).toBe(false);
 
-        store.dispatch(new AuthLoaded([createAuth('AAA'), createAuth('BBB')]));
+    //     store.dispatch(new AuthLoaded([createAuth('AAA'), createAuth('BBB')]));
 
-        list = await readFirst(facade.allAuth$);
-        isLoaded = await readFirst(facade.loaded$);
+    //     list = await readFirst(facade.allAuth$);
+    //     isLoaded = await readFirst(facade.loaded$);
 
-        expect(list.length).toBe(2);
-        expect(isLoaded).toBe(true);
+    //     expect(list.length).toBe(2);
+    //     expect(isLoaded).toBe(true);
 
-        done();
-      } catch (err) {
-        done.fail(err);
-      }
-    });
+    //     done();
+    //   } catch (err) {
+    //     done.fail(err);
+    //   }
+    // });
   });
 });
