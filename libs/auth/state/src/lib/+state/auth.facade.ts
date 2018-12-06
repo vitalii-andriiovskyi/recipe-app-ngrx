@@ -4,17 +4,29 @@ import { select, Store } from '@ngrx/store';
 
 import { AuthPartialState } from './auth.reducer';
 import { authQuery } from './auth.selectors';
-import { LoadAuth } from './auth.actions';
+import { Login, Logout } from './auth.actions';
+import { AuthUserVW } from '@recipe-app-ngrx/models';
 
 @Injectable()
 export class AuthFacade {
-  loaded$ = this.store.pipe(select(authQuery.getLoaded));
-  allAuth$ = this.store.pipe(select(authQuery.getAllAuth));
-  selectedAuth$ = this.store.pipe(select(authQuery.getSelectedAuth));
+  authencticatedUser$ = this.store.pipe(select(authQuery.getUser));
+  loggedIn$ = this.store.pipe(select(authQuery.getLoggedIn));
+  error$ = this.store.pipe(select(authQuery.getAuthError));
+  pending$ = this.store.pipe(select(authQuery.getAuthPending));
 
   constructor(private store: Store<AuthPartialState>) {}
 
-  loadAll() {
-    this.store.dispatch(new LoadAuth());
+  /**
+   * This method should be called on `Login Page`
+   */
+  login(user: AuthUserVW) {
+    this.store.dispatch(new Login({authUser: user}));
+  }
+
+  /**
+   * This method should be called on `User Page`
+   */
+  logout() {
+    this.store.dispatch(new Logout());
   }
 }
