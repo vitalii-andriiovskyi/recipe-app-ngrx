@@ -22,6 +22,9 @@
     },
     "models": {
       "tags": []
+    },
+    "auth-login-ui": {
+      "tags": []
     }
   }
 }

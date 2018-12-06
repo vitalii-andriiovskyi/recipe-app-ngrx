@@ -24,6 +24,9 @@
       ],
       "@recipe-app-ngrx/models": [
         "libs/models/src/index.ts"
+      ],
+      "@recipe-app-ngrx/auth/login-ui": [
+        "libs/auth/login-ui/src/index.ts"
       ]
     }
   },
