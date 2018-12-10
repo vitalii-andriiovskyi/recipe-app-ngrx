@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
-import { MatButtonModule, MatDialogModule } from '@angular/material';
+import { MatButtonModule, MatDialogModule, MatCardModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+import { LoginFormComponent } from './login-form/login-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
  
@@ -10,8 +12,13 @@ export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/
   imports: [
     CommonModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
   ],
-  declarations: [LogoutConfirmationDialogComponent]
+  declarations: [LogoutConfirmationDialogComponent, LoginFormComponent],
+  exports: [LoginFormComponent]
 })
 export class AuthLoginUiModule {}
