@@ -4,6 +4,7 @@ import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/
 import { MatButtonModule, MatDialogModule, MatCardModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
 
 export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
  
@@ -18,7 +19,7 @@ export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/
     MatInputModule,
     ReactiveFormsModule
   ],
-  declarations: [LogoutConfirmationDialogComponent, LoginFormComponent],
-  exports: [LoginFormComponent]
+  declarations: [LogoutConfirmationDialogComponent, LoginFormComponent, LoginComponent],
+  exports: [LoginFormComponent, LoginComponent]
 })
 export class AuthLoginUiModule {}
