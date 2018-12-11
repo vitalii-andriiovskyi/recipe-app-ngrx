@@ -3,11 +3,11 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'rcp-logout-confirmation-dialog',
   template: `
-    <h2 mat-dialog-title>Logout</h2>
+    <h2 mat-dialog-title class="mat-h2">Logout</h2>
     <mat-dialog-content>Are you sure you want to logout?</mat-dialog-content>
     <mat-dialog-actions>
-      <button mat-button [mat-dialog-close]="false">Cancel</button>
-      <button mat-button [mat-dialog-close]="true">OK</button>
+      <button mat-flat-button color="accent" [mat-dialog-close]="false">Cancel</button>
+      <button mat-flat-button color="accent" [mat-dialog-close]="true">OK</button>
     </mat-dialog-actions>
   `,
   styles: [
@@ -21,10 +21,11 @@ import { Component, OnInit } from '@angular/core';
       mat-dialog-actions {
         display: flex;
         justify-content: flex-end;
+        padding-top: 10px;
       }
 
-      [mat-button] {
-        padding: 0;
+      .mat-flat-button {
+        margin-left: 8px;
       }
     `,
   ]
