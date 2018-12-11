@@ -2,11 +2,44 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$recipe-app-primary: mat-palette($mat-yellow, A400, 100, A700);
+$mat-rcp-green: (
+  50:  #efffed,
+  100: #a9ff9e,
+  200: #5ff349,
+  300: #0ae814,
+  400: #0ad414,
+  500: #00c800,
+  600: #00b900,
+  700: #00aa00,
+  800: #009600,
+  900: #008c00,
+  A100: #6cff59,
+  A200: #00ed00,
+  A400: #1fd900,
+  A700: #00a000,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+    A100: $dark-primary-text,
+    A200: $dark-primary-text,
+    A400: $light-primary-text,
+    A700: $light-primary-text,
+  )
+);
+
+$recipe-app-primary: mat-palette($mat-rcp-green, 500, 200, 900);
 $recipe-app-accent: mat-palette($mat-amber, 800, 500, 900);
 
 // The warn palette is optional (defaults to red).
-$recipe-app-warn: mat-palette($mat-red, 700);
+$recipe-app-warn: mat-palette($mat-red, 100);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $recipe-app-theme: mat-light-theme($recipe-app-primary, $recipe-app-accent, $recipe-app-warn);
