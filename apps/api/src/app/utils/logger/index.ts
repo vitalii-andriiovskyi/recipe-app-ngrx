@@ -8,9 +8,10 @@ const { createLogger, format, transports } = require('winston');
 const { combine, colorize, label, json, timestamp, printf } = format;
 require('winston-daily-rotate-file');
 const fs = require('fs');
+import { join } from 'path';
 
 const ENV = process.env.NODE_ENV;
-const logDir = './apps/api/src/app/logs';
+const logDir = join(__dirname, 'logs');
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
