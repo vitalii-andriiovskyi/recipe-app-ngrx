@@ -1,7 +1,25 @@
-import { createLogger, format, transports } from 'winston';
+// import { createLogger, format, transports } from 'winston';
+// I can't use the line above because creators of 'winston' didn't write types for imported objects and 
+// Typescript compiler shows errors during compiling the code into javascript
+// Hovewer, the code gets transpiled into javascript and everything works well
+
+// The line below allows to avoid the errors described above.   
+const { createLogger, format, transports } = require('winston');
 const { combine, colorize, label, json, timestamp, printf } = format;
+require('winston-daily-rotate-file');
+const fs = require('fs');
 
 const ENV = process.env.NODE_ENV;
+const logDir = './apps/api/src/app/logs';
+
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+
+const dailyRotateFileTransport = new transports.DailyRotateFile({
+  filename: `${logDir}/%DATE%-results.log`,
+  datePattern: 'YYYY-MM-DD'
+});
 
 function getLogger(module) {
   let path = '';
@@ -25,21 +43,25 @@ function getLogger(module) {
           )
         )
       }),
-      new transports.File({
-        level: 'info',
-        filename: './app/logs/all-logs.log', // ???
-        // handleExceptions: true,
-        maxsize: 5242880, // 5MB
-        maxFiles: 5,
-        format: json(),
-      }),
+      dailyRotateFileTransport
+      // new transports.File({
+      //   level: 'info',
+      //   filename: './apps/api/src/app/logs/all-logs.log', // ???
+      //   // handleExceptions: true,
+      //   maxsize: 5242880, // 5MB
+      //   maxFiles: 5,
+      //   format: json(),
+      // }),
     ],
     exitOnError: false
   });
 
-  // logger.stream({}).on('write', (message, encoding) => {
-  //   logger.info(message);
-  // });
+  logger.stream = {
+    write: function (message, encoding) {
+      logger.info(message);
+    }
+  };
+
   return logger;
 }
 
