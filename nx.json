@@ -25,6 +25,9 @@
     },
     "auth-login-ui": {
       "tags": []
+    },
+    "api": {
+      "tags": []
     }
   }
 }
