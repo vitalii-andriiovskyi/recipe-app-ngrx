@@ -1,10 +1,17 @@
 import * as app from './app/app';
+import * as config from './app/config';
+import getLogger from './app/utils/logger';
+import { join } from 'path';
 
-const port = 3333;
+const logger = getLogger(module);
 
-app.listen(port, (err) => {
-  if (err) {
-    console.error(err);
+const PORT = config.get('port');
+const HOSTNAME =  process.env.NODE_ENV === 'production' ? config.get('hostname') : 'localhost';
+const DIST_FOLDER = join(process.cwd(), 'dist');
+
+app.listen(PORT, (err) => {
+  if (err) { 
+    logger.error(err);
   }
-  console.log(`Listening at http://localhost:${port}`);
+  logger.info(`Node server is listening on http://${HOSTNAME}:${PORT}`);
 });
