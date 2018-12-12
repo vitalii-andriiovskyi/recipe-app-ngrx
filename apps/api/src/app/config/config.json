@@ -1,0 +1,13 @@
+{
+	"port": 3030,
+	"hostname": "127.0.0.1",
+  "mongoose": {
+		"uri": "mongodb://localhost:27017/rcp",
+		"options": { 
+			"socketTimeoutMS": 0,
+			"keepAlive": true,
+			"reconnectTries": 30,
+			"useNewUrlParser": true
+		}
+	}
+}
