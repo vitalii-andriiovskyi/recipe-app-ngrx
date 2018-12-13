@@ -9,5 +9,6 @@
 			"reconnectTries": 30,
 			"useNewUrlParser": true
 		}
-	}
+	},
+	"secret": "RCP_APP"
 }
