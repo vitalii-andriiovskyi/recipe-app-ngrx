@@ -3,12 +3,12 @@ import { HTTP_ERROR_TYPE, HttpError } from '../utils/error';
 
 describe(`expressErrorHandler`, () => {
   let env = '';
-  const req = {
+  const req: any = {
     app: {
       get: (arg: string) => env
     }
   };
-  const res = {
+  const res: any = {
     locals: {
       message: '',
       error: {}
