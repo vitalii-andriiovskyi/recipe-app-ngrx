@@ -7,7 +7,7 @@ export class HttpError extends Error {
   message: any;
   // I added it in order to solve the issue with instanceof. There's workaround but it's also has problems
   // https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
-  constructor(status, message?, public type = HTTP_ERROR_TYPE) {
+  constructor(status: number, message?: string, public type = HTTP_ERROR_TYPE) {
     // super(arguments);
     super();
     this.status = status;

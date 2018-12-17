@@ -1,4 +1,4 @@
-const nconf = require('nconf');
+import * as nconf from 'nconf'
 import { join } from 'path';
 
 nconf.argv()
