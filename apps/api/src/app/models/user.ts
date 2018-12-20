@@ -1,7 +1,7 @@
 import {Document, model, Model, Schema, Types} from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { from, throwError, Observable, bindNodeCallback, of } from 'rxjs';
-import { exhaustMap, switchMap } from 'rxjs/operators';
+import { exhaustMap, switchMap, map } from 'rxjs/operators';
 import * as config from '../config';
 import * as jwt from 'jsonwebtoken';
 import { CommonError, CommonErrorTypes } from '../utils/error';
@@ -69,7 +69,7 @@ UserSchema.statics.authenticate = function(username: string, password: string): 
   return bindNodeCallback(selfUser.findOne).call(selfUser, {username: username}).pipe(
     switchMap(function(user) {
       if (user) {
-        if (bcrypt.compareSync(password, user['hashedPassword'])) {
+        if (user['checkPassword'](password)) {
           // authentication successful
           logger.info('auth is successful');
           return of(user['getPublicFields']());
@@ -93,7 +93,9 @@ UserSchema.statics.createUser = function(userParam: User): Observable<any> {
         return throwError(new CommonError(`Username ${userParam.username} is already taken`, CommonErrorTypes.CreationError));
       } 
       const newUser = new selfUser({...userParam});
-      return from(newUser.save());
+      return from(newUser.save()).pipe(
+        map(createdUser => createdUser['getPublicFields']())
+      );
     })
   );
 }
