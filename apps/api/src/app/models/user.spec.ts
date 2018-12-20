@@ -37,6 +37,8 @@ describe('UserModel: MongoUserModel', () => {
       try {
         const user = await readFirst(UserModel.createUser(userN));
         expect(user.username).toBe(userN.username);
+        expect(user.hashedPassword).toBeFalsy();
+        expect(user.token).toBeTruthy();
 
         let userModel = await UserModel.findOne({username: userN.username});
         expect(userModel.username).toBe(userN.username);
@@ -152,10 +154,12 @@ describe('UserModel: MongoUserModel', () => {
       phone: '+ 380',
     };
 
-    let user: any
+    let user: any;
+    let userDocument: any;
 
     beforeAll( async () => {
       user = await readFirst(UserModel.createUser(userN));
+      userDocument = await UserModel.findOne({username: userN.username});
     });
 
     afterAll( async () => {
@@ -209,17 +213,17 @@ describe('UserModel: MongoUserModel', () => {
 
     // ------------------------------------------------------------------------
     it(`'checkPassword' should return 'true' when password is correct `, () => {
-      const res = user.checkPassword('11111');
+      const res = userDocument.checkPassword('11111');
       expect(res).toBeTruthy();
     });
 
     it(`'checkPassword' should return 'false' when password is incorrect `, () => {
-      const res = user.checkPassword('2222');
+      const res = userDocument.checkPassword('2222');
       expect(res).toBeFalsy();
     });
 
     it(`'getPublicFields' should return actual data about user`, () => {
-      const publicUser = user.getPublicFields();
+      const publicUser = userDocument.getPublicFields();
       expect(publicUser.username).toBe(userN.username);
       expect(publicUser.firstName).toBe(userN.firstName);
       expect(publicUser.lastName).toBe(userN.lastName);
@@ -235,19 +239,15 @@ describe('UserModel: MongoUserModel', () => {
       expect(publicUser._id).toBeTruthy();
     });
 
-    it(`should get password set by the user`, () => {
-      expect(user.password).toEqual('11111');
-    });
-
-    it(`should set new password and new hashedPassword`, () => {
-      const oldHashedPassword = user.hashedPassword;
+    it(`should set new password and new hashedPassword`, async () => {
+      const oldHashedPassword = userDocument.hashedPassword;
       const hash = 'hash';
-      user.encryptPassword = jest.fn(pass => `${hash}-${pass}`);
+      userDocument.encryptPassword = jest.fn(pass => `${hash}-${pass}`);
 
       const newPassword = '2222';
-      user.password = newPassword;
-      expect(user.password).toEqual(newPassword);
-      expect(user.hashedPassword).toEqual(`${hash}-${newPassword}`);
+      userDocument.password = newPassword;
+      expect(userDocument.password).toEqual(newPassword);
+      expect(userDocument.hashedPassword).toEqual(`${hash}-${newPassword}`);
     });
 
   });
