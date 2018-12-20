@@ -9,6 +9,7 @@ import * as morgan from 'morgan';
 import getLogger from './utils/logger';
 import { sendHttpError } from './middleware/sendHttpError';
 import { expressErrorHandler } from './middleware/expressErrorHandler';
+import { UsersApi } from './api/users';
 
 const DIST_FOLDER = join(process.cwd(), 'dist');
 
@@ -53,6 +54,7 @@ export class ExpressServer {
 
     // create API routes
     // HerosApi.create(router);
+    UsersApi.create(router);
 
     // wire up the REST API
     this.app.use("/api", router);
@@ -88,7 +90,13 @@ export class ExpressServer {
         }
         return null;
       }
-    }).unless({ path: ['/api/users/authenticate', '/api'] }));
+    }).unless({ 
+      path: [
+        '/api',
+        '/api/users/authenticate',
+        '/api/users/create'
+      ]
+    }));
 
     this.app.use(sendHttpError);
 
