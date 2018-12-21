@@ -39,7 +39,7 @@ $recipe-app-primary: mat-palette($mat-rcp-green, 500, 200, 900);
 $recipe-app-accent: mat-palette($mat-amber, 800, 500, 900);
 
 // The warn palette is optional (defaults to red).
-$recipe-app-warn: mat-palette($mat-red, 100);
+$recipe-app-warn: mat-palette($mat-red, 300);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $recipe-app-theme: mat-light-theme($recipe-app-primary, $recipe-app-accent, $recipe-app-warn);
