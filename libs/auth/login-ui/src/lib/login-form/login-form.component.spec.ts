@@ -66,7 +66,7 @@ describe('LoginFormComponent', () => {
     expect(loginError.nativeElement.innerHTML).toContain(errorMessage);
   });
 
-  it('should emit the event if the form is valid when submitted', () => {
+  it('should emit the event \'submit\' if the form is valid when submitted', () => {
     const authData: AuthUserVW = {
       username: 'test',
       password: '1111'
@@ -93,33 +93,121 @@ describe('LoginFormComponent', () => {
     expect(userTestComponent.password).toBe(authData.password, '1111');
   });
 
-  // it('shouldn\'t emit the event if the form isn\'t valid when submitted', () => {
-  //   const authData: AuthUserVW = {
-  //     username: '',
-  //     password: '1111'
-  //   };
+  it('shouldn\'t emit the event \'submit\' if there isn\'t username', () => {
+    const authData: AuthUserVW = {
+      username: '',
+      password: '1111'
+    };
 
-  //   const inputs = loginFormDE.queryAll(By.css('input'));
-  //   const usernameInput = inputs[0].nativeElement;
-  //   usernameInput.value = authData.username;
-  //   usernameInput.dispatchEvent(newEvent('input'));
+    const inputs = loginFormDE.queryAll(By.css('input'));
+    const usernameInput = inputs[0].nativeElement;
+    usernameInput.value = authData.username;
+    usernameInput.dispatchEvent(newEvent('input'));
 
-  //   const passfordInput = inputs[1].nativeElement;
-  //   passfordInput.value = authData.password;
-  //   passfordInput.dispatchEvent(newEvent('input'));
+    const passfordInput = inputs[1].nativeElement;
+    passfordInput.value = authData.password;
+    passfordInput.dispatchEvent(newEvent('input'));
 
-  //   fixture.detectChanges();
+    fixture.detectChanges();
 
-  //   const form = loginFormDE.query(By.css('form')).nativeElement;
-  //   form.dispatchEvent(newEvent('submit'));
+    const form = loginFormDE.query(By.css('form')).nativeElement;
+    form.dispatchEvent(newEvent('submit'));
     
-  //   fixture.detectChanges();
+    fixture.detectChanges();
 
-  //   const user = testComponent.user;
-  //   expect(user).toBeFalsy();
-  //   // expect(user.username).toBe(authData.username, 'test');
-  //   // expect(user.password).toBe(authData.password, '1111');
-  // });
+    const user = testComponent.user;
+    expect(user).toBeFalsy();
+
+    const matError = loginFormDE.queryAll(By.css('mat-error'))[0].nativeElement;
+    expect(matError.innerHTML).toContain('Username is required');
+  });
+
+  it('shouldn\'t emit the event \'submit\' if there isn\'t password', () => {
+    const authData: AuthUserVW = {
+      username: 'test',
+      password: ''
+    };
+
+    const inputs = loginFormDE.queryAll(By.css('input'));
+    const usernameInput = inputs[0].nativeElement;
+    usernameInput.value = authData.username;
+    usernameInput.dispatchEvent(newEvent('input'));
+
+    const passfordInput = inputs[1].nativeElement;
+    passfordInput.value = authData.password;
+    passfordInput.dispatchEvent(newEvent('input'));
+
+    fixture.detectChanges();
+
+    const form = loginFormDE.query(By.css('form')).nativeElement;
+    form.dispatchEvent(newEvent('submit'));
+    
+    fixture.detectChanges();
+
+    const user = testComponent.user;
+    expect(user).toBeFalsy();
+    const matError = loginFormDE.queryAll(By.css('mat-error'))[0].nativeElement;
+    expect(matError.innerHTML).toContain('Password is required');
+  });
+
+  it('shouldn\'t emit the event \'submit\' if username length is less than 4 characters', () => {
+    const authData: AuthUserVW = {
+      username: 'rcp',
+      password: '1111'
+    };
+
+    const inputs = loginFormDE.queryAll(By.css('input'));
+    const usernameInput = inputs[0].nativeElement;
+    usernameInput.value = authData.username;
+    usernameInput.dispatchEvent(newEvent('input'));
+
+    const passfordInput = inputs[1].nativeElement;
+    passfordInput.value = authData.password;
+    passfordInput.dispatchEvent(newEvent('input'));
+
+    fixture.detectChanges();
+
+    const form = loginFormDE.query(By.css('form')).nativeElement;
+    form.dispatchEvent(newEvent('submit'));
+    
+    fixture.detectChanges();
+
+    const user = testComponent.user;
+    expect(user).toBeFalsy();
+
+    const matError = loginFormDE.queryAll(By.css('mat-error'))[0].nativeElement;
+    expect(matError.innerHTML).toContain('Username must be at least 4 characters long');
+  });
+
+  it('shouldn\'t emit the event \'submit\' if the password length is less than 4 characters', () => {
+    const authData: AuthUserVW = {
+      username: 'test',
+      password: '111'
+    };
+
+    const inputs = loginFormDE.queryAll(By.css('input'));
+    const usernameInput = inputs[0].nativeElement;
+    usernameInput.value = authData.username;
+    usernameInput.dispatchEvent(newEvent('input'));
+
+    const passfordInput = inputs[1].nativeElement;
+    passfordInput.value = authData.password;
+    passfordInput.dispatchEvent(newEvent('input'));
+
+    fixture.detectChanges();
+
+    const form = loginFormDE.query(By.css('form')).nativeElement;
+    form.dispatchEvent(newEvent('submit'));
+    
+    fixture.detectChanges();
+
+    const user = testComponent.user;
+    expect(user).toBeFalsy();
+    const matError = loginFormDE.queryAll(By.css('mat-error'))[0].nativeElement;
+    expect(matError.innerHTML).toContain('Password must be at least 4 characters long');
+  });
+
+  
 });
 
 @Component({
