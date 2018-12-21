@@ -28,7 +28,7 @@ describe('Auth Selectors', () => {
     it('getUser() should return the user of Auth', () => {
       const user = authQuery.getUser(storeState);
 
-      expect(user.username).toBe('test_name');
+      expect(user['username']).toBe('test_name');
     });
 
     it('getLoggedIn() should return the current \'loggedIn\' storeState', () => {

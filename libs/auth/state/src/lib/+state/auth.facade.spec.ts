@@ -119,7 +119,7 @@ describe('AuthFacade', () => {
         expect(pending).toBeFalsy('pending=false');
         expect(error).toBeFalsy('error=null');
 
-        getLoginSpy.and.returnValue(throwError(errorMessage));
+        getLoginSpy.and.returnValue(throwError({ error: errorMessage}));
 
         facade.login({username: 'test', password: ''});
 

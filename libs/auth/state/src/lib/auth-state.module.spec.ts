@@ -9,6 +9,7 @@ describe('AuthStateModule', () => {
   }));
 
   it('should create', () => {
+    // it gives the error because of tests of AuthEffects and AuthReducer; They have circular dependencies with @recipe-app-ngrx/auth/login-ui
     expect(AuthStateModule).toBeDefined();
   });
 });

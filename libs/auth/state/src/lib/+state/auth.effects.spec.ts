@@ -85,7 +85,9 @@ describe('AuthEffects', () => {
       const completion = new LoginFailure({
         error: 'Invalid username or password',
       });
-      const error = 'Invalid username or password';
+      const error = {
+        error: 'Invalid username or password',
+      };
 
       actions$ = hot('-a---', { a: action });
       const response = cold('-#', {}, error);
