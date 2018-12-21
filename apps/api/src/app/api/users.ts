@@ -43,10 +43,11 @@ export class UsersApi {
       },
       err => {
         if (err.type && err.type === CommonErrorTypes.CreationError) {
-          return next(new HttpError(403, err.message));
+          res.status(403).send(err.message);
         } else {
-          return next(err);
+          return next(err); // ???????? don't know whether it is right
         }
+        next();
       }
     );
   }
@@ -59,10 +60,11 @@ export class UsersApi {
       },
       err => {
         if (err.type && (err.type === CommonErrorTypes.AuthError || err.type === CommonErrorTypes.CommonError)) {
-          return next(new HttpError(403, err.message));
+          res.status(401).send(err.message);
         } else {
-          return next(err);
+          return next(err); // ???????? don't know whether it is right
         }
+        next();
       }
     );
   }
@@ -83,10 +85,11 @@ export class UsersApi {
       },
       err => {
         if (err.type && err.type === CommonErrorTypes.DeletionError) {
-          return next(new HttpError(403, err.message));
+          res.status(403).send(err.message);
         } else {
-          return next(err);
+          return next(err); // ???????? don't know whether it is right
         }
+        next();
       }
     );
   }
