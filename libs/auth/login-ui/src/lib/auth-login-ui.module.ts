@@ -20,6 +20,7 @@ export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/
     ReactiveFormsModule
   ],
   declarations: [LogoutConfirmationDialogComponent, LoginFormComponent, LoginComponent],
-  exports: [LoginFormComponent, LoginComponent]
+  exports: [LoginFormComponent, LoginComponent],
+  entryComponents: [LogoutConfirmationDialogComponent],
 })
 export class AuthLoginUiModule {}
