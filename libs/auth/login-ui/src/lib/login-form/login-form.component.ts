@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthUserVW } from '@recipe-app-ngrx/models';
+import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 
 @Component({
   selector: 'rcp-login-form',
@@ -19,13 +20,22 @@ export class LoginFormComponent implements OnInit {
   }
 
   @Input() errorMessage: string | null;
-
   @Output() submitted = new EventEmitter<AuthUserVW>();
 
   form: FormGroup = new FormGroup({
-    username: new FormControl(''),
-    password: new FormControl(''),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(4)
+    ]),
   });
+
+  get username() { return this.form.get('username'); }
+  get password() { return this.form.get('password'); }
+  matcher = new CommonErrorStateMatcher();
 
   constructor() {}
 
