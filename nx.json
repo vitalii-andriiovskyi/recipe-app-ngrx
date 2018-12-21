@@ -16,6 +16,18 @@
     },
     "utils": {
       "tags": []
+    },
+    "auth-state": {
+      "tags": []
+    },
+    "models": {
+      "tags": []
+    },
+    "auth-login-ui": {
+      "tags": []
+    },
+    "api": {
+      "tags": []
     }
   }
 }

@@ -12,18 +12,24 @@ import { environment } from '../environments/environment';
 import { StoreRouterConnectingModule, RouterStateSerializer } from '@ngrx/router-store';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
+import { AuthStateModule } from '@recipe-app-ngrx/auth/state';
+import { AuthLoginUiModule } from '@recipe-app-ngrx/auth/login-ui';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    HttpClientModule,
     NxModule.forRoot(),
     RouterModule.forRoot([], { initialNavigation: 'enabled' }),
     BrowserAnimationsModule,
     StoreModule.forRoot({},{ metaReducers : !environment.production ? [storeFreeze] : [] }),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    StoreRouterConnectingModule
+    StoreRouterConnectingModule,
+    AuthStateModule,
+    AuthLoginUiModule
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
