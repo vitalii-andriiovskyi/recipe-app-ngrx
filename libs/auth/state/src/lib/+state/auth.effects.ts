@@ -35,7 +35,7 @@ export class AuthEffects {
           }
         }),
         map(user => new LoginSuccess({ user })),
-        catchError(error => of(new LoginFailure({ error })))
+        catchError(error => of(new LoginFailure({ error: error.error })))
       )
     )
   );
