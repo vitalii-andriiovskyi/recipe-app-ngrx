@@ -5,9 +5,13 @@ import { MatButtonModule, MatDialogModule, MatCardModule, MatFormFieldModule, Ma
 import { LoginFormComponent } from './login-form/login-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
+import { Routes, RouterModule } from '@angular/router';
 
 export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
- 
+
+const authRoutes: Routes = [
+  { path: 'login', component: LoginComponent }
+];
 
 @NgModule({
   imports: [
@@ -17,7 +21,8 @@ export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule.forChild(authRoutes)
   ],
   declarations: [LogoutConfirmationDialogComponent, LoginFormComponent, LoginComponent],
   exports: [LoginFormComponent, LoginComponent],
