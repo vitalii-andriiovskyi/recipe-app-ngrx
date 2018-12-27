@@ -22,6 +22,8 @@ import {
 import { AuthService } from '@recipe-app-ngrx/utils';
 import { MatDialog } from '@angular/material';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
 
 describe('AuthEffects', () => {
   let actions$: Observable<any>;
@@ -29,6 +31,7 @@ describe('AuthEffects', () => {
   let getLoginSpy: jasmine.Spy;
   let getLogoutSpy: jasmine.Spy;
   let getMatDialogOpenSpy: jasmine.Spy;
+  let routerService: Router;
 
   beforeEach(() => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
@@ -40,6 +43,7 @@ describe('AuthEffects', () => {
     
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule.withRoutes([ ]),
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([])
@@ -123,6 +127,31 @@ describe('AuthEffects', () => {
       getMatDialogOpenSpy.and.returnValue({afterClosed: afterClosedMethod});
 
       expect(effects.logout$).toBeObservable(expected);
+    });
+  });
+
+  describe('loginSuccess$', () => {
+    beforeEach(() => {
+      routerService = TestBed.get(Router);
+      spyOn(routerService, 'navigate').and.callThrough();
+    })
+    it('should dispatch a RouterNavigation action', (done: any) => {
+      const user = {
+        _id: '',
+        username: 'test_name',
+        password: '',
+        firstName: '',
+        lastName: '',
+        email: ''
+      } as User;
+      const action = new LoginSuccess({ user });
+
+      actions$ = of(action);
+
+      effects.loginSuccess$.subscribe(() => {
+        expect(routerService.navigate).toHaveBeenCalledWith(['/']);
+        done();
+      });
     });
   });
   // describe('loadAuth$', () => {

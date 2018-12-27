@@ -22,6 +22,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { readFirst } from '@nrwl/nx/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 export function newEvent(eventName: string, bubbles = false, cancelable = false) {
   const evt = document.createEvent('CustomEvent');  // MUST be 'CustomEvent'
@@ -69,7 +70,8 @@ describe('LoginComponent', () => {
           NxModule.forRoot(),
           StoreModule.forRoot({}),
           EffectsModule.forRoot([]),
-          AuthStateModule
+          AuthStateModule,
+          RouterTestingModule
         ],
         declarations: [ LoginComponent, LoginFormComponent, LogoutConfirmationDialogComponent, TestComponent ],
         providers: [
