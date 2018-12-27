@@ -15,6 +15,7 @@ import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 import { AuthStateModule } from '@recipe-app-ngrx/auth/state';
 import { AuthLoginUiModule } from '@recipe-app-ngrx/auth/login-ui';
 import { HttpClientModule } from '@angular/common/http';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,7 +30,8 @@ import { HttpClientModule } from '@angular/common/http';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     StoreRouterConnectingModule,
     AuthStateModule,
-    AuthLoginUiModule
+    AuthLoginUiModule,
+    FlexLayoutModule
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
