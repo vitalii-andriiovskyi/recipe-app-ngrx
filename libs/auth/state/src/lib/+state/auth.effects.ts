@@ -19,6 +19,7 @@ import {
 import { AuthUserVW } from '@recipe-app-ngrx/models';
 import { AuthService, LocalStorageService } from '@recipe-app-ngrx/utils';
 import { LogoutConfirmationDialogComponent } from '@recipe-app-ngrx/auth/login-ui';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthEffects {
@@ -40,13 +41,6 @@ export class AuthEffects {
     )
   );
 
-  // @Effect({ dispatch: false })
-  // loginSuccess$ = this.actions$.pipe(
-  //   ofType(AuthActionTypes.LoginSuccess),
-  //   -- maybe should load additional data for authenitcated users
-  //   tap(() => this.router.navigate(['/']))
-  // );
-
   @Effect()
   logout$ = this.actions$.pipe(
     ofType(AuthActionTypes.Logout),
@@ -66,12 +60,20 @@ export class AuthEffects {
           : new LogoutDismiss()
     )
   );
+
+  @Effect({ dispatch: false })
+  loginSuccess$ = this.actions$.pipe(
+    ofType(AuthActionTypes.LoginSuccess),
+    // -- maybe should load additional data for authenticated users
+    tap(() => this.router.navigate(['/recipes/newest']))
+  );
   
   constructor(
     private actions$: Actions,
     private dataPersistence: DataPersistence<AuthPartialState>,
     private authService: AuthService,
     private localeStorageService: LocalStorageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 }

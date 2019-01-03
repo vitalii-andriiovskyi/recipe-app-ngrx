@@ -22,6 +22,9 @@ import {
 import { AuthService } from '@recipe-app-ngrx/utils';
 import { MatDialog } from '@angular/material';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 
 describe('AuthEffects', () => {
   let actions$: Observable<any>;
@@ -29,6 +32,7 @@ describe('AuthEffects', () => {
   let getLoginSpy: jasmine.Spy;
   let getLogoutSpy: jasmine.Spy;
   let getMatDialogOpenSpy: jasmine.Spy;
+  let routerService: Router;
 
   beforeEach(() => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
@@ -40,6 +44,9 @@ describe('AuthEffects', () => {
     
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule.withRoutes([
+          { path: 'recipes/newest', component: TestComponent}
+        ]),
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([])
@@ -49,7 +56,8 @@ describe('AuthEffects', () => {
         provideMockActions(() => actions$),
         { provide: AuthService, useValue: authServiceSpy},
         { provide: MatDialog, useValue: matDialogSpy }
-      ]
+      ],
+      declarations: [ TestComponent ]
     });
 
     effects = TestBed.get(AuthEffects);
@@ -125,6 +133,31 @@ describe('AuthEffects', () => {
       expect(effects.logout$).toBeObservable(expected);
     });
   });
+
+  describe('loginSuccess$', () => {
+    beforeEach(() => {
+      routerService = TestBed.get(Router);
+      spyOn(routerService, 'navigate').and.callThrough();
+    })
+    it('should dispatch a RouterNavigation action', (done: any) => {
+      const user = {
+        _id: '',
+        username: 'test_name',
+        password: '',
+        firstName: '',
+        lastName: '',
+        email: ''
+      } as User;
+      const action = new LoginSuccess({ user });
+
+      actions$ = of(action);
+
+      effects.loginSuccess$.subscribe(() => {
+        expect(routerService.navigate).toHaveBeenCalledWith(['/recipes/newest']);
+        done();
+      });
+    });
+  });
   // describe('loadAuth$', () => {
   //   it('should work', () => {
   //     actions = hot('-a-|', { a: new LoadAuth() });
@@ -134,3 +167,12 @@ describe('AuthEffects', () => {
   //   });
   // });
 });
+
+
+@Component({
+  selector: 'rcp-test-comp',
+  template: '<p>test</p>'
+})
+class TestComponent {
+
+}

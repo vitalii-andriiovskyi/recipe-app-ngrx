@@ -17,6 +17,7 @@ import { AuthService } from '@recipe-app-ngrx/utils';
 import { MatDialog } from '@angular/material';
 import { User } from '@recipe-app-ngrx/models';
 import { of, throwError } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 interface TestSchema {
   auth: AuthState;
@@ -50,7 +51,8 @@ describe('AuthFacade', () => {
       @NgModule({
         imports: [
           StoreModule.forFeature('auth', authReducer, { initialState }),
-          EffectsModule.forFeature([AuthEffects])
+          EffectsModule.forFeature([AuthEffects]),
+          RouterTestingModule
         ],
         providers: [
           AuthFacade,

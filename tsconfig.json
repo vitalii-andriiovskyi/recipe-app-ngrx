@@ -27,6 +27,9 @@
       ],
       "@recipe-app-ngrx/auth/login-ui": [
         "libs/auth/login-ui/src/index.ts"
+      ],
+      "@recipe-app-ngrx/shared-components": [
+        "libs/shared-components/src/index.ts"
       ]
     }
   },

@@ -16,6 +16,7 @@ import { AuthStateModule } from '@recipe-app-ngrx/auth/state';
 import { AuthLoginUiModule } from '@recipe-app-ngrx/auth/login-ui';
 import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,7 +32,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     StoreRouterConnectingModule,
     AuthStateModule,
     AuthLoginUiModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    SharedComponentsModule
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
