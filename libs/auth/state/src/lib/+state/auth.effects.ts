@@ -65,7 +65,7 @@ export class AuthEffects {
   loginSuccess$ = this.actions$.pipe(
     ofType(AuthActionTypes.LoginSuccess),
     // -- maybe should load additional data for authenticated users
-    tap(() => this.router.navigate(['/']))
+    tap(() => this.router.navigate(['/recipes/newest']))
   );
   
   constructor(
