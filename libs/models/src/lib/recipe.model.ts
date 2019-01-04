@@ -16,5 +16,5 @@ export interface Recipe {
 
   category: string;
   user_username: string;
-  timestamp: string;
+  date_created: Date;
 }
