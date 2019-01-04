@@ -33,6 +33,9 @@
       ],
       "@recipe-app-ngrx/rcp-entity-store": [
         "libs/rcp-entity-store/src/index.ts"
+      ],
+      "@recipe-app-ngrx/recipe/state": [
+        "libs/recipe/state/src/index.ts"
       ]
     }
   },
