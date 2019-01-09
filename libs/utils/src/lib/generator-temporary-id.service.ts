@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class GeneratorTemporaryId {
+export class TemporaryIdGenerator {
   private _id: number;
   lastBiggestBaseForId: number;
 
