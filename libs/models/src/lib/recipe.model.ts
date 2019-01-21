@@ -1,9 +1,11 @@
 import { Image } from './image.model';
 import { Ingredient } from './ingredient.model';
+import { slugify } from '@recipe-app-ngrx/utils';
 
-export interface RecipeOptions {
+export interface Recipe {
   id: number;
   title: string;
+  title_slugged?: string;
   description?: string;
   ingredients: Ingredient[];
   steps: string[];
@@ -16,50 +18,33 @@ export interface RecipeOptions {
 
   category: string | string[];
   user_username: string;
+  date_created: Date;
 }
 
-export class Recipe implements RecipeOptions {
-  public readonly id: number;
-  date_created: Date;
-  url: string;
+export class RecipeMaker {
+  constructor() { }
 
-  title: string;
-  description?: string;
-  ingredients: Ingredient[];
-  steps: string[];
-  images?: Image[];
-  footnotes?: string;
-  nutritionFat?: string;
-  preparetionTime?: number;
-  cookTime?: number;
-  servingsNumber?: number;
+  static create(recipe: Recipe): Recipe {
+    const slugged_url = slugify(recipe.title);
+    const createdRecipe: Recipe = {
+      id: recipe.id,
+      title: recipe.title,
+      title_slugged: slugged_url,
 
-  category: string | string[];
-  user_username: string;
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
+      images: recipe.images,
+      footnotes: recipe.footnotes,
+      nutritionFat: recipe.nutritionFat,
+      preparetionTime: recipe.preparetionTime,
+      cookTime: recipe.cookTime,
+      servingsNumber: recipe.servingsNumber,
 
-  constructor(options: RecipeOptions) {
-    this.id = options.id;
-    this.title = options.title;
-    this.description = options.description;
-    this.ingredients = options.ingredients;
-    this.steps = options.steps;
-    this.images = options.images;
-    this.footnotes = options.footnotes;
-    this.nutritionFat = options.nutritionFat;
-    this.preparetionTime = options.preparetionTime;
-    this.cookTime = options.cookTime;
-    this.servingsNumber = options.servingsNumber;
-    
-    this.category = options.category;
-    this.user_username = options.user_username;
-
-    this.date_created = new Date();
-
-    this.url = this.createUrl(options.title);
-  }
-
-  createUrl(value: string): string {
-    const url = value.replace(/ +(?= )/g,'').toLowerCase().split(' ').join('-');
-    return url;
+      category: recipe.category,
+      user_username: recipe.user_username,
+      date_created: new Date(),
+    }
+    return createdRecipe;
   }
 }
