@@ -19,7 +19,7 @@ import {
   Logout,
   LogoutConfirmation,
   LogoutDismiss } from './auth.actions';
-import { AuthService } from '@recipe-app-ngrx/utils';
+import { AuthService } from '../services/auth.service';
 import { MatDialog } from '@angular/material';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
