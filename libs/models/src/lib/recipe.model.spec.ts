@@ -1,8 +1,8 @@
-import { RecipeOptions, Recipe } from "./recipe.model";
+import { Recipe, RecipeMaker } from "./recipe.model";
 
 
 describe('RECIPE MODEL', () => {
-  const recOptions: RecipeOptions = {
+  const recOptions: Recipe = {
     id: 0,
     title: 'Pasta by Alain Ducasse',
     description: 'Testy pasta',
@@ -26,22 +26,22 @@ describe('RECIPE MODEL', () => {
 
     category: 'hot dishes',
     user_username: 'rcp_user',
-
+    date_created: new Date()
   }
   let recipe: Recipe;
 
 
   it(`should create Recipe with url 'pasta-by-alain-ducasse'`, () => {
     const res = 'pasta-by-alain-ducasse';
-    recipe = new Recipe(recOptions);
-    expect(recipe.url).toBe(res, res);
+    recipe = RecipeMaker.create(recOptions);
+    expect(recipe.title_slugged).toBe(res, res);
   });
 
   it(`should create Recipe with url 'pasta-by-alain-ducasse' when the option 'title=Pasta  by Alain Ducasse' has two double spaces`, () => {
     const res = 'pasta-by-alain-ducasse';
     recOptions.title = 'Pasta  by Alain Ducasse';
-    recipe = new Recipe(recOptions);
-    expect(recipe.url).toBe(res, res);
+    recipe = RecipeMaker.create(recOptions);
+    expect(recipe.title_slugged).toBe(res, res);
   });
 
 });
