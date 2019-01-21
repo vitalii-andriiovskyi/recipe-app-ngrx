@@ -4,6 +4,8 @@ import { ENTITY_METADATA_TOKEN } from 'ngrx-data';
 
 import { recipeEntityMetadata } from './recipe-entity-metadata';
 
+export { RecipeEntityCollectionService } from './services/recipe-entity-collection.service';
+
 @NgModule({
   imports: [CommonModule],
   providers: [
