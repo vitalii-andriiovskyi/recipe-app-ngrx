@@ -10,6 +10,9 @@ export const recipeEntityMetadata: EntityMetadataMap = {
       optimisticDelete: false,
       optimisticAdd: true,
       optimisticUpdate: true
+    },
+    additionalCollectionState: {
+      totalNRecipes: 1000000
     }
   }
 };
