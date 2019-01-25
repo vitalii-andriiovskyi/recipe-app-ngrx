@@ -10,12 +10,13 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { readFirst } from '@nrwl/nx/testing';
 import { NxModule } from '@nrwl/nx';
-import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataService, HttpUrlGenerator, Logger, EntityDataService, EntityServicesBase, EntityServicesElements } from 'ngrx-data';
+import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataService, HttpUrlGenerator, Logger, EntityDataService, EntityServicesBase, EntityServicesElements, EntityCollectionReducerRegistry, EntityOp } from 'ngrx-data';
 
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 import { Recipe } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
+import { RecipeEntityOp } from '../+state/recipe.actions';
 
 
 describe('RecipeEntityCollectionService', () => {
@@ -54,7 +55,8 @@ describe('RecipeEntityCollectionService', () => {
       providers: [
         { provide: ENTITY_METADATA_TOKEN, multi: true, useValue: recipeEntityMetadata },
         // { provide: RecipeDataService, useValue: recipeDataServiceSpy }
-        RecipeDataService
+        RecipeDataService,
+        EntityCollectionReducerRegistry
       ]
     })
     class CustomFeatureModule {
@@ -137,7 +139,7 @@ describe('RecipeEntityCollectionService', () => {
     }
   });
 
-  it('should add the recipe to Persistant state and notify about error on the server; ERROR', async done => {
+  it('should add the recipe to Persistant state and notify about the error on the server; ERROR', async done => {
     try {
       getHttpPostSpy.and.returnValue(throwError(new Error('err')));
       // method http.get() should be called for the selector selectors$.totalNRecipes$ 
@@ -162,7 +164,17 @@ describe('RecipeEntityCollectionService', () => {
     } catch (err) {
       done.fail(err);
     }
-  })
+  });
+
+  it(`method 'loadTotalNRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_TOTAL_N_RECIPES`, () => {
+    const dispatchSpy = spyOn(recipeEntityCollectionService, 'dispatch').and.callThrough();
+    const tag = 'Create Recipe Page';
+    const action = recipeEntityCollectionService.createEntityAction(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
+    recipeEntityCollectionService.loadTotalNRecipes(tag);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(action);
+
+  });
 });
 
 @Injectable()
