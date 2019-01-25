@@ -22,6 +22,9 @@ import { RcpEntityStoreModule } from '@recipe-app-ngrx/rcp-entity-store';
 
 import { AppComponent } from './app.component';
 
+import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils'; 
+   
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -41,7 +44,9 @@ import { AppComponent } from './app.component';
     RcpEntityStoreModule
   ],
   providers: [
-    { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer }
+    { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
+    { provide: ENV_RCP, useValue: environment },
+    LogService,
   ],
   bootstrap: [AppComponent]
 })
