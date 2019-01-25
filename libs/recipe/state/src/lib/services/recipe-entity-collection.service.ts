@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions } from 'ngrx-data';
+import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp } from 'ngrx-data';
 import { Recipe } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
 import { of, Observable, merge } from 'rxjs';
 import { switchMap, filter, mergeMap, map } from 'rxjs/operators';
+import { RecipeEntityOp } from '../+state/recipe.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +43,9 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     return result$;
   }
 
+  loadTotalNRecipes(tag: string) {
+    const action = this.createEntityAction(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
+    this.dispatch(action);
+  }
   
 }
