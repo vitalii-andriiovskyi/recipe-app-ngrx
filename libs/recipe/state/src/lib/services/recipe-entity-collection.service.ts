@@ -44,8 +44,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   }
 
   loadTotalNRecipes(tag: string) {
-    const action = this.createEntityAction(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
-    this.dispatch(action);
+    this.createAndDispatch(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
   }
   
 }
