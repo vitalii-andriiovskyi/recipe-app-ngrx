@@ -1,4 +1,4 @@
-import { recipeTotalNReducer } from './recipe.reducer';
+import { recipeReducer } from './recipe.reducer';
 import { EntityCollection, EntityActionFactory, EntityOp } from 'ngrx-data';
 import { Recipe } from '@recipe-app-ngrx/models';
 import { RecipeEntityOp } from './recipe.actions';
@@ -24,7 +24,7 @@ describe('recipeTotalNReducer', () => {
       const data = 10;
       const entityActionFactory = new EntityActionFactory();
       const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'});
-      const result: EntityCollection<Recipe> = recipeTotalNReducer(recipeCollection, action);
+      const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
 
       expect(result.entityName).toBe('Recipe');
       expect(result.loaded).toBe(false);
@@ -37,7 +37,7 @@ describe('recipeTotalNReducer', () => {
     it('should return state with initial total number of recipes', () => {
       const entityActionFactory = new EntityActionFactory();
       const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, {}, {tag: 'API'});
-      const result: EntityCollection<Recipe> = recipeTotalNReducer(recipeCollection, action);
+      const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
 
       expect(result.entityName).toBe('Recipe');
       expect(result.loaded).toBe(false);
@@ -55,7 +55,7 @@ describe('recipeTotalNReducer', () => {
           entityOp: 'ngrx-data/'
         }
       } as any;
-      const result = recipeTotalNReducer(recipeCollection, action);
+      const result = recipeReducer(recipeCollection, action);
 
       expect(result).toBe(recipeCollection);
     });

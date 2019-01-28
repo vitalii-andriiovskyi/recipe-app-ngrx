@@ -4,7 +4,7 @@ import { ENTITY_METADATA_TOKEN, EntityDataService, EntityCollectionReducerRegist
 
 import { recipeEntityMetadata } from './recipe-entity-metadata';
 import { RecipeDataService } from './services/recipe-data.service';
-import { recipeTotalNReducer } from './+state/recipe.reducer';
+import { recipeReducer } from './+state/recipe.reducer';
 import { RecipeEffects } from './+state/recipe.effects';
 import { EffectsModule } from '@ngrx/effects';
 
@@ -27,6 +27,6 @@ export class RecipeStateModule {
     entityCollectionReducerRegistry: EntityCollectionReducerRegistry
   ) {
     entityDataService.registerService('Recipe', recipeDataService);
-    entityCollectionReducerRegistry.registerReducer('Recipe', recipeTotalNReducer);
+    entityCollectionReducerRegistry.registerReducer('Recipe', recipeReducer);
   }
 }

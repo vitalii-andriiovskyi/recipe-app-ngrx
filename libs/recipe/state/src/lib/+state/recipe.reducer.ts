@@ -14,7 +14,7 @@ const methods = {
   },
 }
 
-export function recipeTotalNReducer(state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> {
+export function recipeReducer(state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> {
   state = methods[action.payload.entityOp] ? methods[action.payload.entityOp](state, action) : state;
   // switch (action.payload.entityOp) {
   //   case RecipeEntityOp.QUERY_TOTAL_N_RECIPES: {
