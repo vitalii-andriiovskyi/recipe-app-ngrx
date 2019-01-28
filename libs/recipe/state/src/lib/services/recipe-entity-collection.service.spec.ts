@@ -167,12 +167,11 @@ describe('RecipeEntityCollectionService', () => {
   });
 
   it(`method 'loadTotalNRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_TOTAL_N_RECIPES`, () => {
-    const dispatchSpy = spyOn(recipeEntityCollectionService, 'dispatch').and.callThrough();
+    const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
     const tag = 'Create Recipe Page';
-    const action = recipeEntityCollectionService.createEntityAction(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
     recipeEntityCollectionService.loadTotalNRecipes(tag);
 
-    expect(dispatchSpy).toHaveBeenCalledWith(action);
+    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
 
   });
 });
