@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NgModule, Injectable } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { of, throwError, Subject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
@@ -172,6 +172,16 @@ describe('RecipeEntityCollectionService', () => {
     recipeEntityCollectionService.loadTotalNRecipes(tag);
 
     expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
+
+  });
+
+  it(`method 'loadCountFilteredRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`, () => {
+    const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
+    const tag = 'Recipe List Page';
+    const data = { params: new HttpParams().set('type', 'category').set('value', 'Bread') };
+
+    recipeEntityCollectionService.loadCountFilteredRecipes(tag, data);
+    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, data, { tag: tag});
 
   });
 });
