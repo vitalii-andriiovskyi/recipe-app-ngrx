@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { DefaultDataService, HttpUrlGenerator } from 'ngrx-data';
 
 import { LogService } from '@recipe-app-ngrx/utils';
@@ -20,5 +20,9 @@ export class RecipeDataService extends DefaultDataService<Recipe>{
 
   getTotalNRecipes(): Observable<number> {
     return this.execute('GET', 'api/recipes/totalN');
+  }
+
+  getCountFilteredRecipes(options: any): Observable<number> {
+    return this.execute('GET', 'api/recipes/countFilteredRecipes, null', options);
   }
 }
