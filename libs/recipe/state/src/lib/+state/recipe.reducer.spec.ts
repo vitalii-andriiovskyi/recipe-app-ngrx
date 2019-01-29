@@ -12,7 +12,7 @@ describe('recipeTotalNReducer', () => {
     loaded: false,
     loading: false,
     changeState: {},
-    ...{totalNRecipes: 1000}
+    ...{totalNRecipes: 1000, countFilteredRecipes: 0, filters: {category: '', username: '', page: 1}}
   }
 
   beforeEach(() => {
@@ -45,6 +45,24 @@ describe('recipeTotalNReducer', () => {
       expect(result.ids.length).toBe(0);
       expect(result.loaded).toBe(false);
       expect(result['totalNRecipes']).toBe(recipeCollection['totalNRecipes']);
+    });
+    
+    it(`should return state with defined value of 'countFilteredRecipes'; QUERY_COUNT_FILTERED_RECIPES_SUCCESS`, () => {
+      const data = 100;
+      const entityActionFactory = new EntityActionFactory();
+      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'});
+      const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
+
+      expect(result['countFilteredRecipes']).toBe(data, data);
+    });
+
+    it(`should return state with defined value of 'countFilteredRecipes'; QUERY_COUNT_FILTERED_RECIPES_ERROR`, () => {
+      const data = 101;
+      const entityActionFactory = new EntityActionFactory();
+      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, data, {tag: 'API'});
+      const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
+
+      expect(result['countFilteredRecipes']).toBe(recipeCollection.ids.length, recipeCollection.ids.length);
     });
   });
 
