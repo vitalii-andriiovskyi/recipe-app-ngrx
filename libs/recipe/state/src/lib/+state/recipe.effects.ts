@@ -18,6 +18,14 @@ export class RecipeEffects {
     )),
   );
 
+  @Effect() queryCountFilteredRecipes$ = this.actions$.pipe(
+    ofEntityOp([RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES]),
+    exhaustMap(action => this.recipeDataService.getCountFilteredRecipes(action.payload.data).pipe(
+      map(data => this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'})),
+      catchError(err => of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'})))
+    )),
+  );
+
   constructor(
     private actions$: Actions,
     private recipeDataService: RecipeDataService,
