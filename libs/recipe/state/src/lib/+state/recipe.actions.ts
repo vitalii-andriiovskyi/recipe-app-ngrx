@@ -13,7 +13,8 @@ export enum RecipeEntityOp {
   QUERY_TOTAL_N_RECIPES_ERROR = 'ngrx-data/query-total-n-recipes/error',
   QUERY_COUNT_FILTERED_RECIPES = 'ngrx-data/query-count-of-filtered-recipes',
   QUERY_COUNT_FILTERED_RECIPES_SUCCESS = 'ngrx-data/query-count-of-filtered-recipes/success',
-  QUERY_COUNT_FILTERED_RECIPES_ERROR = 'ngrx-data/query-count-of-filtered-recipes/error'
+  QUERY_COUNT_FILTERED_RECIPES_ERROR = 'ngrx-data/query-count-of-filtered-recipes/error',
+  FILTERS_UPDATED = 'ngrx-data/query-count-of-filtered-recipes/error',
 }
 
 // export class LoadTotalNRecipes implements Action {
