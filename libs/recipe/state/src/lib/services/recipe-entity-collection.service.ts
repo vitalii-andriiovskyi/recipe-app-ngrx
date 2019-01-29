@@ -46,5 +46,14 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   loadTotalNRecipes(tag: string) {
     this.createAndDispatch(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
   }
+
+  /**
+   * Dispatches action `RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`
+   * @param tag - Tag is message containing info about the place calling the method; e.g. Recipe Page, API
+   * @param data - Data are the options for `http.get()` method. In this case, object should contain the prop `params` with object similar to `{type: 'category', value: 'Dessers' }` or `{type: 'username', value: 'username' }`
+   */
+  loadCountFilteredRecipes(tag: string, data: any) {
+    this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, data, {tag: tag});
+  }
   
 }
