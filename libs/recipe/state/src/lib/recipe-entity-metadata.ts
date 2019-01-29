@@ -12,7 +12,8 @@ export const recipeEntityMetadata: EntityMetadataMap = {
       optimisticUpdate: true
     },
     additionalCollectionState: {
-      totalNRecipes: 1000000
+      totalNRecipes: 1000000,
+      countFilteredRecipes: 0
     }
   }
 };
