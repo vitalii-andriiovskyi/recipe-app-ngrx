@@ -32,6 +32,22 @@ export class RecipeEffects {
     )),
   );
 
+  @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot) => {
+    const id = route.paramMap.get('id');
+    const isCat = isCategory(id);
+    const filters: RecipeFilters = {
+      category: (isCat && id) ? id : null,
+      username: (!isCat && id) ? id : null,
+      page: +route.params['page'] || 1,
+      itemsPerPage: +route.params['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
+    };
+
+    const filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+    const loadCountFilteredRecipesAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
+    
+    return [filtersUpdatedAction, loadCountFilteredRecipesAction];
+  });
+
   constructor(
     private actions$: Actions,
     private recipeDataService: RecipeDataService,
