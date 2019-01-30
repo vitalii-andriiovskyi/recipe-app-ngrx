@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Effect, Actions } from '@ngrx/effects';
-import { DataPersistence } from '@nrwl/nx';
+import { ActivatedRouteSnapshot } from '@angular/router';
+
+import { Effect, Actions, ofType } from '@ngrx/effects';
+import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
+
+import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction } from 'ngrx-data';
+import { of } from 'rxjs';
+import { exhaustMap, catchError, map, filter, flatMap, tap } from 'rxjs/operators';
 
 import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
-import { ofEntityOp, EntityActionFactory, EntityOp } from 'ngrx-data';
-import { exhaustMap, catchError, map } from 'rxjs/operators';
 import { RecipeDataService } from '../services/recipe-data.service';
-import { of } from 'rxjs';
+import { RecipeFilters } from '@recipe-app-ngrx/models';
+import { isCategory } from '../services/utils';
+import { recipeEntityMetadata } from '../recipe-entity-metadata';
 
 @Injectable()
 export class RecipeEffects {
@@ -29,6 +35,19 @@ export class RecipeEffects {
   constructor(
     private actions$: Actions,
     private recipeDataService: RecipeDataService,
-    private entityActionFactory: EntityActionFactory
-  ) {}
+    private entityActionFactory: EntityActionFactory,
+  ) { }
+
+  private _handleNavigation(segment: string, callback: (a: ActivatedRouteSnapshot) => EntityAction[]) {
+    return this.actions$.pipe(
+      ofType(ROUTER_NAVIGATION),
+      map(firstSegment),
+      filter(s => s.routeConfig.path === segment),
+      flatMap(a => callback(a))
+    );
+  }
+}
+
+function firstSegment(ra: RouterNavigationAction): ActivatedRouteSnapshot {
+  return ra.payload.routerState.root.firstChild;
 }
