@@ -24,6 +24,12 @@ const methods = {
       ...{ countFilteredRecipes: state.ids.length }, // not sure about state.ids.length; don't know how to get in effects the min number of filtered elements
     }
   },
+  [RecipeEntityOp.FILTERS_UPDATED]: (state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> => {
+    return {
+      ...state,
+      ...{ filters: action.payload.data }, 
+    }
+  },
 }
 
 export function recipeReducer(state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> {
