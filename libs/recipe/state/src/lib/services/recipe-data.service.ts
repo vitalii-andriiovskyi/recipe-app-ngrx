@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { DefaultDataService, HttpUrlGenerator } from 'ngrx-data';
 
 import { LogService } from '@recipe-app-ngrx/utils';
-import { Recipe } from '@recipe-app-ngrx/models';
+import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -22,7 +22,10 @@ export class RecipeDataService extends DefaultDataService<Recipe>{
     return this.execute('GET', 'api/recipes/totalN');
   }
 
-  getCountFilteredRecipes(options: any): Observable<number> {
-    return this.execute('GET', 'api/recipes/countFilteredRecipes, null', options);
+  getCountFilteredRecipes(filters: RecipeFilters): Observable<number> {
+    const params = new HttpParams();
+    params.set('category', filters.category);
+    params.set('username', filters.username);
+    return this.execute('GET', 'api/recipes/countFilteredRecipes, null', { params });
   }
 }
