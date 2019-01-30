@@ -55,5 +55,19 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   loadCountFilteredRecipes(tag: string, filters: RecipeFilters) {
     this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, {tag: tag});
   }
+
+  belongToCategory(category: string, item: Recipe): boolean {
+    let result: boolean;
+    if (typeof item.category === 'string') {
+      result = item.category === category;
+    } else {
+      result = item.category.indexOf(category) > -1;
+    }
+    return result;
+  }
+
+  belongToUser(username: string, item: Recipe): boolean {
+    return username === item.user_username;
+  }
   
 }
