@@ -34,7 +34,7 @@ describe('RecipeEntityCollectionService', () => {
     cookTime: 12,
     servingsNumber: 6,
 
-    category: 'desert',
+    category: 'dessert',
     user_username: 'rcp_user',
     date_created: new Date(),
   };
@@ -103,91 +103,135 @@ describe('RecipeEntityCollectionService', () => {
   it('should be created', () => {
     expect(recipeEntityCollectionService).toBeTruthy();
   });
-
-  it('should add the recipe to Persistant state and to the remote server; SUCCESS', async done => {
-    try {
-      
-      const newRecipe = {...recipe, id: 100000};
-      getHttpPostSpy.and.returnValue(of(newRecipe)); 
-      // method http.get() should be called for the selector selectors$.totalNRecipes$ 
-      getHttpGetSpy.and.returnValue(of(1000)); 
-
-      const addedRecipe$ = recipeEntityCollectionService.add(recipe).pipe(
-        catchError(recipee => {
-          return of(recipee);
-        })
-      )
-      // .subscribe(
-      //   data => { 
-      //     console.log(data);
-      //   }
-      // );
- 
-      const addedRecipe = await readFirst(addedRecipe$);
-      const entities = await readFirst(recipeEntityCollectionService.entities$);
-      
-      // doesn't return recipe in the case of success, however internal code returns 'of(recipe)` where recipe is the respond from the server;
-      // and after that something get broken. Maybe something wrong with my code. However the error case works fine.
-      expect(addedRecipe.title).toBe(recipe.title, recipe.title);
-      expect(entities.length).toBe(1);
-      // expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
-      // expect(entities[0].id).toBe(addedRecipe.requestData.data.id, `error data: ${entities[0].id} == ${addedRecipe.requestData.data.id}`);
-     
-      done()
-    } catch (err) {
-      done.fail(err);
-    }
+  
+  describe(`method add()`, () => {
+    it('should add the recipe to Persistant state and to the remote server; SUCCESS', async done => {
+      try {
+        
+        const newRecipe = {...recipe, id: 100000};
+        getHttpPostSpy.and.returnValue(of(newRecipe)); 
+        // method http.get() should be called for the selector selectors$.totalNRecipes$ 
+        getHttpGetSpy.and.returnValue(of(1000)); 
+  
+        const addedRecipe$ = recipeEntityCollectionService.add(recipe).pipe(
+          catchError(recipee => {
+            return of(recipee);
+          })
+        )
+        // .subscribe(
+        //   data => { 
+        //     console.log(data);
+        //   }
+        // );
+   
+        const addedRecipe = await readFirst(addedRecipe$);
+        const entities = await readFirst(recipeEntityCollectionService.entities$);
+        
+        // doesn't return recipe in the case of success, however internal code returns 'of(recipe)` where recipe is the respond from the server;
+        // and after that something get broken. Maybe something wrong with my code. However the error case works fine.
+        expect(addedRecipe.title).toBe(recipe.title, recipe.title);
+        expect(entities.length).toBe(1);
+        // expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
+        // expect(entities[0].id).toBe(addedRecipe.requestData.data.id, `error data: ${entities[0].id} == ${addedRecipe.requestData.data.id}`);
+       
+        done()
+      } catch (err) {
+        done.fail(err);
+      }
+    });
+  
+    it('should add the recipe to Persistant state and notify about the error on the server; ERROR', async done => {
+      try {
+        getHttpPostSpy.and.returnValue(throwError(new Error('err')));
+        // method http.get() should be called for the selector selectors$.totalNRecipes$ 
+        getHttpGetSpy.and.returnValue(of(1000)); 
+        
+        const addedRecipe$ = recipeEntityCollectionService.add(recipe).pipe(
+          catchError(recipee => {
+            return of(recipee);
+          })
+        )
+   
+        const error = await readFirst(addedRecipe$);
+        const entities = await readFirst(recipeEntityCollectionService.entities$);
+        
+        expect(error.message).toBe('err');
+        expect(error.requestData.data.title).toBe(recipe.title, recipe.title);
+        expect(entities.length).toBe(1);
+        expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
+        expect(entities[0].id).toBe(error.requestData.data.id, `error data: ${entities[0].id} == ${error.requestData.data.id}`);
+       
+        done()
+      } catch (err) {
+        done.fail(err);
+      }
+    });
   });
 
-  it('should add the recipe to Persistant state and notify about the error on the server; ERROR', async done => {
-    try {
-      getHttpPostSpy.and.returnValue(throwError(new Error('err')));
-      // method http.get() should be called for the selector selectors$.totalNRecipes$ 
-      getHttpGetSpy.and.returnValue(of(1000)); 
-      
-      const addedRecipe$ = recipeEntityCollectionService.add(recipe).pipe(
-        catchError(recipee => {
-          return of(recipee);
-        })
-      )
- 
-      const error = await readFirst(addedRecipe$);
-      const entities = await readFirst(recipeEntityCollectionService.entities$);
-      
-      expect(error.message).toBe('err');
-      expect(error.requestData.data.title).toBe(recipe.title, recipe.title);
-      expect(entities.length).toBe(1);
-      expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
-      expect(entities[0].id).toBe(error.requestData.data.id, `error data: ${entities[0].id} == ${error.requestData.data.id}`);
-     
-      done()
-    } catch (err) {
-      done.fail(err);
-    }
+  describe(`method 'loadTotalNRecipes()'`, () => {
+    it(`method 'loadTotalNRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_TOTAL_N_RECIPES`, () => {
+      const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
+      const tag = 'Create Recipe Page';
+      recipeEntityCollectionService.loadTotalNRecipes(tag);
+  
+      expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
+  
+    });
   });
 
-  it(`method 'loadTotalNRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_TOTAL_N_RECIPES`, () => {
-    const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
-    const tag = 'Create Recipe Page';
-    recipeEntityCollectionService.loadTotalNRecipes(tag);
-
-    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp, null, { tag: tag});
-
+  describe(`method 'loadCountFilteredRecipes()'`, () => {
+    it(`method 'loadCountFilteredRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`, () => {
+      const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
+      const tag = 'Recipe List Page';
+      const filters: RecipeFilters = { 
+        category: 'Bread',
+        username: '',
+        page: 1,
+        itemsPerPage: 6
+      };
+  
+      recipeEntityCollectionService.loadCountFilteredRecipes(tag, filters);
+      expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: tag});
+  
+    });
   });
 
-  it(`method 'loadCountFilteredRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`, () => {
-    const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
-    const tag = 'Recipe List Page';
-    const filters: RecipeFilters = { 
-      category: 'Bread',
-      username: '',
-      page: 1,
-      itemsPerPage: 6
-    };
+  describe(`method 'belongToCategory()'`, () => {
+    it(`should return 'true' when category of the recipe is single string`, () => {
+      const belognsToCategory = recipeEntityCollectionService.belongToCategory('dessert', recipe);
+      expect(belognsToCategory).toBeTruthy('true');
+    });
 
-    recipeEntityCollectionService.loadCountFilteredRecipes(tag, filters);
-    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: tag});
+    it(`should return 'false' when category of the recipe is single string`, () => {
+      const belognsToCategory = recipeEntityCollectionService.belongToCategory('salad', recipe);
+      expect(belognsToCategory).toBeFalsy('false');
+    });
 
+    it(`should return 'true' when category of the recipe is string[]`, () => {
+      const anotherRecipe: Recipe = { ...recipe };
+      anotherRecipe.category = ['dessert', 'cookie'];
+      const belognsToCategory = recipeEntityCollectionService.belongToCategory('dessert', recipe);
+      expect(belognsToCategory).toBeTruthy('true');
+    });
+
+    it(`should return 'true' when category of the recipe is string[]`, () => {
+      const anotherRecipe: Recipe = { ...recipe };
+      anotherRecipe.category = ['dessert', 'cookie'];
+      const belognsToCategory = recipeEntityCollectionService.belongToCategory('salad', recipe);
+      expect(belognsToCategory).toBeFalsy('false');
+    });
+  });
+
+  describe(`method 'belongToUser()'`, () => {
+    it(`should return 'true'`, () => {
+      const belognsToUser = recipeEntityCollectionService.belongToUser('rcp_user', recipe);
+      expect(belognsToUser).toBeTruthy('true');
+    });
+
+    it(`should return 'false'`, () => {
+      const belognsToUser = recipeEntityCollectionService.belongToUser('user', recipe);
+      expect(belognsToUser).toBeFalsy('false');
+    });
   });
 });
 
