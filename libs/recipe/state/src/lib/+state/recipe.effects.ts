@@ -11,7 +11,7 @@ import { exhaustMap, catchError, map, filter, flatMap, tap } from 'rxjs/operator
 import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
 import { RecipeDataService } from '../services/recipe-data.service';
 import { RecipeFilters } from '@recipe-app-ngrx/models';
-import { isCategory } from '../services/utils';
+import { isRecipeCategory } from '../services/utils';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class RecipeEffects {
 
   @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot) => {
     const id = route.paramMap.get('id');
-    const isCat = isCategory(id);
+    const isCat = isRecipeCategory(id);
     const filters: RecipeFilters = {
       category: (isCat && id) ? id : null,
       username: (!isCat && id) ? id : null,
