@@ -14,7 +14,7 @@ import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataServi
 
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
-import { Recipe } from '@recipe-app-ngrx/models';
+import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
 import { RecipeEntityOp } from '../+state/recipe.actions';
 
@@ -178,10 +178,15 @@ describe('RecipeEntityCollectionService', () => {
   it(`method 'loadCountFilteredRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`, () => {
     const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
     const tag = 'Recipe List Page';
-    const data = { params: new HttpParams().set('type', 'category').set('value', 'Bread') };
+    const filters: RecipeFilters = { 
+      category: 'Bread',
+      username: '',
+      page: 1,
+      itemsPerPage: 6
+    };
 
-    recipeEntityCollectionService.loadCountFilteredRecipes(tag, data);
-    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, data, { tag: tag});
+    recipeEntityCollectionService.loadCountFilteredRecipes(tag, filters);
+    expect(dispatchSpy).toHaveBeenCalledWith(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: tag});
 
   });
 });
