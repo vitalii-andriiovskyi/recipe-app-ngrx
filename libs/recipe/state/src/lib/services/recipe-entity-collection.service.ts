@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp } from 'ngrx-data';
-import { Recipe } from '@recipe-app-ngrx/models';
+import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
 import { of, Observable, merge } from 'rxjs';
 import { switchMap, filter, mergeMap, map } from 'rxjs/operators';
@@ -50,10 +50,10 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   /**
    * Dispatches action `RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`
    * @param tag - Tag is message containing info about the place calling the method; e.g. Recipe Page, API
-   * @param data - Data are the options for `http.get()` method. In this case, object should contain the prop `params` with object similar to `{type: 'category', value: 'Dessers' }` or `{type: 'username', value: 'username' }`
+   * @param filters - Filters are the current RecipeFilters which are in the `state.filters` prop
    */
-  loadCountFilteredRecipes(tag: string, data: any) {
-    this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, data, {tag: tag});
+  loadCountFilteredRecipes(tag: string, filters: RecipeFilters) {
+    this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, {tag: tag});
   }
   
 }
