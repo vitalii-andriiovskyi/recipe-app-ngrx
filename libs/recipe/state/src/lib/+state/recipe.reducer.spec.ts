@@ -1,6 +1,6 @@
 import { recipeReducer } from './recipe.reducer';
 import { EntityCollection, EntityActionFactory, EntityOp } from 'ngrx-data';
-import { Recipe } from '@recipe-app-ngrx/models';
+import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { RecipeEntityOp } from './recipe.actions';
 
 describe('recipeTotalNReducer', () => {
@@ -12,7 +12,7 @@ describe('recipeTotalNReducer', () => {
     loaded: false,
     loading: false,
     changeState: {},
-    ...{totalNRecipes: 1000, countFilteredRecipes: 0, filters: {category: '', username: '', page: 1}}
+    ...{totalNRecipes: 1000, countFilteredRecipes: 0, filters: {category: '', username: '', page: 1, itemsPerPage: 5}}
   }
 
   beforeEach(() => {
@@ -63,6 +63,24 @@ describe('recipeTotalNReducer', () => {
       const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
 
       expect(result['countFilteredRecipes']).toBe(recipeCollection.ids.length, recipeCollection.ids.length);
+    });
+
+    it(`should return the state with new 'filters'; FILTERS_UPDATED`, () => {
+      const filters: RecipeFilters = {
+        category: 'Bread',
+        username: 'user_x',
+        page: 10,
+        itemsPerPage: 6
+      };
+
+      const entityActionFactory = new EntityActionFactory();
+      const action = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'test'});
+      const result: EntityCollection<Recipe> = recipeReducer(recipeCollection, action);
+
+      expect(result['filters']['category']).toBe(filters.category, filters.category);
+      expect(result['filters']['username']).toBe(filters.username, filters.username);
+      expect(result['filters']['page']).toBe(filters.page, filters.page);
+      expect(result['filters']['itemsPerPage']).toBe(filters.itemsPerPage, filters.itemsPerPage);
     });
   });
 
