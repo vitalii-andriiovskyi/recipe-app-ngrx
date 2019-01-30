@@ -1,19 +1,30 @@
 import { TestBed, async } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { Observable, of } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRouteSnapshot, ParamMap } from '@angular/router';
+import { Component, NgModule } from '@angular/core';
+
+import { Observable, of, from } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
+import { StoreRouterConnectingModule, ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
+
+import { EntityActionFactory, EntityOp, NgrxDataModule, ENTITY_METADATA_TOKEN, EntityCollectionReducerRegistry, EntityDataService } from 'ngrx-data';
 
 import { NxModule } from '@nrwl/nx';
 import { hot, cold } from '@nrwl/nx/testing';
 
 import { RecipeEffects } from './recipe.effects';
-import { EntityActionFactory, EntityOp } from 'ngrx-data';
 import { RecipeEntityOp } from './recipe.actions';
 import { RecipeDataService } from '../services/recipe-data.service';
-import { HttpParams } from '@angular/common/http';
+import { RecipeFilters } from '@recipe-app-ngrx/models';
+import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
+import { recipeEntityMetadata } from '../recipe-entity-metadata';
 
 describe('RecipeEffects', () => {
   let actions$: Observable<any>;
@@ -27,18 +38,46 @@ describe('RecipeEffects', () => {
     getTotalNRecipesSpy = recipeDataServiceSpy.getTotalNRecipes;
     getCountFilteredRecipesSpy = recipeDataServiceSpy.getCountFilteredRecipes;
 
+    @NgModule({
+      imports: [],
+      providers: [
+        { provide: ENTITY_METADATA_TOKEN, multi: true, useValue: recipeEntityMetadata },
+        { provide: RecipeDataService, useValue: recipeDataServiceSpy },
+        EntityCollectionReducerRegistry
+      ]
+    })
+    class CustomFeatureModule {
+      constructor(
+        entityDataService: EntityDataService,
+        recipeDataService: RecipeDataService
+      ) {
+        entityDataService.registerService('Recipe', recipeDataService);
+      }
+    }
+
     TestBed.configureTestingModule({
       imports: [
         NxModule.forRoot(),
         StoreModule.forRoot({}),
-        EffectsModule.forRoot([])
+        EffectsModule.forRoot([]),
+        StoreRouterConnectingModule,
+        NgrxDataModule.forRoot({
+          entityMetadata: {}
+        }),
+        RouterTestingModule.withRoutes(
+          [{ path: 'recipes:/id', component: TestComponent }]
+        ),
+        HttpClientTestingModule,
+        CustomFeatureModule
       ],
       providers: [
         RecipeEffects,
         provideMockActions(() => actions$),
         EntityActionFactory,
-        { provide: RecipeDataService, useValue: recipeDataServiceSpy }
-      ]
+       
+        RecipeEntityCollectionService
+      ],
+      declarations: [ TestComponent ]
     });
 
     effects = TestBed.get(RecipeEffects);
@@ -75,8 +114,13 @@ describe('RecipeEffects', () => {
   describe(`queryCountFilteredRecipes$`, () => {
     it(`should return SUCCESS action, when the server responds with a number`, () => {
       const countFilteredRecipes = 101;
-      const options: any = { params: new HttpParams().set('type', 'category').set('value', 'Desserts') };
-      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, options);
+      const filters: RecipeFilters = { 
+        category: 'Bread',
+        username: '',
+        page: 1,
+        itemsPerPage: 6
+      };
+      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters);
       const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, countFilteredRecipes, {tag: 'API'});
 
       actions$ = hot('-a---', {a: action});
@@ -89,7 +133,12 @@ describe('RecipeEffects', () => {
 
     it('should return ERROR action, when the server responds with an error ', () => {
       const countFilteredRecipes = 101;
-      const options: any = { params: new HttpParams().set('type', 'category').set('value', 'Desserts') };
+      const options: RecipeFilters = { 
+        category: 'Bread',
+        username: '',
+        page: 1,
+        itemsPerPage: 6
+      }
 
       const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, options);
       const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'});
@@ -102,4 +151,11 @@ describe('RecipeEffects', () => {
       expect(effects.queryCountFilteredRecipes$).toBeObservable(expected);
     });
   });
+
+  
 });
+
+@Component({
+  template: `<div>test</div>`
+})
+class TestComponent {}
