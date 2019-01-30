@@ -152,7 +152,48 @@ describe('RecipeEffects', () => {
     });
   });
 
-  
+  describe('navigateToRecipes$', () => {
+    it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions`, () => {
+      const action = {
+        type: ROUTER_NAVIGATION,
+        payload: {
+          routerState: {
+            root: {
+              firstChild: {
+                routeConfig: {
+                  path: 'recipes/:id'
+                },
+                paramMap: {
+                  get: (id: string) => 'all'
+                },
+                params: {
+                  page: '1',
+                  itemsPage: '6'
+                }
+              } as unknown as ActivatedRouteSnapshot,
+            } as unknown as ActivatedRouteSnapshot
+          },
+          event: {}
+        }
+      } as unknown as RouterNavigationAction;
+
+      const filters: RecipeFilters = { 
+        category: 'all',
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      }
+
+      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
+      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
+     
+      actions$ = hot('-a---', {a: action});
+      
+      const expected = cold('-(bc)', { b: completion1, c: completion2});
+      expect(effects.navigateToRecipes$).toBeObservable(expected)
+    });
+
+  });
 });
 
 @Component({
