@@ -28,7 +28,9 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
         return this.belongToCategory(data[0]['category'], recipe)
       });
-      return [data[0], filteredEntities]
+
+      data = [data[0], filteredEntities];
+      return data;
     })
   );
 
@@ -39,7 +41,8 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
         return this.belongToUser(data[0]['username'], recipe)
       });
 
-      return [data[0], filteredEntities];
+      data = [data[0], filteredEntities];
+      return data;
     })
   );
 
@@ -54,7 +57,8 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
         return  belongsToUser && belongsToCategory;
       });
 
-      return [data[0], filteredEntities];
+      data = [data[0], filteredEntities];
+      return data;
     })
   );
 
