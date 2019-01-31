@@ -32,6 +32,7 @@ describe('RecipeEffects', () => {
   let entityActionFactory: EntityActionFactory;
   let getTotalNRecipesSpy: jasmine.Spy;
   let getCountFilteredRecipesSpy: jasmine.Spy;
+  let recipeEntityCollectionService: RecipeEntityCollectionService;
 
   beforeEach(() => {
     const recipeDataServiceSpy = jasmine.createSpyObj('RecipeDataService', ['getTotalNRecipes', 'getCountFilteredRecipes']);
@@ -82,7 +83,7 @@ describe('RecipeEffects', () => {
 
     effects = TestBed.get(RecipeEffects);
     entityActionFactory = TestBed.get(EntityActionFactory);
-
+    recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
   });
 
   describe('totalNRecipes$', () => {
@@ -153,7 +154,7 @@ describe('RecipeEffects', () => {
   });
 
   describe('navigateToRecipes$', () => {
-    it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions`, () => {
+    it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions; category case`, () => {
       const action = {
         type: ROUTER_NAVIGATION,
         payload: {
@@ -190,6 +191,85 @@ describe('RecipeEffects', () => {
       actions$ = hot('-a---', {a: action});
       
       const expected = cold('-(bc)', { b: completion1, c: completion2});
+      expect(effects.navigateToRecipes$).toBeObservable(expected)
+    });
+
+    it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions; username case`, () => {
+      const action = {
+        type: ROUTER_NAVIGATION,
+        payload: {
+          routerState: {
+            root: {
+              firstChild: {
+                routeConfig: {
+                  path: 'recipes/:id'
+                },
+                paramMap: {
+                  get: (id: string) => 'rcp_user'
+                },
+                params: {
+                  page: '1',
+                  itemsPage: '6'
+                }
+              } as unknown as ActivatedRouteSnapshot,
+            } as unknown as ActivatedRouteSnapshot
+          },
+          event: {}
+        }
+      } as unknown as RouterNavigationAction;
+
+      const filters: RecipeFilters = { 
+        category: null,
+        username: 'rcp_user',
+        page: 1,
+        itemsPerPage: 6
+      }
+
+      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
+      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
+     
+      actions$ = hot('-a---', {a: action});
+      
+      const expected = cold('-(bc)', { b: completion1, c: completion2});
+      expect(effects.navigateToRecipes$).toBeObservable(expected)
+    });
+
+    it(`should return just 'FILTERS_UPDATED' action`, () => {
+      const action = {
+        type: ROUTER_NAVIGATION,
+        payload: {
+          routerState: {
+            root: {
+              firstChild: {
+                routeConfig: {
+                  path: 'recipes/:id'
+                },
+                paramMap: {
+                  get: (id: string) => ''
+                },
+                params: {
+                  page: '1',
+                  itemsPage: '6'
+                }
+              } as unknown as ActivatedRouteSnapshot,
+            } as unknown as ActivatedRouteSnapshot
+          },
+          event: {}
+        }
+      } as unknown as RouterNavigationAction;
+
+      const filters: RecipeFilters = { 
+        category: null,
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      }
+
+      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
+     
+      actions$ = hot('-a---', {a: action}); 
+      
+      const expected = cold('-b', { b: completion1});
       expect(effects.navigateToRecipes$).toBeObservable(expected)
     });
 
