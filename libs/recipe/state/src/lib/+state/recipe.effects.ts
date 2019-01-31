@@ -33,7 +33,7 @@ export class RecipeEffects {
     )),
   );
 
-  @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot) => {
+  @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot, oldFilters: RecipeFilters) => {
     const id = route.paramMap.get('id');
     const isCat = isRecipeCategory(id);
     const filters: RecipeFilters = {
@@ -44,6 +44,11 @@ export class RecipeEffects {
     };
 
     const filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+   
+    if (oldFilters.category === filters.category && oldFilters.username === filters.username) {
+      return [filtersUpdatedAction];
+    }
+    
     const loadCountFilteredRecipesAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
     
     return [filtersUpdatedAction, loadCountFilteredRecipesAction];
