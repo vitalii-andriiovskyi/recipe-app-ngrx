@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, Observable, merge, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap, filter, mergeMap, map, withLatestFrom, tap } from 'rxjs/operators';
-import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp } from 'ngrx-data';
+import { switchMap, filter, mergeMap, map, withLatestFrom, tap, catchError } from 'rxjs/operators';
+import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from 'ngrx-data';
 
 import { Recipe, RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
@@ -13,8 +13,8 @@ import { RecipeEntityOp } from '../+state/recipe.actions';
 export class RecipeEntityCollectionService extends EntityCollectionServiceBase<Recipe>{
 
   private _filteredRecipesSubject = new BehaviorSubject<Recipe[]>([]);
-  filteredRecipes$ = this._filteredRecipesSubject.asObservable();
-
+  filteredRecipes$: Observable<Recipe[]> = this._filteredRecipesSubject.asObservable();
+  
   constructor(
     private entityCacheDispatcher: EntityCacheDispatcher,
     private idGenerator: TemporaryIdGenerator,
@@ -22,6 +22,9 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   ) { 
     super('Recipe', serviceElementsFactory);
   }
+
+  filters$: Observable<RecipeFilters> = (this.selectors$ as any).filters$;
+  countFilteredRecipes$: Observable<number> = (this.selectors$ as any).countFilteredRecipes$;
 
   filteredEntitiesByCategory$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
     filter(data => !!data[0]['category'] && !data[0]['username']),
