@@ -14,8 +14,8 @@ export const recipeEntityMetadata: EntityMetadataMap = {
     additionalCollectionState: {
       totalNRecipes: 1000000,
       filters: {
-        category: '',
-        username: '',
+        category: null,
+        username: null,
         page: 0,
         itemsPerPage: 10
       },
