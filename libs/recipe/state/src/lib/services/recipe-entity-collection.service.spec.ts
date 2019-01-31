@@ -240,7 +240,7 @@ describe('RecipeEntityCollectionService', () => {
   });
 
   describe(`filteredEntitiesByCategory$`, () => {
-    it('should return entities filtered by Category', () => {
+    it('should return entities filtered by \'dessert\'', () => {
       filters = { 
         category: 'dessert',
         username: null,
@@ -256,6 +256,25 @@ describe('RecipeEntityCollectionService', () => {
       // recipeEntityCollectionService.entities$ = hot('-b---', { b: recipes});
      
       const expected = cold('c', { c: [filters, [recipes[0]]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByCategory$).toBeObservable(expected);
+    });
+
+    it('should return entities filtered by Category \'all\'', () => {
+      filters = { 
+        category: 'all',
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      };
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, category: 'salad'}];
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      // 2 lines below are useless
+      // recipeEntityCollectionService.selectors$['filters$'] = hot('-a---', {a: filters});
+      // recipeEntityCollectionService.entities$ = hot('-b---', { b: recipes});
+     
+      const expected = cold('c', { c: [filters, recipes] });
       expect(recipeEntityCollectionService.filteredEntitiesByCategory$).toBeObservable(expected);
     });
 
@@ -287,6 +306,38 @@ describe('RecipeEntityCollectionService', () => {
       
       const expected = cold('c', { c: [filters, [recipes[1]]] });
       expect(recipeEntityCollectionService.filteredEntitiesByUser$).toBeObservable(expected);
+    });
+  });
+
+  describe(`filteredEntitiesByCategoryAndUser$`, () => {
+    it(`should return entities filtered by category='salad' and username='test_user'`, () => {
+      filters = { 
+        category: 'salad',
+        username: 'test_user',
+        page: 1,
+        itemsPerPage: 6
+      };
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: 'salad'}];
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('c', { c: [filters, [recipes[1]]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByCategoryAndUser$).toBeObservable(expected);
+    });
+
+    it(`should return entities filtered by category='all' and username='test_user'`, () => {
+      filters = { 
+        category: 'all',
+        username: 'test_user',
+        page: 1,
+        itemsPerPage: 6
+      };
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: 'salad'}];
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('c', { c: [filters, [recipes[1]]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByCategoryAndUser$).toBeObservable(expected);
     });
   });
 });
