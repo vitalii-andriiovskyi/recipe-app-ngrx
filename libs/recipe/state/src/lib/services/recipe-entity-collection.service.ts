@@ -62,6 +62,21 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
+  filteredEntitiesByAllFilters$ = merge(
+    this.filteredEntitiesByCategory$,
+    this.filteredEntitiesByUser$,
+    this.filteredEntitiesByCategoryAndUser$,
+  ).pipe(
+    map(data => {
+      const page = data[0]['page'];
+      const itemsPerPage = data[0]['itemsPerPage'];
+      const begin = page * itemsPerPage;
+      const end = begin + itemsPerPage;
+
+      return data[1].slice(begin, end);
+    })
+  );
+
   add(recipe: Recipe, options?: EntityActionOptions) {
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !rcp.id),
