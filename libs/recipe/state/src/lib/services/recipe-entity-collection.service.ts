@@ -32,6 +32,17 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
+  filteredEntitiesByUser$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+    filter(data => !!data[0]['username'] && !data[0]['category']),
+    map(data => {
+      const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
+        return this.belongToUser(data[0]['username'], recipe)
+      });
+
+      return [data[0], filteredEntities];
+    })
+  );
+
   add(recipe: Recipe, options?: EntityActionOptions) {
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !rcp.id),
@@ -82,5 +93,5 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   belongToUser(username: string, item: Recipe): boolean {
     return username === item.user_username;
   }
-  
+
 }
