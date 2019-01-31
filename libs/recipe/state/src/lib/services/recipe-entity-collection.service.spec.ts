@@ -340,6 +340,92 @@ describe('RecipeEntityCollectionService', () => {
       expect(recipeEntityCollectionService.filteredEntitiesByCategoryAndUser$).toBeObservable(expected);
     });
   });
+
+  describe(`filteredEntitiesByAllFilters$`, () => {
+    it(`should return entities filtered by category, page and itemsPerPage`, () => {
+      filters = { 
+        category: 'salad',
+        username: null,
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', date_created: new Date(4)},
+        {...recipe, id: 3, category: 'salad', date_created: new Date(5)}
+      ];
+
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('a', { a: [recipes[3], recipes[2]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByAllFilters$).toBeObservable(expected);
+    });
+
+    it(`should return entities filtered by user, page and itemsPerPage`, () => {
+      filters = { 
+        category: null,
+        username: 'test_user',
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: '_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: 'salad', user_username: 'test_user', date_created: new Date(5)}
+      ];
+
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('a', { a: [recipes[3], recipes[1]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByAllFilters$).toBeObservable(expected);
+    });
+
+    it(`should return entities filtered by user, page and itemsPerPage; number of recipes is less than 'itemsPerPage'`, () => {
+      filters = { 
+        category: null,
+        username: 'test_user',
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: '_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ];
+
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('a', { a: [recipes[1]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByAllFilters$).toBeObservable(expected);
+    });
+
+    it(`should return entities filtered by category, user, page and itemsPerPage`, () => {
+      filters = { 
+        category: 'salad',
+        username: 'test_user',
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ];
+
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('a', { a: [recipes[2], recipes[1]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByAllFilters$).toBeObservable(expected);
+    });
+  });
 });
 
 @Injectable()
