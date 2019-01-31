@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, Observable, merge, combineLatest } from 'rxjs';
+import { of, Observable, merge, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter, mergeMap, map, withLatestFrom, tap } from 'rxjs/operators';
 import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp } from 'ngrx-data';
 
@@ -11,6 +11,9 @@ import { RecipeEntityOp } from '../+state/recipe.actions';
   providedIn: 'root'
 })
 export class RecipeEntityCollectionService extends EntityCollectionServiceBase<Recipe>{
+
+  private _filteredRecipesSubject = new BehaviorSubject<Recipe[]>([]);
+  filteredRecipes$ = this._filteredRecipesSubject.asObservable();
 
   constructor(
     private entityCacheDispatcher: EntityCacheDispatcher,
