@@ -6,13 +6,14 @@ import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
 
 import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction } from 'ngrx-data';
 import { of } from 'rxjs';
-import { exhaustMap, catchError, map, filter, flatMap, tap } from 'rxjs/operators';
+import { exhaustMap, catchError, map, filter, flatMap, tap, withLatestFrom } from 'rxjs/operators';
 
 import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
 import { RecipeDataService } from '../services/recipe-data.service';
 import { RecipeFilters } from '@recipe-app-ngrx/models';
 import { isRecipeCategory } from '../services/utils';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
+import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
 
 @Injectable()
 export class RecipeEffects {
@@ -52,14 +53,16 @@ export class RecipeEffects {
     private actions$: Actions,
     private recipeDataService: RecipeDataService,
     private entityActionFactory: EntityActionFactory,
+    private recipeEntityCollectionService: RecipeEntityCollectionService
   ) { }
 
-  private _handleNavigation(segment: string, callback: (a: ActivatedRouteSnapshot) => EntityAction[]) {
+  private _handleNavigation(segment: string, callback: (a: ActivatedRouteSnapshot, filters?: RecipeFilters) => EntityAction[]) {
     return this.actions$.pipe(
       ofType(ROUTER_NAVIGATION),
       map(firstSegment),
       filter(s => s && s.routeConfig.path === segment),
-      flatMap(a => callback(a))
+      withLatestFrom(this.recipeEntityCollectionService.filters$),
+      flatMap(a => callback(a[0], a[1]))
     );
   }
 }
