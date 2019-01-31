@@ -1,6 +1,8 @@
-import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
+import { ActionReducer } from '@ngrx/store';
 import { EntityCollection, EntityAction } from 'ngrx-data';
+
 import { Recipe } from '@recipe-app-ngrx/models';
+import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
 
 const methods = {
   [RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS]: (state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> => {
@@ -50,4 +52,11 @@ export function recipeReducer(state: EntityCollection<Recipe>, action: EntityAct
   //   // }
   // }
   return state;
+}
+
+export function recipeMetaReducer(reducer: ActionReducer<EntityCollection<Recipe>, EntityAction>) {
+  return (state: EntityCollection<Recipe>, action: EntityAction) => {
+    const extendedState: EntityCollection<Recipe> = recipeReducer(state, action);
+    return reducer(extendedState, action);
+  }
 }
