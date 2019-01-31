@@ -58,7 +58,7 @@ export class RecipeEffects {
     return this.actions$.pipe(
       ofType(ROUTER_NAVIGATION),
       map(firstSegment),
-      filter(s => s.routeConfig.path === segment),
+      filter(s => s && s.routeConfig.path === segment),
       flatMap(a => callback(a))
     );
   }
