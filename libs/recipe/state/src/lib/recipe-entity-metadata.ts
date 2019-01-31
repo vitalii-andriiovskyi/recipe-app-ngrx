@@ -16,7 +16,7 @@ export const recipeEntityMetadata: EntityMetadataMap = {
       filters: {
         category: '',
         username: '',
-        page: 1,
+        page: 0,
         itemsPerPage: 10
       },
       countFilteredRecipes: 0
