@@ -8,15 +8,16 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { of, throwError, Subject } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
-import { readFirst } from '@nrwl/nx/testing';
+import { readFirst, hot, cold, getTestScheduler } from '@nrwl/nx/testing';
 import { NxModule } from '@nrwl/nx';
-import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataService, HttpUrlGenerator, Logger, EntityDataService, EntityServicesBase, EntityServicesElements, EntityCollectionReducerRegistry, EntityOp } from 'ngrx-data';
+import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataService, HttpUrlGenerator, Logger, EntityDataService, EntityServicesBase, EntityServicesElements, EntityCollectionReducerRegistry, EntityOp, ENTITY_COLLECTION_META_REDUCERS } from 'ngrx-data';
 
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
 import { RecipeEntityOp } from '../+state/recipe.actions';
+import { recipeReducer, recipeMetaReducer } from '../+state/recipe.reducer';
 
 
 describe('RecipeEntityCollectionService', () => {
@@ -40,8 +41,10 @@ describe('RecipeEntityCollectionService', () => {
   };
   let getAddSpy: jasmine.Spy;
   let recipeEntityCollectionService: RecipeEntityCollectionService;
+  let entityCollectionReducerRegistry: EntityCollectionReducerRegistry;
   let getHttpPostSpy: jasmine.Spy;
   let getHttpGetSpy: jasmine.Spy;
+  let filters: RecipeFilters;
 
   beforeEach(() => {
     const recipeDataServiceSpy = jasmine.createSpyObj('RecipeDataService', ['add']);
@@ -62,7 +65,7 @@ describe('RecipeEntityCollectionService', () => {
     class CustomFeatureModule {
       constructor(
         entityDataService: EntityDataService,
-        recipeDataService: RecipeDataService
+        recipeDataService: RecipeDataService,
       ) {
         entityDataService.registerService('Recipe', recipeDataService);
       }
@@ -82,6 +85,7 @@ describe('RecipeEntityCollectionService', () => {
       providers: [
         AppEntityServices,
         { provide: EntityServices, useExisting: AppEntityServices },
+        { provide: ENTITY_COLLECTION_META_REDUCERS, useValue: [recipeMetaReducer] }
       ]
     })
     class RootModule {}
@@ -98,6 +102,7 @@ describe('RecipeEntityCollectionService', () => {
     });
 
     recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+    entityCollectionReducerRegistry = TestBed.get(EntityCollectionReducerRegistry);
   });
 
   it('should be created', () => {
@@ -183,7 +188,7 @@ describe('RecipeEntityCollectionService', () => {
     it(`method 'loadCountFilteredRecipes' should dispatch the action with 'entityOp=RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES`, () => {
       const dispatchSpy = spyOn(recipeEntityCollectionService, 'createAndDispatch').and.callThrough();
       const tag = 'Recipe List Page';
-      const filters: RecipeFilters = { 
+      filters = { 
         category: 'Bread',
         username: '',
         page: 1,
@@ -231,6 +236,40 @@ describe('RecipeEntityCollectionService', () => {
     it(`should return 'false'`, () => {
       const belognsToUser = recipeEntityCollectionService.belongToUser('user', recipe);
       expect(belognsToUser).toBeFalsy('false');
+    });
+  });
+
+  describe(`filteredEntitiesByCategory$`, () => {
+    it('should return filtered entities by Category', () => {
+      filters = { 
+        category: 'dessert',
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      };
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, category: 'salad'}];
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      // 2 lines below are useless
+      // recipeEntityCollectionService.selectors$['filters$'] = hot('-a---', {a: filters});
+      // recipeEntityCollectionService.entities$ = hot('-b---', { b: recipes});
+     
+      const expected = cold('c', { c: [filters, [recipes[0]]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByCategory$).toBeObservable(expected);
+    });
+
+    it('should add filters to the collection', () => {
+      filters = { 
+        category: 'dessert',
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      };
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+
+      const expected = cold('a', {a: filters});
+      expect(recipeEntityCollectionService.selectors$['filters$']).toBeObservable(expected);
     });
   });
 });
