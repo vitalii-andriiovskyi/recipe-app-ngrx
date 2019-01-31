@@ -240,7 +240,7 @@ describe('RecipeEntityCollectionService', () => {
   });
 
   describe(`filteredEntitiesByCategory$`, () => {
-    it('should return filtered entities by Category', () => {
+    it('should return entities filtered by Category', () => {
       filters = { 
         category: 'dessert',
         username: null,
@@ -270,6 +270,23 @@ describe('RecipeEntityCollectionService', () => {
 
       const expected = cold('a', {a: filters});
       expect(recipeEntityCollectionService.selectors$['filters$']).toBeObservable(expected);
+    });
+  });
+
+  describe(`filteredEntitiesByUser$`, () => {
+    it('should return entities filtered by username', () => {
+      filters = { 
+        category: null,
+        username: 'test_user',
+        page: 1,
+        itemsPerPage: 6
+      };
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user'}];
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      
+      const expected = cold('c', { c: [filters, [recipes[1]]] });
+      expect(recipeEntityCollectionService.filteredEntitiesByUser$).toBeObservable(expected);
     });
   });
 });
