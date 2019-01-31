@@ -43,6 +43,21 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
+  filteredEntitiesByCategoryAndUser$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+    filter(data => !!data[0]['username'] && !!data[0]['category']),
+    map(data => {
+      const isRecipeCategoryAll = data[0]['category'] === recipeCategoryAll.url;
+
+      const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
+        const belongsToUser = this.belongToUser(data[0]['username'], recipe);
+        const belongsToCategory = isRecipeCategoryAll || this.belongToCategory(data[0]['category'], recipe);
+        return  belongsToUser && belongsToCategory;
+      });
+
+      return [data[0], filteredEntities];
+    })
+  );
+
   add(recipe: Recipe, options?: EntityActionOptions) {
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !rcp.id),
