@@ -68,11 +68,13 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByAllFilters$ = merge(
+  filteredEntitiesByCategoryUserCommon$ = merge(
     this.filteredEntitiesByCategory$,
     this.filteredEntitiesByUser$,
     this.filteredEntitiesByCategoryAndUser$,
-  ).pipe(
+  );
+
+  filteredEntitiesByAllFilters$ = this.filteredEntitiesByCategoryUserCommon$.pipe(
     map(data => {
       const page = data[0]['page'];
       const itemsPerPage = data[0]['itemsPerPage'];
