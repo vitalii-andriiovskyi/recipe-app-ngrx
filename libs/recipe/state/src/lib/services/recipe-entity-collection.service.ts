@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { of, Observable, merge, combineLatest } from 'rxjs';
+import { switchMap, filter, mergeMap, map, withLatestFrom, tap } from 'rxjs/operators';
 import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp } from 'ngrx-data';
-import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
+
+import { Recipe, RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
-import { of, Observable, merge } from 'rxjs';
-import { switchMap, filter, mergeMap, map } from 'rxjs/operators';
 import { RecipeEntityOp } from '../+state/recipe.actions';
 
 @Injectable({
@@ -18,6 +19,18 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   ) { 
     super('Recipe', serviceElementsFactory);
   }
+
+  filteredEntitiesByCategory$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+    filter(data => !!data[0]['category'] && !data[0]['username']),
+    map(data => {
+      if(data[0]['category'] === recipeCategoryAll.url) return data;
+
+      const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
+        return this.belongToCategory(data[0]['category'], recipe)
+      });
+      return [data[0], filteredEntities]
+    })
+  );
 
   add(recipe: Recipe, options?: EntityActionOptions) {
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
