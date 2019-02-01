@@ -25,6 +25,7 @@ import { RecipeDataService } from '../services/recipe-data.service';
 import { RecipeFilters } from '@recipe-app-ngrx/models';
 import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
+import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
 
 describe('RecipeEffects', () => {
   let actions$: Observable<any>;
@@ -75,7 +76,8 @@ describe('RecipeEffects', () => {
         RecipeEffects,
         provideMockActions(() => actions$),
         EntityActionFactory,
-       
+        { provide: ENV_RCP, useValue: { production: false } },
+        LogService,
         RecipeEntityCollectionService
       ],
       declarations: [ TestComponent ]
