@@ -448,7 +448,7 @@ describe('RecipeEntityCollectionService', () => {
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
       // recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
-      recipeEntityCollectionService.loadRecipesByFilters();
+      recipeEntityCollectionService.loadRecipesByFilters().subscribe();
 
       // recipes are sorted by time from newest to oldiest
       const expected = cold('a', { a: [recipes[1], recipes[0]] });
@@ -473,7 +473,7 @@ describe('RecipeEntityCollectionService', () => {
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
-      recipeEntityCollectionService.loadRecipesByFilters();
+      recipeEntityCollectionService.loadRecipesByFilters().subscribe();
       
       // recipes are sorted by time from newest to oldiest
       /* Therefore entities = [
@@ -507,7 +507,7 @@ describe('RecipeEntityCollectionService', () => {
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
-      recipeEntityCollectionService.loadRecipesByFilters();
+      recipeEntityCollectionService.loadRecipesByFilters().subscribe();
       
       // recipes are sorted by time from newest to oldiest
       const expected = cold('a', { a: [response[1], response[0]] });
@@ -532,7 +532,7 @@ describe('RecipeEntityCollectionService', () => {
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
       // recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
-      recipeEntityCollectionService.loadRecipesByFilters();
+      recipeEntityCollectionService.loadRecipesByFilters().subscribe();
 
       // recipes are sorted by time from newest to oldiest
       const expected = cold('a', { a: [recipes[1], recipes[0]] });
@@ -560,7 +560,7 @@ describe('RecipeEntityCollectionService', () => {
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
-      recipeEntityCollectionService.loadRecipesByFilters();
+      recipeEntityCollectionService.loadRecipesByFilters().subscribe();
       
       // recipes are sorted by time from newest to oldiest
       const expected = cold('a', { a: [response[1], response[0]] });
