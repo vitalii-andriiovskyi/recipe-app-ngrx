@@ -9,6 +9,9 @@ import { HeaderComponent } from './header/header.component';
 import { FilterComponent } from './filter/filter.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
+export { FilterComponent } from './filter/filter.component';
+export { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+
 @NgModule({
   imports: [
     CommonModule,
