@@ -123,7 +123,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, {tag: tag});
   }
 
-  loadRecipesByFilters(options?: EntityActionOptions) {
+  loadRecipesByFilters(options?: EntityActionOptions): Observable<any> {
     const selectFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
       filter(data => this._hasRecipesAccordingToFilters(data)),
       tap(() => {this.logger.log('loadRecipesByFilters() -> selectFilteredRecipes$')}),
@@ -142,7 +142,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
       catchError(err => {this.logger.error(err); return of([])})
     )
 
-    const loadRecipesMerge$ = merge(selectFilteredRecipes$, loadFilteredRecipes$).subscribe(() => {});
+    return merge(selectFilteredRecipes$, loadFilteredRecipes$);
   }
 
   private _hasRecipesAccordingToFilters(data: [number, [RecipeFilters, Recipe[]]]): boolean {
