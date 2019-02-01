@@ -6,6 +6,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderComponent } from './header/header.component';
+import { FilterComponent } from './filter/filter.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,7 @@ import { HeaderComponent } from './header/header.component';
     MatInputModule,
     MatTooltipModule
   ],
-  declarations: [HeaderComponent],
-  exports: [HeaderComponent]
+  declarations: [HeaderComponent, FilterComponent],
+  exports: [HeaderComponent, FilterComponent]
 })
 export class SharedComponentsModule {}
