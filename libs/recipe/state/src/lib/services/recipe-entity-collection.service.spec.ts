@@ -15,7 +15,7 @@ import { NgrxDataModule, EntityServices, ENTITY_METADATA_TOKEN, DefaultDataServi
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
-import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
+import { TemporaryIdGenerator, LogService, ENV_RCP } from '@recipe-app-ngrx/utils';
 import { RecipeEntityOp } from '../+state/recipe.actions';
 import { recipeReducer, recipeMetaReducer } from '../+state/recipe.reducer';
 
@@ -97,7 +97,9 @@ describe('RecipeEntityCollectionService', () => {
       ], 
       providers: [
         TemporaryIdGenerator,
-        { provide: HttpClient, useValue: httpSpy }
+        { provide: HttpClient, useValue: httpSpy },
+        { provide: ENV_RCP, useValue: { production: false } },
+        LogService
       ]
     });
 
@@ -424,6 +426,145 @@ describe('RecipeEntityCollectionService', () => {
       
       const expected = cold('a', { a: [recipes[2], recipes[1]] });
       expect(recipeEntityCollectionService.filteredEntitiesByAllFilters$).toBeObservable(expected);
+    });
+  });
+
+  describe(`loadRecipesByFilters()`, () => {
+    it(`should load Recipes from the server; entities = []; Category case`, () => {
+      filters = { 
+        category: 'salad',
+        username: null,
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        // recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        // {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ];
+      
+      getHttpGetSpy.and.returnValue(of(recipes));
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
+      // recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      recipeEntityCollectionService.loadRecipesByFilters();
+
+      // recipes are sorted by time from newest to oldiest
+      const expected = cold('a', { a: [recipes[1], recipes[0]] });
+      expect(recipeEntityCollectionService.filteredRecipes$).toBeObservable(expected);
+    });
+
+    it(`should load Recipes from the EntityCache; prop 'entities' contains 4 recipes; Category case`, () => {
+      filters = { 
+        category: 'salad',
+        username: null,
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ];
+      
+      // getHttpGetSpy.and.returnValue(of(recipes));
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
+      recipeEntityCollectionService.loadRecipesByFilters();
+      
+      // recipes are sorted by time from newest to oldiest
+      /* Therefore entities = [
+        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        ] 
+      */
+      const expected = cold('a', { a: [recipes[3], recipes[2]] });
+      expect(recipeEntityCollectionService.filteredRecipes$).toBeObservable(expected);
+    });
+
+    it(`should load Recipes from the server; prop 'entities' contains 1 needed recipe; Category case`, () => {
+      filters = { 
+        category: 'salad',
+        username: null,
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+      ];
+
+      const response: Recipe[] = [
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ]
+      
+      getHttpGetSpy.and.returnValue(of(response));
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
+      recipeEntityCollectionService.loadRecipesByFilters();
+      
+      // recipes are sorted by time from newest to oldiest
+      const expected = cold('a', { a: [response[1], response[0]] });
+      expect(recipeEntityCollectionService.filteredRecipes$).toBeObservable(expected);
+    });
+
+    it(`should load Recipes from the server; entities = []; Category and Username case`, () => {
+      filters = { 
+        category: 'salad',
+        username: 'test_user',
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        // recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        // {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+      ];
+      
+      getHttpGetSpy.and.returnValue(of(recipes));
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
+      // recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
+      recipeEntityCollectionService.loadRecipesByFilters();
+
+      // recipes are sorted by time from newest to oldiest
+      const expected = cold('a', { a: [recipes[1], recipes[0]] });
+      expect(recipeEntityCollectionService.filteredRecipes$).toBeObservable(expected);
+    });
+
+    it(`should load Recipes from the server; prop 'entities' contains 1 needed recipe; Category and User case`, () => {
+      filters = { 
+        category: 'salad',
+        username: 'test_user',
+        page: 0,
+        itemsPerPage: 2
+      };
+      const recipes: Recipe[] = [
+        recipe,
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+      ];
+
+      const response: Recipe[] = [
+        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(5)}
+      ]
+      
+      getHttpGetSpy.and.returnValue(of(response));
+      recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'TEST' });
+      recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, 100, { tag: 'TEST' });
+      recipeEntityCollectionService.loadRecipesByFilters();
+      
+      // recipes are sorted by time from newest to oldiest
+      const expected = cold('a', { a: [response[1], response[0]] });
+      expect(recipeEntityCollectionService.filteredRecipes$).toBeObservable(expected);
     });
   });
 });
