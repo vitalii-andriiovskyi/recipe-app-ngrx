@@ -124,7 +124,6 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   }
 
   loadRecipesByFilters(options?: EntityActionOptions) {
-    
     const selectFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
       filter(data => this._hasRecipesAccordingToFilters(data)),
       tap(() => {this.logger.log('loadRecipesByFilters() -> selectFilteredRecipes$')}),
