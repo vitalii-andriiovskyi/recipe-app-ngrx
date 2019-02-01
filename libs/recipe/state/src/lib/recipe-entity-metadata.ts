@@ -4,7 +4,7 @@ import { Recipe } from '@recipe-app-ngrx/models';
 export const recipeEntityMetadata: EntityMetadataMap = {
   Recipe: {
     sortComparer: sortByDateCreated,
-
+    filterFn: titleFilter,
     // Pessimistic delete; optimistic add and update.
     entityDispatcherOptions: {
       optimisticDelete: false,
@@ -27,4 +27,8 @@ export const recipeEntityMetadata: EntityMetadataMap = {
 /** Sort Comparer to sort the entity collection by its name property */
 export function sortByDateCreated(a: Recipe, b: Recipe): number {
   return +b.date_created - (+a.date_created);
+}
+
+export function titleFilter<T extends {title: string}>(entities: T[], pattern: string) {
+  return PropsFilterFnFactory(['title'])(entities, pattern);
 }
