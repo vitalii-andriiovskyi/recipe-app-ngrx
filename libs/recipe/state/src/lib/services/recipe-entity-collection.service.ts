@@ -123,6 +123,29 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, {tag: tag});
   }
 
+  loadRecipesByFilters(options?: EntityActionOptions) {
+    
+    const selectFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
+      filter(data => this._hasRecipesAccordingToFilters(data)),
+      tap(() => {this.logger.log('loadRecipesByFilters() -> selectFilteredRecipes$')}),
+      switchMap(data => this.filteredEntitiesByAllFilters$),
+      tap(recipes => this._filteredRecipesSubject.next(recipes))
+    );
+
+    const loadFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
+      filter(data => !this._hasRecipesAccordingToFilters(data)),
+      tap(() => {this.logger.log('loadRecipesByFilters() -> loadFilteredRecipes$')}),
+      tap(data => {
+        const filters: RecipeFilters = data[1][0];
+        const params: QueryParams = {...filters, page: `${filters.page}`, itemsPerPage: `${filters.itemsPerPage}`};
+        this.getWithQuery(params, options)
+      }),
+      catchError(err => {this.logger.error(err); return of([])})
+    )
+
+    const loadRecipesMerge$ = merge(selectFilteredRecipes$, loadFilteredRecipes$).subscribe(() => {});
+  }
+
   private _hasRecipesAccordingToFilters(data: [number, [RecipeFilters, Recipe[]]]): boolean {
     const filters: RecipeFilters = data[1][0];
     const recipes: Recipe[] = data[1][1];
