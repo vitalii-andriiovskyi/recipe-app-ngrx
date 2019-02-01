@@ -112,7 +112,7 @@ describe('RecipeEntityCollectionService', () => {
   });
   
   describe(`method add()`, () => {
-    it('should add the recipe to Persistant state and to the remote server; SUCCESS', async done => {
+    it('should add the recipe to Persistant state and to the remote server, and update the recipe returned from by the server; SUCCESS', async done => {
       try {
         
         const newRecipe = {...recipe, id: 100000};
@@ -138,7 +138,7 @@ describe('RecipeEntityCollectionService', () => {
         // and after that something get broken. Maybe something wrong with my code. However the error case works fine.
         expect(addedRecipe.title).toBe(recipe.title, recipe.title);
         expect(entities.length).toBe(1);
-        // expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
+        expect(entities[0].id).toBeGreaterThan(recipe.id, `${entities[0].id} > ${recipe.id}`);
         // expect(entities[0].id).toBe(addedRecipe.requestData.data.id, `error data: ${entities[0].id} == ${addedRecipe.requestData.data.id}`);
        
         done()
