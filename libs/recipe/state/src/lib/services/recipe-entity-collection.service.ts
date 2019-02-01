@@ -123,6 +123,14 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     this.createAndDispatch(RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, {tag: tag});
   }
 
+  private _hasRecipesAccordingToFilters(data: [number, [RecipeFilters, Recipe[]]]): boolean {
+    const filters: RecipeFilters = data[1][0];
+    const recipes: Recipe[] = data[1][1];
+    const countRecipesRequested = (filters.page + 1) * filters.itemsPerPage;
+    const result = Math.min(data[0], countRecipesRequested) <= recipes.length;
+    return result;
+  }
+
   belongToCategory(category: string, item: Recipe): boolean {
     let result: boolean;
     if (typeof item.category === 'string') {
