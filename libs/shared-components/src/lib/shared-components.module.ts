@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { HeaderComponent } from './header/header.component';
 import { FilterComponent } from './filter/filter.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,7 @@ import { FilterComponent } from './filter/filter.component';
     MatInputModule,
     MatTooltipModule
   ],
-  declarations: [HeaderComponent, FilterComponent],
-  exports: [HeaderComponent, FilterComponent]
+  declarations: [HeaderComponent, FilterComponent, PageNotFoundComponent],
+  exports: [HeaderComponent, FilterComponent, PageNotFoundComponent]
 })
 export class SharedComponentsModule {}
