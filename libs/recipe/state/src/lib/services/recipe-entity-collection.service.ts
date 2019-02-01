@@ -3,7 +3,7 @@ import { of, Observable, merge, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter, mergeMap, map, withLatestFrom, tap, catchError } from 'rxjs/operators';
 import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from 'ngrx-data';
 
-import { Recipe, RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
+import { Recipe, RecipeFilters, recipeCategoryAll, FilterObserver } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator, LogService } from '@recipe-app-ngrx/utils';
 import { RecipeEntityOp } from '../+state/recipe.actions';
 
@@ -14,6 +14,8 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
 
   private _filteredRecipesSubject = new BehaviorSubject<Recipe[]>([]);
   filteredRecipes$: Observable<Recipe[]> = this._filteredRecipesSubject.asObservable();
+
+  filterObserver: FilterObserver;
   
   constructor(
     private entityCacheDispatcher: EntityCacheDispatcher,
@@ -22,6 +24,11 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     private logger: LogService
   ) { 
     super('Recipe', serviceElementsFactory);
+
+    this.filterObserver = {
+      filter$: this.filter$,
+      setFilter: this.setFilter.bind(this)
+    }
   }
 
   filters$: Observable<RecipeFilters> = (this.selectors$ as any).filters$;
