@@ -4,7 +4,7 @@ import { switchMap, filter, mergeMap, map, withLatestFrom, tap, catchError } fro
 import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from 'ngrx-data';
 
 import { Recipe, RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
-import { TemporaryIdGenerator } from '@recipe-app-ngrx/utils';
+import { TemporaryIdGenerator, LogService } from '@recipe-app-ngrx/utils';
 import { RecipeEntityOp } from '../+state/recipe.actions';
 
 @Injectable({
@@ -18,7 +18,8 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   constructor(
     private entityCacheDispatcher: EntityCacheDispatcher,
     private idGenerator: TemporaryIdGenerator,
-    private serviceElementsFactory: EntityCollectionServiceElementsFactory
+    private serviceElementsFactory: EntityCollectionServiceElementsFactory,
+    private logger: LogService
   ) { 
     super('Recipe', serviceElementsFactory);
   }
@@ -26,7 +27,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   filters$: Observable<RecipeFilters> = (this.selectors$ as any).filters$;
   countFilteredRecipes$: Observable<number> = (this.selectors$ as any).countFilteredRecipes$;
 
-  filteredEntitiesByCategory$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+  filteredEntitiesByCategory$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
     filter(data => !!data[0]['category'] && !data[0]['username']),
     map(data => {
       if(data[0]['category'] === recipeCategoryAll.url) return data;
@@ -40,7 +41,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByUser$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+  filteredEntitiesByUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
     filter(data => !!data[0]['username'] && !data[0]['category']),
     map(data => {
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
@@ -52,7 +53,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByCategoryAndUser$ = combineLatest((this.selectors$ as any).filters$, this.entities$).pipe(
+  filteredEntitiesByCategoryAndUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
     filter(data => !!data[0]['username'] && !!data[0]['category']),
     map(data => {
       const isRecipeCategoryAll = data[0]['category'] === recipeCategoryAll.url;
@@ -68,13 +69,13 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByCategoryUserCommon$ = merge(
+  filteredEntitiesByCategoryUserCommon$: Observable<[RecipeFilters, Recipe[]]> = merge(
     this.filteredEntitiesByCategory$,
     this.filteredEntitiesByUser$,
     this.filteredEntitiesByCategoryAndUser$,
   );
 
-  filteredEntitiesByAllFilters$ = this.filteredEntitiesByCategoryUserCommon$.pipe(
+  filteredEntitiesByAllFilters$: Observable<Recipe[]> = this.filteredEntitiesByCategoryUserCommon$.pipe(
     map(data => {
       const page = data[0]['page'];
       const itemsPerPage = data[0]['itemsPerPage'];
