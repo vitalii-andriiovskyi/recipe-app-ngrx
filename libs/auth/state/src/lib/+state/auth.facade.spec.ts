@@ -13,7 +13,7 @@ import { AuthFacade } from './auth.facade';
 import { authQuery } from './auth.selectors';
 import { Login, Logout } from './auth.actions';
 import { AuthState, initialState, authReducer } from './auth.reducer';
-import { AuthService } from '@recipe-app-ngrx/utils';
+import { AuthService } from '../services/auth.service';
 import { MatDialog } from '@angular/material';
 import { User } from '@recipe-app-ngrx/models';
 import { of, throwError } from 'rxjs';

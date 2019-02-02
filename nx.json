@@ -31,6 +31,12 @@
     },
     "shared-components": {
       "tags": []
+    },
+    "rcp-entity-store": {
+      "tags": []
+    },
+    "recipe-state": {
+      "tags": []
     }
   }
 }

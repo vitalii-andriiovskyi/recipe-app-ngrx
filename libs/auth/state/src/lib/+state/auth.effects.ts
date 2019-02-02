@@ -17,7 +17,8 @@ import {
   AuthActionTypes
 } from './auth.actions';
 import { AuthUserVW } from '@recipe-app-ngrx/models';
-import { AuthService, LocalStorageService } from '@recipe-app-ngrx/utils';
+import { LocalStorageService } from '@recipe-app-ngrx/utils';
+import { AuthService } from '../services/auth.service';
 import { LogoutConfirmationDialogComponent } from '@recipe-app-ngrx/auth/login-ui';
 import { Router } from '@angular/router';
 

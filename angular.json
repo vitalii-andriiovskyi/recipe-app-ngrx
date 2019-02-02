@@ -331,6 +331,62 @@
           }
         }
       }
+    },
+    "rcp-entity-store": {
+      "root": "libs/rcp-entity-store",
+      "sourceRoot": "libs/rcp-entity-store/src",
+      "projectType": "library",
+      "prefix": "rcp",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/rcp-entity-store/src/test.ts",
+            "tsConfig": "libs/rcp-entity-store/tsconfig.spec.json",
+            "karmaConfig": "libs/rcp-entity-store/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/rcp-entity-store/tsconfig.lib.json",
+              "libs/rcp-entity-store/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "recipe-state": {
+      "root": "libs/recipe/state",
+      "sourceRoot": "libs/recipe/state/src",
+      "projectType": "library",
+      "prefix": "rcp",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/recipe/state/src/test.ts",
+            "tsConfig": "libs/recipe/state/tsconfig.spec.json",
+            "karmaConfig": "libs/recipe/state/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/recipe/state/tsconfig.lib.json",
+              "libs/recipe/state/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

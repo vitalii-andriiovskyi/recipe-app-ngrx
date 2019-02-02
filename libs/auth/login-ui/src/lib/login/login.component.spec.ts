@@ -8,9 +8,8 @@ import { StoreModule } from '@ngrx/store';
 
 import { NxModule } from '@nrwl/nx';
 
-import { AuthFacade, AuthStateModule } from '@recipe-app-ngrx/auth/state';
+import { AuthFacade, AuthStateModule, AuthService } from '@recipe-app-ngrx/auth/state';
 
-import { AuthService } from '@recipe-app-ngrx/utils';
 import { MatDialog, MatDialogModule } from '@angular/material';
 import { User, AuthUserVW } from '@recipe-app-ngrx/models';
 import { LoginFormComponent } from '../login-form/login-form.component';
@@ -74,13 +73,16 @@ describe('LoginComponent', () => {
           RouterTestingModule
         ],
         declarations: [ LoginComponent, LoginFormComponent, LogoutConfirmationDialogComponent, TestComponent ],
+       
+      })
+      class RootModule {}
+      TestBed.configureTestingModule({
+        imports: [RootModule],
         providers: [
           { provide: AuthService, useValue: authServiceSpy},
           { provide: MatDialog, useValue: matDialogSpy }
         ]
-      })
-      class RootModule {}
-      TestBed.configureTestingModule({ imports: [RootModule] });
+      });
 
       facade = TestBed.get(AuthFacade);
     });
