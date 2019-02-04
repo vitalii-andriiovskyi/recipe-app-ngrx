@@ -10,6 +10,7 @@ import getLogger from './utils/logger';
 import { sendHttpError } from './middleware/sendHttpError';
 import { expressErrorHandler } from './middleware/expressErrorHandler';
 import { UsersApi } from './api/users';
+import { RecipesApi } from './api/recipes';
 
 const DIST_FOLDER = join(process.cwd(), 'dist');
 
@@ -55,7 +56,9 @@ export class ExpressServer {
     // create API routes
     // HerosApi.create(router);
     UsersApi.create(router);
-
+    
+    RecipesApi.create(router);
+    
     // wire up the REST API
     this.app.use("/api", router);
 
@@ -94,7 +97,9 @@ export class ExpressServer {
       path: [
         '/api',
         '/api/users/authenticate',
-        '/api/users/create'
+        '/api/users/create',
+        '/api/recipes',
+        // '/api/recipes/:id'
       ]
     }));
 
