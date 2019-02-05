@@ -285,4 +285,29 @@ describe(`RecipesApi`, () => {
     });
 
   });
+
+  describe(`GET '/recipes/totalN'`, () => {
+    beforeEach(async () => {
+      try {
+        counterModel = await CounterModel.findById('recipes');
+        if (counterModel) { counterModel = await counterModel.update({seq: 0}); }
+      } catch(err) {
+        console.log(err);
+      }
+
+      const recipesArr = recipes.map(rcp => new RecipeModel(rcp));
+      recipesArr.forEach(async rcp => await rcp.save());
+    });
+  
+    afterEach(async done => {
+      await RecipeModel.find().remove();
+      done();
+    });
+
+    it(`should get the total number of recipes`, async () => {
+      const response = await request.get('/api/recipes/totalN');
+      expect(response.body).toBe(recipes.length);
+    });
+  });
+
 });
