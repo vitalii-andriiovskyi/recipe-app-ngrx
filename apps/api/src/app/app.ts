@@ -98,8 +98,10 @@ export class ExpressServer {
         /\/api/,
         /\/api\/users\/authenticate/,
         /\/api\/users\/create/,
+        /\/api\/recipes\/totalN/,
+        /\/api\/recipes\/countFilteredRecipes/,
         /\/api\/recipes/,
-        { url: /\/api\/recipes\/*/, methods: ['GET'] }
+        { url: /\/api\/recipe\/*/, methods: ['GET'] }
       ]
     }));
 
