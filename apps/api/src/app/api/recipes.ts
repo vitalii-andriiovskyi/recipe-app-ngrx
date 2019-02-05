@@ -9,7 +9,10 @@ const logger = getLogger(module);
 export class RecipesApi {
 
   public static create(router: Router): void {
-    // return this.execute('GET', 'api/recipes/countFilteredRecipes, null', { params });
+    
+    router.get('/recipes/countFilteredRecipes', (req: Request, res: Response, next: NextFunction) => {
+      new RecipesApi().getCountFilteredRecipes(req, res, next);
+    });
     
     router.get('/recipes/totalN', (req: Request, res: Response, next: NextFunction) => {
       new RecipesApi().getRecipesTotalNumber(req, res, next);
@@ -147,6 +150,27 @@ export class RecipesApi {
       logger.info(`Got the number of recipes: ${counter.seq}`);
       next();
     }).catch(next);
+  }
+
+  public getCountFilteredRecipes(req: Request, res: Response, next: NextFunction) {
+    const queryParams = req.query,
+          username = queryParams.username, 
+          categoryValue = queryParams.category,
+
+          queryObj = {
+            user_username: username,
+            category: { $in: categoryValue }
+          };
+
+    if (!username) { delete queryObj.user_username };
+    if (!categoryValue) { delete queryObj.category };
+    
+    RecipeModel.countDocuments(queryObj)
+      .then(count => { 
+        res.status(200).json(count);
+        next();
+      })
+      .catch(next);
   }
  
 }
