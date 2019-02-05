@@ -2,9 +2,11 @@ import { ExpressServer as server } from '../app';
 import * as supertest from 'supertest';
 
 import { MongooseStub } from '../../testing/mongoose-stub';
-import { Recipe, Counter } from '@recipe-app-ngrx/models';
+import { Recipe, Counter, User } from '@recipe-app-ngrx/models';
 import { RecipeModel, RecipeDocument } from '../models/recipe';
 import { CounterDocument, CounterModel } from '../models/counter';
+import { readFirst } from '@nrwl/nx/testing';
+import { UserModel, NongoUserDocument } from '../models/user';
 
 const app = server.bootstrap().app;
 const request: supertest.SuperTest<supertest.Test> = supertest(app);
@@ -47,6 +49,23 @@ describe(`RecipesApi`, () => {
     page: '0',
     itemsPerPage: '2'
   }
+
+  const userN: User = {
+    username: 'creator_of_recipes',
+    password: '11111',
+    firstName: 'faked_user',
+    lastName: 'faked_user',
+    email: 'email@gmail.com',
+    address: {
+      street: 'string',
+      city: 'string',
+      state: 'string',
+      zip: 'string',
+    },
+    phone: '+ 380',
+  };
+
+  let user: NongoUserDocument;
 
   // beforeAll(async done => {
   beforeAll(() => {
@@ -139,6 +158,37 @@ describe(`RecipesApi`, () => {
     it(`should return error 500 when id of recipe is string`, async () => {
       const response = await request.get('/api/recipe/recipe');
       
+      expect(response.status).toBe(500);
+    });
+  });
+
+  describe(`POST '/recipe'`, () => {
+    let response: any;
+
+    beforeAll( async () => {
+      user = await new UserModel(userN);
+    });
+
+    afterAll( async done => {
+      await user.remove();
+      done();
+    });
+
+    it(`should create new recipe`, async () => {
+      response = await request.post('/api/recipe').set('Authorization', `Bearer ${user.token}`).send(recipe);
+      const newRecipe = response.body;
+
+      expect(response.status).toBe(201);
+      expect(newRecipe.title).toBe(recipe.title);
+
+      await RecipeModel.findOne({id: newRecipe.id}).remove();
+    });
+
+    it(`shouldn\'t create new recipe when data lacks some fields; error.status=500`, async () => {
+      const fakedRecipe = {...recipe};
+      delete fakedRecipe.title;
+
+      response = await request.post('/api/recipe').set('Authorization', `Bearer ${user.token}`).send(fakedRecipe);
       expect(response.status).toBe(500);
     });
   });
