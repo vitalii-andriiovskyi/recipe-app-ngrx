@@ -2,8 +2,9 @@ import { ExpressServer as server } from '../app';
 import * as supertest from 'supertest';
 
 import { MongooseStub } from '../../testing/mongoose-stub';
-import { Recipe } from '@recipe-app-ngrx/models';
-import { RecipeModel } from '../models/recipe';
+import { Recipe, Counter } from '@recipe-app-ngrx/models';
+import { RecipeModel, RecipeDocument } from '../models/recipe';
+import { CounterDocument, CounterModel } from '../models/counter';
 
 const app = server.bootstrap().app;
 const request: supertest.SuperTest<supertest.Test> = supertest(app);
@@ -54,22 +55,22 @@ describe(`RecipesApi`, () => {
     // done();
   });
 
-  beforeEach(() => {
-    const recipesArr = recipes.map(rcp => new RecipeModel(rcp));
-    recipesArr.forEach(async rcp => await rcp.save())
-  });
-
-  afterEach(async done => {
-    await RecipeModel.find().remove();
-    done();
-  });
-
   afterAll(async done => {
     // await RecipeModel.find().remove();
     MongooseStub.disconnect(done);
   });
 
   describe(`GET '/api/recipes' with params`, () => {
+    beforeEach(() => {
+      const recipesArr = recipes.map(rcp => new RecipeModel(rcp));
+      recipesArr.forEach(async rcp => await rcp.save())
+    });
+  
+    afterEach(async done => {
+      await RecipeModel.find().remove();
+      done();
+    });
+
     it(`should get 2 recipes by category='dessert' and user_username=null`, async () => {
       await new Promise(resolve => setTimeout(resolve, 9000));
       const response = await request.get('/api/recipes').query(params);
@@ -98,5 +99,47 @@ describe(`RecipesApi`, () => {
       expect(loadedRecipes.length).toBe(2);
       expect(loadedRecipes[0].title).toBe('Recipe 8');
     }, 10000);
+  });
+
+  describe(`GET '/api/recipe/:id`, () => {
+    let recipeDoc: RecipeDocument;
+    let counterModel: CounterDocument;
+
+    beforeEach(async () => {
+      try {
+        counterModel = await CounterModel.findById('recipes');
+        if (counterModel) { counterModel = await counterModel.update({seq: 0}); }
+      } catch(err) {
+        console.log(err);
+      }
+
+      recipeDoc = new RecipeModel(recipe);
+      await recipeDoc.save();
+    });
+  
+    afterEach(async done => {
+      await recipeDoc.remove();
+      done();
+    });
+
+    it(`should get recipe having id=1`, async () => {
+      const response = await request.get('/api/recipe/1');
+      const rcp: Recipe = response.body;
+
+      expect(rcp.id).toBe(1);
+      expect(rcp.title).toBe('Recipe 1');
+    });
+
+    it(`should return error 404 when recipe doesn't exist`, async () => {
+      const response = await request.get('/api/recipe/1000');
+      
+      expect(response.status).toBe(404);
+    });
+
+    it(`should return error 500 when id of recipe is string`, async () => {
+      const response = await request.get('/api/recipe/recipe');
+      
+      expect(response.status).toBe(500);
+    });
   });
 })
