@@ -2,12 +2,19 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { RecipeModel } from '../models/recipe';
 import { Recipe } from '@recipe-app-ngrx/models';
 import getLogger from '../utils/logger';
+import { CounterModel } from '../models/counter';
 
 const logger = getLogger(module);
 
 export class RecipesApi {
 
   public static create(router: Router): void {
+    // return this.execute('GET', 'api/recipes/countFilteredRecipes, null', { params });
+    
+    router.get('/recipes/totalN', (req: Request, res: Response, next: NextFunction) => {
+      new RecipesApi().getRecipesTotalNumber(req, res, next);
+    });
+
     router.get('/recipes', (req: Request, res: Response, next: NextFunction) => {
       new RecipesApi().getRecipes(req, res, next);
     });
@@ -130,6 +137,14 @@ export class RecipesApi {
       const resData = recipe ? recipe.toObject() : null;
       res.status(200).json(resData);
       logger.info('Recipe removed successfully');
+      next();
+    }).catch(next);
+  }
+
+  public getRecipesTotalNumber(req: Request, res: Response, next: NextFunction) {
+    CounterModel.findById('recipes').then(counter => {
+      res.status(200).json(counter.seq);
+      logger.info(`Got the number of recipes: ${counter.seq}`);
       next();
     }).catch(next);
   }
