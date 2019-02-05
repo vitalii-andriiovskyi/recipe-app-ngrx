@@ -14,7 +14,11 @@ export class RecipesApi {
 
     router.get('/recipe/:id', (req: Request, res: Response, next: NextFunction) => {
       new RecipesApi().getRecipe(req, res, next);
-    })
+    });
+
+    router.post('/recipe', (req: Request, res: Response, next: NextFunction) => {
+      new RecipesApi().postRecipe(req, res, next);
+    });
   }
 
   public getRecipes(req: Request, res: Response, next: NextFunction) {
@@ -64,6 +68,15 @@ export class RecipesApi {
 
       res.status(200).json(recipe.toObject());
       logger.info('Recipe found and sent');
+      next();
+    }).catch(next);
+  }
+
+  public postRecipe(req: Request, res: Response, next: NextFunction) {
+    const recipe = new RecipeModel(req.body);
+    recipe.save().then(rcp => {
+      res.status(201).json(rcp.toObject());
+      logger.info('New recipe created successfully!');
       next();
     }).catch(next);
   }
