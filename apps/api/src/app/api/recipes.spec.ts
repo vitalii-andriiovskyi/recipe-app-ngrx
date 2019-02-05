@@ -310,4 +310,65 @@ describe(`RecipesApi`, () => {
     });
   });
 
+  describe(`GET '/recipes/countFilteredRecipes'`, () => {
+    let paramsForCount: {[field: string]: string};
+
+    beforeAll(async () => {
+      try {
+        counterModel = await CounterModel.findById('recipes');
+        if (counterModel) { counterModel = await counterModel.update({seq: 0}); }
+      } catch(err) {
+        console.log(err);
+      }
+
+      const recipesArr = recipes.map(rcp => new RecipeModel(rcp));
+      recipesArr.forEach(async rcp => await rcp.save());
+    });
+  
+    afterAll(async done => {
+      await RecipeModel.find().remove();
+      done();
+    });
+
+    it(`should return countFilteredRecipes=6`, async () => {
+       paramsForCount = {
+        category: 'dessert',
+        username: null
+      }
+      const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
+      expect(response.status).toBe(200);
+      expect(response.body).toBe(6);
+    });
+
+    it(`should return countFilteredRecipes=6`, async () => {
+      paramsForCount = {
+       category: null,
+       username: 'test_user'
+      }
+      const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
+      expect(response.status).toBe(200);
+      expect(response.body).toBe(6);
+    });
+
+    it(`should return countFilteredRecipes=3`, async () => {
+      paramsForCount = {
+        category: 'salad',
+        username: 'test_user_an'
+      }
+      const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
+      expect(response.status).toBe(200);
+      expect(response.body).toBe(3);
+    });
+
+    it(`should return countFilteredRecipes=9`, async () => {
+      paramsForCount = {
+        category: null,
+        username: null
+      }
+      const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
+      expect(response.status).toBe(200);
+      expect(response.body).toBe(9);
+    });
+  });
+
 });
