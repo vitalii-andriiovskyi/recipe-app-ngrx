@@ -95,11 +95,11 @@ export class ExpressServer {
       }
     }).unless({ 
       path: [
-        '/api',
-        '/api/users/authenticate',
-        '/api/users/create',
-        '/api/recipes',
-        // '/api/recipes/:id'
+        /\/api/,
+        /\/api\/users\/authenticate/,
+        /\/api\/users\/create/,
+        /\/api\/recipes/,
+        { url: /\/api\/recipes\/*/, methods: ['GET'] }
       ]
     }));
 
