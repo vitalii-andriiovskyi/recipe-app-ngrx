@@ -252,4 +252,37 @@ describe(`RecipesApi`, () => {
       await RecipeModel.findOneAndRemove({id: updatedRecipe.id});
     });
   });
-})
+
+  describe(`DELETE '/recipe/:id'`, () => {
+    let response: any;
+
+    beforeAll( async () => {
+      user = await new UserModel(userN);
+    });
+
+    afterAll( async done => {
+      await user.remove();
+      done();
+    });
+
+    it(`should remove user`, async () => {
+      recipeDoc = new RecipeModel(recipe);
+      recipeDoc = await recipeDoc.save();
+      
+      response = await request.delete(`/api/recipe/${recipeDoc.id}`).set('Authorization', `Bearer ${user.token}`);
+      expect(response.status).toBe(200);
+      expect(response.body.title).toBe(recipe.title);
+
+      const deletedRec = await RecipeModel.findOne({id: recipeDoc.id});
+      expect(deletedRec).toBeFalsy();
+    });
+
+    it(`should return 'null' after trial of removing unexisting user`, async () => {
+      
+      response = await request.delete(`/api/recipe/10`).set('Authorization', `Bearer ${user.token}`);
+      expect(response.status).toBe(200);
+      expect(response.body).toBeFalsy();
+    });
+
+  });
+});
