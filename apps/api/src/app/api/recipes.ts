@@ -23,6 +23,10 @@ export class RecipesApi {
     router.put('/recipe/:id', (req: Request, res: Response, next: NextFunction) => {
       new RecipesApi().putRecipe(req, res, next);
     });
+
+    router.delete('/recipe/:id', (req: Request, res: Response, next: NextFunction) => {
+      new RecipesApi().deleteRecipe(req, res, next);
+    });
   }
 
   public getRecipes(req: Request, res: Response, next: NextFunction) {
@@ -107,6 +111,25 @@ export class RecipesApi {
     ).then(recipe => {
       res.status(200).json(recipe.toObject());
       logger.info('Recipe updated successfully');
+      next();
+    }).catch(next);
+  }
+
+  public deleteRecipe(req: Request, res: Response, next: NextFunction) {
+    // verify the id parameter exists
+    const PARAM_ID = 'id';
+    if (req.params[PARAM_ID] === undefined) {
+      res.status(404).send(`There's no 'id' parameter in delete method`);
+      next();
+      return;
+    }
+
+    const id: number = parseInt(req.params[PARAM_ID], 10);
+
+    RecipeModel.findOneAndRemove({id: id}).then(recipe => {
+      const resData = recipe ? recipe.toObject() : null;
+      res.status(200).json(resData);
+      logger.info('Recipe removed successfully');
       next();
     }).catch(next);
   }
