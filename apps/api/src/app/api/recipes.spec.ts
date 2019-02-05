@@ -12,6 +12,9 @@ const app = server.bootstrap().app;
 const request: supertest.SuperTest<supertest.Test> = supertest(app);
 
 describe(`RecipesApi`, () => {
+  let recipeDoc: RecipeDocument;
+  let counterModel: CounterDocument;
+
   const recipe: Recipe = {
     id: 0,
     title: 'Recipe 1',
@@ -121,8 +124,6 @@ describe(`RecipesApi`, () => {
   });
 
   describe(`GET '/api/recipe/:id`, () => {
-    let recipeDoc: RecipeDocument;
-    let counterModel: CounterDocument;
 
     beforeEach(async () => {
       try {
@@ -190,6 +191,65 @@ describe(`RecipesApi`, () => {
 
       response = await request.post('/api/recipe').set('Authorization', `Bearer ${user.token}`).send(fakedRecipe);
       expect(response.status).toBe(500);
+    });
+  });
+
+  describe(`PUT '/recipe/:id'`, () => {
+    let response: any;
+
+    beforeAll( async () => {
+      user = await new UserModel(userN);
+    });
+
+    beforeEach( async () => {
+      recipeDoc = new RecipeModel(recipe);
+      recipeDoc = await recipeDoc.save();
+    });
+
+    afterEach( async () => {
+      await recipeDoc.remove();
+    })
+
+    afterAll( async done => {
+      await user.remove();
+      done();
+    });
+
+    it(`should update the recipe`, async () => {
+      const updatedRecipe: Recipe = { ...recipe, id: recipeDoc.id, title: 'Recipe N', title_slugged: 'recipe-n'};
+      
+      response = await request.put(`/api/recipe/${recipeDoc.id}`).set('Authorization', `Bearer ${user.token}`).send(updatedRecipe);
+      const returnedRecipe = response.body;
+      expect(returnedRecipe.title).toBe(updatedRecipe.title);
+      expect(returnedRecipe.title_slugged).toBe(updatedRecipe.title_slugged);
+
+      await RecipeModel.findOneAndRemove({id: returnedRecipe.id});
+    });
+
+    it(`should create the new recipe in the db when there's no recipe with needed 'id'`, async () => {
+      const updatedRecipe: Recipe = { ...recipe, id: 10, title: 'Recipe N', title_slugged: 'recipe-n'};
+      
+      response = await request.put(`/api/recipe/${updatedRecipe.id}`).set('Authorization', `Bearer ${user.token}`).send(updatedRecipe);
+      const returnedRecipe = response.body;
+      expect(returnedRecipe.id).toBe(10);
+      expect(returnedRecipe.title).toBe(updatedRecipe.title);
+      expect(returnedRecipe.title_slugged).toBe(updatedRecipe.title_slugged);
+
+      await RecipeModel.findOneAndRemove({id: updatedRecipe.id});
+    });
+
+    it(`should create the new recipe which lacks field 'title'`, async () => {
+      const updatedRecipe: Recipe = { ...recipe, id: 10, title: 'Recipe N', title_slugged: 'recipe-n'};
+      delete updatedRecipe.title;
+
+      response = await request.put(`/api/recipe/${updatedRecipe.id}`).set('Authorization', `Bearer ${user.token}`).send(updatedRecipe);
+      // expect(response.status).toBe(500);
+      const returnedRecipe = response.body;
+      expect(returnedRecipe.id).toBe(10);
+      expect(returnedRecipe.title).toBeFalsy();
+      expect(returnedRecipe.title_slugged).toBe(updatedRecipe.title_slugged);
+
+      await RecipeModel.findOneAndRemove({id: updatedRecipe.id});
     });
   });
 })
