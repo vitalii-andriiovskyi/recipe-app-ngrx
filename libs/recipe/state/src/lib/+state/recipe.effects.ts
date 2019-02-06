@@ -10,7 +10,7 @@ import { exhaustMap, catchError, map, filter, flatMap, tap, withLatestFrom } fro
 
 import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';
 import { RecipeDataService } from '../services/recipe-data.service';
-import { RecipeFilters } from '@recipe-app-ngrx/models';
+import { RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
 import { isRecipeCategory } from '../services/utils';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
@@ -34,16 +34,17 @@ export class RecipeEffects {
   );
 
   @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot, oldFilters: RecipeFilters) => {
-    const id = route.paramMap.get('id');
-    const isCat = isRecipeCategory(id);
-    const filters: RecipeFilters = {
-      category: (isCat && id) ? id : null,
-      username: (!isCat && id) ? id : null,
-      page: +route.params['page'] || 1,
-      itemsPerPage: +route.params['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
-    };
+    const id = route.paramMap.get('id'),
+          isCat = isRecipeCategory(id),
+          isCatAll = id === recipeCategoryAll.url,
+          filters: RecipeFilters = {
+            category: (isCat && id) ? id : null,
+            username: (!isCat && !isCatAll && id) ? id : null,
+            page: +route.params['page'] || 1,
+            itemsPerPage: +route.params['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
+          },
 
-    const filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+          filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
    
     if (oldFilters.category === filters.category && oldFilters.username === filters.username) {
       return [filtersUpdatedAction];
