@@ -167,6 +167,46 @@ describe('RecipeEffects', () => {
                   path: 'recipes/:id'
                 },
                 paramMap: {
+                  get: (id: string) => 'desserts'
+                },
+                params: {
+                  page: '1',
+                  itemsPage: '6'
+                }
+              } as unknown as ActivatedRouteSnapshot,
+            } as unknown as ActivatedRouteSnapshot
+          },
+          event: {}
+        }
+      } as unknown as RouterNavigationAction;
+
+      const filters: RecipeFilters = { 
+        category: 'desserts',
+        username: null,
+        page: 1,
+        itemsPerPage: 6
+      }
+
+      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
+      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
+      
+      actions$ = hot('-a---', {a: action});
+      
+      const expected = cold('-(bc)', { b: completion1, c: completion2});
+      expect(effects.navigateToRecipes$).toBeObservable(expected)
+    });
+
+    it(`should return 'FILTERS_UPDATED' actions; 'all' case`, () => {
+      const action = {
+        type: ROUTER_NAVIGATION,
+        payload: {
+          routerState: {
+            root: {
+              firstChild: {
+                routeConfig: {
+                  path: 'recipes/:id'
+                },
+                paramMap: {
                   get: (id: string) => 'all'
                 },
                 params: {
@@ -181,18 +221,19 @@ describe('RecipeEffects', () => {
       } as unknown as RouterNavigationAction;
 
       const filters: RecipeFilters = { 
-        category: 'all',
+        category: null,
         username: null,
         page: 1,
         itemsPerPage: 6
       }
 
-      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
-      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
-     
+      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
+      
       actions$ = hot('-a---', {a: action});
       
-      const expected = cold('-(bc)', { b: completion1, c: completion2});
+      // The navigation to route '/recipes/all' will always define filters as it is the variable `filters`;
+      // But the initial state of filters is the same. When new filters and old filters are the same, the effect `navigateToRecipes` will dispatch only FILTERS_UPDATED
+      const expected = cold('-(b)', { b: completion});
       expect(effects.navigateToRecipes$).toBeObservable(expected)
     });
 
