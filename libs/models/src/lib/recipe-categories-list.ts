@@ -15,6 +15,5 @@ export const recipeCategoriesList: Set<RecipeCategory> = new Set([
   {value: 'Soups, Stews & Chili', url: 'soups-stews-and-chili'},
   {value: 'Salads', url: 'salads'},
   {value: 'Desserts', url: 'desserts'},
-  {value: 'Smoothies', url: 'smoothies'},
-  recipeCategoryAll
+  {value: 'Smoothies', url: 'smoothies'}
 ]);
