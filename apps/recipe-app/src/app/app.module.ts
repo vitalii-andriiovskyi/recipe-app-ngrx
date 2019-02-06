@@ -17,15 +17,16 @@ import { environment } from '../environments/environment';
 import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 import { AuthStateModule } from '@recipe-app-ngrx/auth/state';
 import { AuthLoginUiModule } from '@recipe-app-ngrx/auth/login-ui';
-import { SharedComponentsModule, PageNotFoundComponent } from '@recipe-app-ngrx/shared-components';
+import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 import { RcpEntityStoreModule } from '@recipe-app-ngrx/rcp-entity-store';
 
 import { AppComponent } from './app.component';
 
 import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils'; 
+import { CoreComponentsModule } from '@recipe-app-ngrx/core-components';
    
 const routes: Routes = [
-  { path: '**', component: PageNotFoundComponent }
+  // { path: '**', component: PageNotFoundComponent }
 ]
 @NgModule({
   declarations: [AppComponent],
@@ -33,7 +34,6 @@ const routes: Routes = [
     BrowserModule,
     HttpClientModule,
     NxModule.forRoot(),
-    RouterModule.forRoot(routes, { initialNavigation: 'enabled' }),
     BrowserAnimationsModule,
     StoreModule.forRoot({},{ metaReducers : !environment.production ? [storeFreeze] : [] }),
     EffectsModule.forRoot([]),
@@ -43,7 +43,9 @@ const routes: Routes = [
     AuthLoginUiModule,
     FlexLayoutModule,
     SharedComponentsModule,
-    RcpEntityStoreModule
+    RcpEntityStoreModule,
+    CoreComponentsModule,
+    RouterModule.forRoot(routes, { initialNavigation: 'enabled' }),
   ],
   providers: [
     // { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
