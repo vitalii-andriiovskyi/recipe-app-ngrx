@@ -3,7 +3,7 @@ import * as config from '../app/config';
 
 export class MongooseStub {
   static connect = () => {
-    mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'))
+    mongoose.connect('mongodb://localhost:27017/test_rcp', config.get('mongoose:options'))
   }
 
   static disconnect = (done: any) => {
