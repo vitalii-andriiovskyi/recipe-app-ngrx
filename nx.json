@@ -37,6 +37,9 @@
     },
     "recipe-state": {
       "tags": []
+    },
+    "recipe-ui": {
+      "tags": []
     }
   }
 }
