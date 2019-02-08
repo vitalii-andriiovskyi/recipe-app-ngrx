@@ -1,3 +1,121 @@
-<p>
-  recipe-editor works!
-</p>
+<form [formGroup]="recipeForm" (ngSubmit)="submit()">
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput [errorStateMatcher]="matcher" 
+              placeholder="The title of recipe" formControlName="title" required>
+      <mat-error *ngIf="title.errors?.required">Title is required</mat-error>
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <mat-select placeholder="Select category" [errorStateMatcher]="matcher" 
+                  formControlName="category" required>
+        <mat-option *ngFor="let cat of categories" [value]="cat.url">{{cat.value}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="category.errors?.required">Category is required</mat-error>
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput formControlName="description" [errorStateMatcher]="matcher"
+             placeholder="The description of recipe">
+    </mat-form-field>
+  </p>
+  
+  <div class="ingredients" formArrayName="ingredients">
+    <h3>Ingredients</h3>
+    <div *ngFor="let ingredient of ingredients.controls; let i=index">
+    
+      <ng-container [formGroupName]="i">
+        <input type="hidden" formControlName="id" [value]="i">
+        <mat-form-field color="accent">
+          <input type="text" matInput formControlName="name" placeholder="Name of ingredient"
+                 [errorStateMatcher]="matcher" required>
+          <mat-error *ngIf="ingredient.get('name').errors?.required">Name is required</mat-error>
+        </mat-form-field>
+       
+        <mat-form-field color="accent">
+          <input type="number" matInput formControlName="quantity" placeholder="Quantity"
+                  [errorStateMatcher]="matcher" required>
+          <mat-error *ngIf="ingredient.get('quantity').errors?.required">Quantity is required</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field color="accent">
+          <mat-select placeholder="Select unit" formControlName="unit" [errorStateMatcher]="matcher" required>
+            <mat-optgroup *ngFor="let unitGroup of units" [label]="unitGroup.name" [disabled]="unitGroup.disabled">
+              <mat-option *ngFor="let unit of unitGroup.units" [value]="unit.value">{{unit.value}}</mat-option>
+            </mat-optgroup>
+          </mat-select>
+          <mat-error *ngIf="ingredient.get('unit').errors?.required">Unit is required</mat-error>
+        </mat-form-field>
+
+      </ng-container>
+      <button mat-mini-fab color="warn" 
+              *ngIf="ingredients.controls.length > 1" (click)="removeIngredient(i)">
+        <mat-icon>delete forever</mat-icon>
+      </button>      
+    </div>
+    <div>
+      <button type="button" mat-flat-button (click)="addIngredient()" color="accent">Add new ingredient</button>
+    </div>
+  </div> <!-- /.ingredients -->
+  
+  <div class="steps" formArrayName="steps">
+    <p *ngFor="let step of steps.controls; let i=index">
+      <mat-form-field color="accent">
+        <textarea matInput placeholder="Describe the step" required [errorStateMatcher]="matcher"
+                  cdkTextareaAutosize
+                  cdkTextareaMinRows="1" cdkTextareaMaxRows="6" [formControlName]="i" required ></textarea>
+        <mat-error *ngIf="step.errors?.required">Step is required</mat-error> 
+      </mat-form-field>
+      <button mat-mini-fab color="warn"
+              *ngIf="steps.controls.length > 1" (click)="removeStep(i)">
+        <mat-icon>delete forever</mat-icon>
+      </button>
+    </p>
+    <div>
+      <button mat-flat-button type="button" (click)="addStep()" color="accent">Add new step</button>
+    </div>
+  </div> <!-- /.steps-->
+
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput formControlName="footnotes" [errorStateMatcher]="matcher"
+             placeholder="Footnotes">
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <mat-label>Nutrition fat</mat-label>
+      <input type="text" matInput formControlName="nutritionFat" [errorStateMatcher]="matcher">
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <mat-label>Preparation time</mat-label>
+      <input type="number" matInput formControlName="preparationTime" [errorStateMatcher]="matcher">
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <mat-label>Cook time, minute</mat-label>
+      <input type="number" matInput formControlName="cookTime" [errorStateMatcher]="matcher">
+    </mat-form-field>
+  </p>
+ 
+  <p>
+    <mat-form-field color="accent">
+      <mat-label>Servings</mat-label>
+      <input type="number" matInput formControlName="servingsNumber" [errorStateMatcher]="matcher">
+    </mat-form-field> 
+  </p>
+  
+  <div>
+    <button type="submit" mat-flat-button color="accent" [disabled]="!recipeForm.valid">Save recipe</button>
+  </div>
+</form>
