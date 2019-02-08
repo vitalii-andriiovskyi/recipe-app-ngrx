@@ -63,6 +63,7 @@ export class RecipeEditorComponent implements OnInit {
   }
   removeIngredient(id: number) { this.ingredients.removeAt(id); }
 
-  
+  addStep() { this.steps.push( new FormControl('')); }
+  removeStep(id: number) { this.steps.removeAt(id); }
 
 }
