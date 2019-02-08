@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups } from '@recipe-app-ngrx/models';
 
 @Component({
@@ -36,6 +37,12 @@ export class RecipeEditorComponent implements OnInit {
     servingsNumber: new FormControl('')
   });
 
+  get title() { return this.recipeForm.get('title') };
+  get category() { return this.recipeForm.get('category') };
+  get ingredients() { return this.recipeForm.get('ingredients') as FormArray; };
+  get steps() { return this.recipeForm.get('steps') as FormArray; };
+  matcher = new CommonErrorStateMatcher();;
+
   constructor() { }
 
   ngOnInit() { }
@@ -48,5 +55,14 @@ export class RecipeEditorComponent implements OnInit {
       quantity: new FormControl()
     });
   }
+
+  addIngredient() {
+    this.ingredients.push(
+      this.createIngredient()
+    );
+  }
+  removeIngredient(id: number) { this.ingredients.removeAt(id); }
+
+  
 
 }
