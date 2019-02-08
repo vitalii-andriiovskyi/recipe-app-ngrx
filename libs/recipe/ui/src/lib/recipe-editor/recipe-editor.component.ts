@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups } from '@recipe-app-ngrx/models';
 
 @Component({
   selector: 'rcp-recipe-editor',
@@ -7,6 +8,9 @@ import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
   styleUrls: ['./recipe-editor.component.scss']
 })
 export class RecipeEditorComponent implements OnInit {
+  categories: Set<RecipeCategory> = recipeCategoriesList;
+  units: UnitGroup[] = unitGroups;
+
   recipeForm: FormGroup = new FormGroup({
     id: new FormControl(0),
     title: new FormControl('', [Validators.required]),
