@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
-import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe } from '@recipe-app-ngrx/models';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj } from '@recipe-app-ngrx/models';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,6 +12,8 @@ import { Observable } from 'rxjs';
 export class RecipeEditorComponent implements OnInit {
   @Input() recipe$: Observable<Recipe>;
   @Input() username: string;
+
+  @Output() createdRecipe = new EventEmitter<CreatedRecipeEvtObj>();
 
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
