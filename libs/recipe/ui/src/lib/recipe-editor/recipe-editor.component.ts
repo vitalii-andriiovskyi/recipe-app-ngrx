@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
@@ -53,7 +54,19 @@ export class RecipeEditorComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.recipe$.pipe(
+      take(1), // maybe I should use 'takeUntil' and additional Subject which emits values in 'ngOnDestroy'
+      tap(rcp => {
+        // gets recipe and fills the form in order to update the existing recipe
+        if (rcp) { 
+          this.addMode = true;
+          this.fillRecipeForm(rcp);
+        }
+      })
+    ).subscribe();
+
+  }
 
   createIngredient(): FormGroup {
     return new FormGroup({
