@@ -19,7 +19,7 @@ export class RecipeEditorComponent implements OnInit {
 
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
-  addMode = false;
+  addMode = true;
 
   recipeForm: FormGroup = new FormGroup({
     id: new FormControl(0),
@@ -50,7 +50,7 @@ export class RecipeEditorComponent implements OnInit {
   get category() { return this.recipeForm.get('category') };
   get ingredients() { return this.recipeForm.get('ingredients') as FormArray; };
   get steps() { return this.recipeForm.get('steps') as FormArray; };
-  matcher = new CommonErrorStateMatcher();;
+  matcher = new CommonErrorStateMatcher();
 
   constructor() { }
 
@@ -60,7 +60,7 @@ export class RecipeEditorComponent implements OnInit {
       tap(rcp => {
         // gets recipe and fills the form in order to update the existing recipe
         if (rcp) { 
-          this.addMode = true;
+          this.addMode = false;
           this.fillRecipeForm(rcp);
         }
       })
