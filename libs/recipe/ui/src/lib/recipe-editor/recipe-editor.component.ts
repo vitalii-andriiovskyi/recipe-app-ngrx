@@ -87,4 +87,13 @@ export class RecipeEditorComponent implements OnInit {
     }
   }
 
+  fillRecipeForm(recipe: Recipe) {
+    const rcp: any = { ...recipe };
+    delete rcp.title_slugged;
+    delete rcp.date_created;
+    delete rcp.user_username;
+
+    this.recipeForm.setValue(rcp);
+  }
+
 }
