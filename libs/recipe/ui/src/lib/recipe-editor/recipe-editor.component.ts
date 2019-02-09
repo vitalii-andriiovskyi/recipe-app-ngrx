@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
-import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups } from '@recipe-app-ngrx/models';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe } from '@recipe-app-ngrx/models';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'rcp-recipe-editor',
@@ -9,8 +10,12 @@ import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups } from '@re
   styleUrls: ['./recipe-editor.component.scss']
 })
 export class RecipeEditorComponent implements OnInit {
+  @Input() recipe$: Observable<Recipe>;
+  @Input() username: string;
+
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
+  addMode: boolean;
 
   recipeForm: FormGroup = new FormGroup({
     id: new FormControl(0),
@@ -65,5 +70,7 @@ export class RecipeEditorComponent implements OnInit {
 
   addStep() { this.steps.push( new FormControl('')); }
   removeStep(id: number) { this.steps.removeAt(id); }
+
+  submit() { }
 
 }
