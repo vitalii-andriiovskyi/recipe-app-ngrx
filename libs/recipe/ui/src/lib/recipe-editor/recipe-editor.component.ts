@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
-import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
-import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj } from '@recipe-app-ngrx/models';
 import { Observable } from 'rxjs';
+
+import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
 
 @Component({
   selector: 'rcp-recipe-editor',
@@ -17,7 +18,7 @@ export class RecipeEditorComponent implements OnInit {
 
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
-  addMode: boolean;
+  addMode = false;
 
   recipeForm: FormGroup = new FormGroup({
     id: new FormControl(0),
@@ -73,6 +74,17 @@ export class RecipeEditorComponent implements OnInit {
   addStep() { this.steps.push( new FormControl('')); }
   removeStep(id: number) { this.steps.removeAt(id); }
 
-  submit() { }
+  saveRecipe() {
+    let recipe: Recipe;
+    const { valid, dirty, value} = this.recipeForm;
+    
+    if (valid && dirty) {
+      recipe = RecipeMaker.create({...value, user_username: this.username, date_created: new Date()});
+      this.createdRecipe.emit({
+        addMode: this.addMode,
+        recipe: recipe
+      });
+    }
+  }
 
 }

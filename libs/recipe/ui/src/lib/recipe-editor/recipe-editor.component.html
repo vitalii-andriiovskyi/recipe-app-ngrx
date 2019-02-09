@@ -1,4 +1,4 @@
-<form [formGroup]="recipeForm" (ngSubmit)="submit()">
+<form [formGroup]="recipeForm" (ngSubmit)="saveRecipe()">
   <p>
     <mat-form-field color="accent">
       <input type="text" matInput [errorStateMatcher]="matcher" 
