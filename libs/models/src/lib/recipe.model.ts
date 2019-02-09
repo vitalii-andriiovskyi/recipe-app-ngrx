@@ -48,3 +48,8 @@ export class RecipeMaker {
     return createdRecipe;
   }
 }
+
+export interface CreatedRecipeEvtObj {
+  addMode: boolean;
+  recipe: Recipe;
+}
