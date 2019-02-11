@@ -37,7 +37,7 @@ export class RecipeMaker {
       images: recipe.images,
       footnotes: recipe.footnotes,
       nutritionFat: recipe.nutritionFat,
-      preparetionTime: recipe.preparetionTime,
+      preparationTime: recipe.preparationTime,
       cookTime: recipe.cookTime,
       servingsNumber: recipe.servingsNumber,
 
