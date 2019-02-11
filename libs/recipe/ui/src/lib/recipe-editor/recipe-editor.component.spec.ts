@@ -70,7 +70,7 @@ const recipe: Recipe = {
   servingsNumber: 6,
 
   category: 'desserts',
-  user_username: 'rcp_user',
+  user_username: 'test_user',
   date_created: new Date(),
 };
 
@@ -149,7 +149,7 @@ describe('RecipeEditorComponent', () => {
       rcpFormControlsAButtons.titleControl.triggerEventHandler('blur', null);
       fixture.detectChanges();
 
-      matError = getMatError(rcpFormControlsAButtons.titleControl);
+      matError = getMatError(rcpFormControlsAButtons.titleControl); 
       expect(matError).toBeTruthy(`there's <mat-error>`);
       expect(rcpEditorComponent.recipeForm.value.title).toBe('', '');
 
@@ -771,6 +771,7 @@ describe('RecipeEditorComponent', () => {
 
     it(`should fire the event 'createdRecipe' when 'recipeForm' is filled correctly and submitted. addMode=false`, fakeAsync(() => {
       const changedTitle = 'Another recipe';
+      const changedTitle_slugged = 'another-recipe';
       expect(testComponent.createdRecipeEvObj).toBeFalsy('createdRecipeEvObj is empty');
       expect(rcpFormControlsAButtons.saveRecipeButton.nativeElement.disabled).toBeTruthy('save button is disabled');
       testComponent.sendRecipe(recipe);
@@ -788,8 +789,24 @@ describe('RecipeEditorComponent', () => {
       tick();
       fixture.detectChanges();
       expect(testComponent.createdRecipeEvObj).toBeTruthy('createdRecipeEvObj is updated');
-      expect(testComponent.createdRecipeEvObj.recipe.title).toBe(changedTitle, changedTitle);
       expect(testComponent.createdRecipeEvObj.addMode).toBeFalsy('addMode=false');
+      expect(testComponent.createdRecipeEvObj.recipe.title).toBe(changedTitle, changedTitle);
+      expect(testComponent.createdRecipeEvObj.recipe.title_slugged).toBe(changedTitle_slugged, changedTitle_slugged);
+      expect(testComponent.createdRecipeEvObj.recipe.id).toBe(recipe.id, recipe.id);
+      expect(testComponent.createdRecipeEvObj.recipe.description).toBe(recipe.description, recipe.description);
+      expect(testComponent.createdRecipeEvObj.recipe.ingredients[0].id).toBe(recipe.ingredients[0].id, recipe.ingredients[0].id);
+      expect(testComponent.createdRecipeEvObj.recipe.ingredients[0].name).toBe(recipe.ingredients[0].name, recipe.ingredients[0].name);
+      expect(testComponent.createdRecipeEvObj.recipe.ingredients[0].quantity).toBe(recipe.ingredients[0].quantity, recipe.ingredients[0].quantity);
+      expect(testComponent.createdRecipeEvObj.recipe.ingredients[0].unit).toBe(recipe.ingredients[0].unit, recipe.ingredients[0].unit);
+      expect(testComponent.createdRecipeEvObj.recipe.steps[0]).toBe(recipe.steps[0], recipe.steps[0]);
+      expect(testComponent.createdRecipeEvObj.recipe.footnotes).toBe(recipe.footnotes, recipe.footnotes);
+      expect(testComponent.createdRecipeEvObj.recipe.nutritionFat).toBe(recipe.nutritionFat, recipe.nutritionFat);
+      expect(testComponent.createdRecipeEvObj.recipe.preparationTime).toBe(recipe.preparationTime, recipe.preparationTime);
+      expect(testComponent.createdRecipeEvObj.recipe.cookTime).toBe(recipe.cookTime, recipe.cookTime);
+      expect(testComponent.createdRecipeEvObj.recipe.servingsNumber).toBe(recipe.servingsNumber, recipe.servingsNumber);
+      expect(testComponent.createdRecipeEvObj.recipe.category).toBe(recipe.category, recipe.category);
+      expect(testComponent.createdRecipeEvObj.recipe.user_username).toBe(recipe.user_username, recipe.user_username);
+      expect(+testComponent.createdRecipeEvObj.recipe.date_created).toBeGreaterThan(+recipe.date_created, +recipe.date_created);
 
     }));
 
