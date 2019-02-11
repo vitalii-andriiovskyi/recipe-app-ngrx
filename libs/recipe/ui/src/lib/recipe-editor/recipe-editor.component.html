@@ -26,7 +26,7 @@
   
   <div class="ingredients" formArrayName="ingredients">
     <h3>Ingredients</h3>
-    <div *ngFor="let ingredient of ingredients.controls; let i=index">
+    <div class="ingredient-wrapper" *ngFor="let ingredient of ingredients.controls; let i=index">
     
       <ng-container [formGroupName]="i">
         <input type="hidden" formControlName="id" [value]="i">
@@ -57,13 +57,13 @@
         <mat-icon>delete forever</mat-icon>
       </button>      
     </div>
-    <div>
+    <div class="button-wrapper">
       <button type="button" mat-flat-button (click)="addIngredient()" color="accent">Add new ingredient</button>
     </div>
   </div> <!-- /.ingredients -->
   
   <div class="steps" formArrayName="steps">
-    <p *ngFor="let step of steps.controls; let i=index">
+    <p class="step-wrapper" *ngFor="let step of steps.controls; let i=index">
       <mat-form-field color="accent">
         <textarea matInput placeholder="Describe the step" required [errorStateMatcher]="matcher"
                   cdkTextareaAutosize
@@ -75,21 +75,14 @@
         <mat-icon>delete forever</mat-icon>
       </button>
     </p>
-    <div>
+    <div class="button-wrapper">
       <button mat-flat-button type="button" (click)="addStep()" color="accent">Add new step</button>
     </div>
   </div> <!-- /.steps-->
-
-  <p>
-    <mat-form-field color="accent">
-      <input type="text" matInput formControlName="footnotes" [errorStateMatcher]="matcher"
-             placeholder="Footnotes">
-    </mat-form-field>
-  </p>
   
   <p>
     <mat-form-field color="accent">
-      <mat-label>Nutrition fat</mat-label>
+      <mat-label>Nutrition facts</mat-label>
       <input type="text" matInput formControlName="nutritionFat" [errorStateMatcher]="matcher">
     </mat-form-field>
   </p>
@@ -114,8 +107,16 @@
       <input type="number" matInput formControlName="servingsNumber" [errorStateMatcher]="matcher">
     </mat-form-field> 
   </p>
+
+  
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput formControlName="footnotes" [errorStateMatcher]="matcher"
+             placeholder="Footnotes">
+    </mat-form-field>
+  </p>
   
   <div>
-    <button type="submit" mat-flat-button color="accent" [disabled]="!recipeForm.valid">Save recipe</button>
+    <button type="submit" mat-flat-button color="accent" [disabled]="recipeForm.invalid">Save recipe</button>
   </div>
 </form>
