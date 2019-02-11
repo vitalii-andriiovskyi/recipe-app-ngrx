@@ -12,7 +12,7 @@ export interface Recipe {
   images?: Image[];
   footnotes?: string;
   nutritionFat?: string;
-  preparetionTime?: number;
+  preparationTime?: number;
   cookTime?: number;
   servingsNumber?: number;
 

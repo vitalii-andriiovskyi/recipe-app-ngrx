@@ -31,7 +31,7 @@ describe('RecipeEntityCollectionService', () => {
     images: [],
     footnotes: 'string',
     nutritionFat: 'string',
-    preparetionTime: 12,
+    preparationTime: 12,
     cookTime: 12,
     servingsNumber: 6,
 

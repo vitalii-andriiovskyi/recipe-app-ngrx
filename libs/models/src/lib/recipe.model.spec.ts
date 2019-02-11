@@ -20,7 +20,7 @@ describe('RECIPE MODEL', () => {
     ],
     footnotes: 'Footnotes',
     nutritionFat: 'light',
-    preparetionTime: 15,
+    preparationTime: 15,
     cookTime: 15,
     servingsNumber: 2,
 
