@@ -820,7 +820,7 @@ function getRcpFormControlsAButtons(de: DebugElement): RcpFormControlsAButtons {
     idControl: de.query(By.css('input[formcontrolname="id"]')),
     titleControl: de.query(By.css('input[formcontrolname="title"]')),
     categoryControl: de.query(By.css('[formcontrolname="category"]')), // ????????
-    descriptionControl: de.query(By.css('input[formcontrolname="description"]')),
+    descriptionControl: de.query(By.css('textarea[formcontrolname="description"]')),
     ingredients: {
       ingArr: null,
       addIngredientBut: de.query(By.css('.ingredients .button-wrapper button')),
@@ -834,7 +834,7 @@ function getRcpFormControlsAButtons(de: DebugElement): RcpFormControlsAButtons {
       imagesArr: null,
     },
     footnotesControl: de.query(By.css('input[formcontrolname="footnotes"]')),
-    nutritionFactsControl: de.query(By.css('input[formcontrolname="nutritionFacts"]')),
+    nutritionFactsControl: de.query(By.css('[formcontrolname="nutritionFacts"]')),
     preparationTimeControl: de.query(By.css('input[formcontrolname="preparationTime"]')),
     cookTimeControl: de.query(By.css('input[formcontrolname="cookTime"]')),
     servingsNumberControl: de.query(By.css('input[formcontrolname="servingsNumber"]')),
