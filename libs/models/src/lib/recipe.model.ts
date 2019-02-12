@@ -11,7 +11,7 @@ export interface Recipe {
   steps: string[];
   images?: Image[];
   footnotes?: string;
-  nutritionFat?: string;
+  nutritionFacts?: string;
   preparationTime?: number;
   cookTime?: number;
   servingsNumber?: number;
@@ -36,7 +36,7 @@ export class RecipeMaker {
       steps: recipe.steps,
       images: recipe.images,
       footnotes: recipe.footnotes,
-      nutritionFat: recipe.nutritionFat,
+      nutritionFacts: recipe.nutritionFacts,
       preparationTime: recipe.preparationTime,
       cookTime: recipe.cookTime,
       servingsNumber: recipe.servingsNumber,
