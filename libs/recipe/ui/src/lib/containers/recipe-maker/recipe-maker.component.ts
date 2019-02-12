@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, Subject } from 'rxjs';
-import { tap, map, filter, switchMap, takeUntil, shareReplay } from 'rxjs/operators';
+import { tap, map, filter, switchMap, takeUntil, shareReplay, delay } from 'rxjs/operators';
 
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
+import { ofEntityOp, EntityOp } from 'ngrx-data';
 
 @Component({
   selector: 'rcp-recipe-maker',
@@ -17,6 +18,9 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
 
   recipeById$: Observable<Recipe>;
   destroy$ = new Subject();
+  error$: Observable<string>;
+  loading$: Observable<boolean>;
+
   constructor(
     private activatedRoute: ActivatedRoute, 
     private appEntityServices: AppEntityServices
@@ -41,6 +45,19 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.destroy$),
       shareReplay(1)
+    );
+
+    this.error$ = this.recipeEntityService.errors$.pipe(
+      ofEntityOp(EntityOp.QUERY_BY_KEY_ERROR),
+      map(errorAction => errorAction.payload.error ? errorAction.payload.error.message : 'Oops! An error occurred.'),
+      // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
+      delay(1),
+      takeUntil(this.destroy$)
+    );
+
+    this.loading$ = this.recipeEntityService.loading$.pipe(
+      delay(1),
+      takeUntil(this.destroy$)
     );
     
   }
