@@ -40,7 +40,7 @@ export class RecipeEditorComponent implements OnInit {
       // })
     ]),
     footnotes: new FormControl(''),
-    nutritionFat: new FormControl(''),
+    nutritionFacts: new FormControl(''),
     preparationTime: new FormControl(''),
     cookTime: new FormControl(''),
     servingsNumber: new FormControl('')
