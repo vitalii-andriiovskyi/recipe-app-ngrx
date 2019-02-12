@@ -5,11 +5,20 @@ import { take, tap } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'rcp-recipe-editor',
   templateUrl: './recipe-editor.component.html',
-  styleUrls: ['./recipe-editor.component.scss']
+  styleUrls: ['./recipe-editor.component.scss'],
+  animations: [
+    trigger('fadeInUp', [
+      transition(`:enter`, [
+        style({ transform: 'translateY(20px)', opacity: 0 }),
+        animate('0.5s ease-in-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class RecipeEditorComponent implements OnInit {
   @Input() recipe$: Observable<Recipe>;
