@@ -80,3 +80,12 @@ rcp-logout-confirmation-dialog {
   margin: 0 auto;
 }
 
+.ingredient-wrapper, .step-wrapper {
+  .heading {
+    border-top: 1px dashed mat-color($accent, 800);
+    & > span {
+      background-color: mat-color($accent, 800);
+    }
+  }
+} 
+
