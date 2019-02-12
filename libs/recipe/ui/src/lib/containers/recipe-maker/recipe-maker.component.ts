@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, combineLatest, Subject } from 'rxjs';
+import { Observable, combineLatest, Subject, merge } from 'rxjs';
 import { tap, map, filter, switchMap, takeUntil, shareReplay, delay } from 'rxjs/operators';
 
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
@@ -17,6 +17,9 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
   recipeEntityService: RecipeEntityCollectionService;
 
   recipeById$: Observable<Recipe>;
+  nonRecipe$: Observable<null>;
+  recipe$: Observable<Recipe | null>
+
   destroy$ = new Subject();
   error$: Observable<string>;
   loading$: Observable<boolean>;
@@ -46,6 +49,16 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       shareReplay(1)
     );
+
+    this.nonRecipe$ = this.activatedRoute.paramMap.pipe(
+      map(paramMap => paramMap.get('id')),
+      filter(id => !id),
+      map(id => null)
+    );
+
+    this.recipe$ = merge(this.recipeById$, this.nonRecipe$).pipe(
+      takeUntil(this.destroy$)
+    )
 
     this.error$ = this.recipeEntityService.errors$.pipe(
       ofEntityOp(EntityOp.QUERY_BY_KEY_ERROR),
