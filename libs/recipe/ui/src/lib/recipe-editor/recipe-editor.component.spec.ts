@@ -40,7 +40,7 @@ interface RcpFormControlsAButtons {
     imagesArr: any[]
   };
   footnotesControl: DebugElement;
-  nutritionFatControl: DebugElement;
+  nutritionFactsControl: DebugElement;
   preparationTimeControl: DebugElement;
   cookTimeControl: DebugElement;
   servingsNumberControl: DebugElement;
@@ -64,7 +64,7 @@ const recipe: Recipe = {
   steps: [ 'Step 1'],
   images: [],
   footnotes: 'Some info',
-  nutritionFat: '372 calories',
+  nutritionFacts: '372 calories',
   preparationTime: 12,
   cookTime: 12,
   servingsNumber: 6,
@@ -124,7 +124,7 @@ describe('RecipeEditorComponent', () => {
       expect(rcpFormControlsAButtons.steps.stepArr[0].stepControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.steps.stepArr[0].removeButton).toBeFalsy(`there's no 'remove step button'`);
       expect(rcpFormControlsAButtons.footnotesControl.nativeElement.value).toBe('', '');
-      expect(rcpFormControlsAButtons.nutritionFatControl.nativeElement.value).toBe('', '');
+      expect(rcpFormControlsAButtons.nutritionFactsControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.preparationTimeControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.cookTimeControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.servingsNumberControl.nativeElement.value).toBe('', '');
@@ -294,8 +294,8 @@ describe('RecipeEditorComponent', () => {
       tick();
       fixture.detectChanges();
 
-      rcpFormControlsAButtons.nutritionFatControl.nativeElement.value = recipe.nutritionFat;
-      rcpFormControlsAButtons.nutritionFatControl.nativeElement.dispatchEvent(newEvent('input'));
+      rcpFormControlsAButtons.nutritionFactsControl.nativeElement.value = recipe.nutritionFacts;
+      rcpFormControlsAButtons.nutritionFactsControl.nativeElement.dispatchEvent(newEvent('input'));
       tick();
       fixture.detectChanges();
 
@@ -701,7 +701,7 @@ describe('RecipeEditorComponent', () => {
       expect(rcpFormControlsAButtons.steps.stepArr[0].stepControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.steps.stepArr[0].removeButton).toBeFalsy(`there's no 'remove step button'`);
       expect(rcpFormControlsAButtons.footnotesControl.nativeElement.value).toBe('', '');
-      expect(rcpFormControlsAButtons.nutritionFatControl.nativeElement.value).toBe('', '');
+      expect(rcpFormControlsAButtons.nutritionFactsControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.preparationTimeControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.cookTimeControl.nativeElement.value).toBe('', '');
       expect(rcpFormControlsAButtons.servingsNumberControl.nativeElement.value).toBe('', '');
@@ -720,7 +720,7 @@ describe('RecipeEditorComponent', () => {
       expect(rcpFormControlsAButtons.steps.stepArr[0].stepControl.nativeElement.value).toBe(recipe.steps[0], recipe.steps[0]);
       expect(rcpFormControlsAButtons.steps.stepArr[0].removeButton).toBeFalsy(`there's no 'remove step button'`);
       expect(rcpFormControlsAButtons.footnotesControl.nativeElement.value).toBe(recipe.footnotes, recipe.footnotes);
-      expect(rcpFormControlsAButtons.nutritionFatControl.nativeElement.value).toBe(recipe.nutritionFat, recipe.nutritionFat);
+      expect(rcpFormControlsAButtons.nutritionFactsControl.nativeElement.value).toBe(recipe.nutritionFacts, recipe.nutritionFacts);
       expect(rcpFormControlsAButtons.preparationTimeControl.nativeElement.value).toBe(`${recipe.preparationTime}`, `${recipe.preparationTime}`);
       expect(rcpFormControlsAButtons.cookTimeControl.nativeElement.value).toBe(`${recipe.cookTime}`, `${recipe.cookTime}`);
       expect(rcpFormControlsAButtons.servingsNumberControl.nativeElement.value).toBe(`${recipe.servingsNumber}`, `${recipe.servingsNumber}`);
@@ -800,7 +800,7 @@ describe('RecipeEditorComponent', () => {
       expect(testComponent.createdRecipeEvObj.recipe.ingredients[0].unit).toBe(recipe.ingredients[0].unit, recipe.ingredients[0].unit);
       expect(testComponent.createdRecipeEvObj.recipe.steps[0]).toBe(recipe.steps[0], recipe.steps[0]);
       expect(testComponent.createdRecipeEvObj.recipe.footnotes).toBe(recipe.footnotes, recipe.footnotes);
-      expect(testComponent.createdRecipeEvObj.recipe.nutritionFat).toBe(recipe.nutritionFat, recipe.nutritionFat);
+      expect(testComponent.createdRecipeEvObj.recipe.nutritionFacts).toBe(recipe.nutritionFacts, recipe.nutritionFacts);
       expect(testComponent.createdRecipeEvObj.recipe.preparationTime).toBe(recipe.preparationTime, recipe.preparationTime);
       expect(testComponent.createdRecipeEvObj.recipe.cookTime).toBe(recipe.cookTime, recipe.cookTime);
       expect(testComponent.createdRecipeEvObj.recipe.servingsNumber).toBe(recipe.servingsNumber, recipe.servingsNumber);
@@ -834,7 +834,7 @@ function getRcpFormControlsAButtons(de: DebugElement): RcpFormControlsAButtons {
       imagesArr: null,
     },
     footnotesControl: de.query(By.css('input[formcontrolname="footnotes"]')),
-    nutritionFatControl: de.query(By.css('input[formcontrolname="nutritionFat"]')),
+    nutritionFactsControl: de.query(By.css('input[formcontrolname="nutritionFacts"]')),
     preparationTimeControl: de.query(By.css('input[formcontrolname="preparationTime"]')),
     cookTimeControl: de.query(By.css('input[formcontrolname="cookTime"]')),
     servingsNumberControl: de.query(By.css('input[formcontrolname="servingsNumber"]')),

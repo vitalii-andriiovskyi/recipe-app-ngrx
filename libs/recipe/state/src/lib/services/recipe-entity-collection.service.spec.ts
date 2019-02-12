@@ -30,7 +30,7 @@ describe('RecipeEntityCollectionService', () => {
     steps: [],
     images: [],
     footnotes: 'string',
-    nutritionFat: 'string',
+    nutritionFacts: 'string',
     preparationTime: 12,
     cookTime: 12,
     servingsNumber: 6,
