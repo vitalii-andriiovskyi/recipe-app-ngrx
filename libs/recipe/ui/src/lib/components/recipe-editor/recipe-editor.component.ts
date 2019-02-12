@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
-import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'rcp-recipe-editor',
