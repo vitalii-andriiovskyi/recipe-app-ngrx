@@ -165,6 +165,24 @@ describe('AuthEffects', () => {
       });
     });
   });
+
+  describe(`loginRedirect$`, () => {
+    beforeEach(() => {
+      routerService = TestBed.get(Router);
+      spyOn(routerService, 'navigate').and.callThrough();
+    });
+
+    it(`should call 'router.navigate(['/login'])`, (done: any) => {
+      const action = new LoginRedirect();
+      actions$ = of(action);
+  
+      effects.loginRedirect$.subscribe(() => {
+        expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
+        done();
+      })
+    });
+    
+  });
   // describe('loadAuth$', () => {
   //   it('should work', () => {
   //     actions = hot('-a-|', { a: new LoadAuth() });
