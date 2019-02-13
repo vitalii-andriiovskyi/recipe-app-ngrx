@@ -3,7 +3,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
 
 import { EffectsModule, Actions } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
+import { StoreModule, Store } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
 
 import { NxModule } from '@nrwl/nx';
@@ -25,6 +25,9 @@ import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { Component } from '@angular/core';
+import { RouterHistoryStateModule, RouterHistoryState, initialState as routerHistoryInitState } from '@recipe-app-ngrx/router-history-state';
+import { RouterStateUrl } from '@recipe-app-ngrx/utils';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 describe('AuthEffects', () => {
   let actions$: Observable<any>;
@@ -45,11 +48,14 @@ describe('AuthEffects', () => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([
-          { path: 'recipes/newest', component: TestComponent}
+          { path: 'recipes/newest', component: TestComponent},
+          { path: '**', component: PageNotFoundComponent},
         ]),
         NxModule.forRoot(),
         StoreModule.forRoot({}),
-        EffectsModule.forRoot([])
+        EffectsModule.forRoot([]),
+        StoreRouterConnectingModule,
+        RouterHistoryStateModule,
       ],
       providers: [
         AuthEffects,
@@ -57,7 +63,7 @@ describe('AuthEffects', () => {
         { provide: AuthService, useValue: authServiceSpy},
         { provide: MatDialog, useValue: matDialogSpy }
       ],
-      declarations: [ TestComponent ]
+      declarations: [ TestComponent, PageNotFoundComponent ]
     });
 
     effects = TestBed.get(AuthEffects);
@@ -148,12 +154,13 @@ describe('AuthEffects', () => {
         lastName: '',
         email: ''
       } as User;
-      const action = new LoginSuccess({ user });
 
+      const action = new LoginSuccess({ user });
+      
       actions$ = of(action);
 
       effects.loginSuccess$.subscribe(() => {
-        expect(routerService.navigate).toHaveBeenCalledWith(['/recipes/newest']);
+        expect(routerService.navigate).toHaveBeenCalledWith([routerHistoryInitState.previousRouter.url]);
         done();
       });
     });
@@ -174,5 +181,12 @@ describe('AuthEffects', () => {
   template: '<p>test</p>'
 })
 class TestComponent {
+}
+
+@Component({
+  selector: 'rcp-page-not-found',
+  template: '<p>test</p>'
+})
+class PageNotFoundComponent {
 
 }
