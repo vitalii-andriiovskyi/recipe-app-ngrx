@@ -71,6 +71,12 @@ export class AuthEffects {
     tap(([action, router]) => this.router.navigate([router.url]))
   );
 
+  @Effect({ dispatch: false })
+  loginRedirect$ = this.actions$.pipe(
+    ofType(AuthActionTypes.LoginRedirect),
+    tap(() => this.router.navigate(['/login']))
+  );
+  
   constructor(
     private actions$: Actions,
     private dataPersistence: DataPersistence<AuthPartialState>,
