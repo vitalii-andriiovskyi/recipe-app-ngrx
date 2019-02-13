@@ -43,6 +43,9 @@
     },
     "core-components": {
       "tags": []
+    },
+    "router-history-state": {
+      "tags": []
     }
   }
 }
