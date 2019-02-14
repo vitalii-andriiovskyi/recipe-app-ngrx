@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { RecipeMakerComponent } from './recipe-maker.component';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, of, throwError, Observable } from 'rxjs';
 import { User, Recipe } from '@recipe-app-ngrx/models';
 import { RecipeEditorComponent } from '../../components/recipe-editor/recipe-editor.component';
 import { Component, NgModule, DebugElement } from '@angular/core';
@@ -11,7 +11,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { NgrxDataModule, EntityOp, EntityDataService, DataServiceError, RequestData } from 'ngrx-data';
 import { RcpEntityStoreModule } from '@recipe-app-ngrx/rcp-entity-store';
 import { TemporaryIdGenerator, ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AuthFacade, AuthGuard } from '@recipe-app-ngrx/auth/state';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -21,7 +21,7 @@ import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 import { cold } from 'jasmine-marbles';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
-import { delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
 
 const recipe: Recipe = {
   id: 1001,
@@ -56,6 +56,9 @@ describe('RecipeMakerComponent', () => {
   let deRcpMakerComponent: DebugElement;
   let rcpMakerComponent: RecipeMakerComponent;
 
+  let deRcpEditorComponent: DebugElement;
+  let rcpEditorComponent: RecipeEditorComponent;
+
   const loggedIn$ = new BehaviorSubject<boolean>(false);
   const authencticatedUser$ = new BehaviorSubject<User>(null);
   const activatedRouteParamMap$ = new BehaviorSubject<ParamMap>(convertToParamMap({}));
@@ -66,6 +69,7 @@ describe('RecipeMakerComponent', () => {
   let loginRedirectSpy: jasmine.Spy;
   let getHttpPostSpy: jasmine.Spy;
   let getHttpGetSpy: jasmine.Spy;
+  let httpPutSpy: jasmine.Spy;
 
   let router: Router;
   let recipeEntityCollectionService: RecipeEntityCollectionService;
@@ -89,9 +93,10 @@ describe('RecipeMakerComponent', () => {
     authFacadeSpy.authencticatedUser$ = authencticatedUser$.asObservable();
     loginRedirectSpy = authFacadeSpy.loginRedirect;
 
-    const httpSpy = jasmine.createSpyObj('HttpClient', ['post', 'get']);
+    const httpSpy = jasmine.createSpyObj('HttpClient', ['post', 'get', 'put']);
     getHttpPostSpy = httpSpy.post;
     getHttpGetSpy = httpSpy.get;
+    httpPutSpy = httpSpy.put;
 
     @NgModule({
       imports: [
@@ -226,7 +231,76 @@ describe('RecipeMakerComponent', () => {
         expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
       });
 
-    })
+      it('should create new recipe and succesfully save it on the server', fakeAsync(() => {
+        const newRecipe = { ...recipe, id: 0 };
+        getHttpPostSpy.and.returnValue(of(newRecipe).pipe(delay(1000)));
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+
+        fixture.detectChanges();
+        deRcpEditorComponent = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        rcpEditorComponent = deRcpEditorComponent.componentInstance;
+        rcpEditorComponent.createdRecipe.emit({
+          addMode: true,
+          recipe: newRecipe
+        });
+
+        const recipes: Recipe[] = [ {...recipe, id: 2000 } ];
+        const expected = cold('a', { a: recipes });
+        expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
+        let expectedLoading = cold('a', { a: true } );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        
+        // fixture.detectChanges();
+        // const snackBar = deRcpEditorComponent.nativeElement.closest('body').querySelector('.cdk-overlay .mat-snack-bar-container')
+        // expect(snackBar).toBeTruthy('snackbar is shown');
+
+        tick(1001);
+        fixture.detectChanges();
+
+        expectedLoading = cold('a', { a: false} );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        tick(1000);
+      }));
+
+      it('should create new recipe and cancel Persistant because of the error on the server', fakeAsync(() => {
+        const error: HttpErrorResponse = new HttpErrorResponse({
+          error: new Error('recipe is not saved'),
+          status: 400,
+          url: 'api/recipe/1001'
+        });
+        const newRecipe = { ...recipe, id: 0 };
+
+        getHttpPostSpy.and.returnValue(throwError(error).pipe(delay(1000)));
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+
+        fixture.detectChanges();
+        deRcpEditorComponent = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        rcpEditorComponent = deRcpEditorComponent.componentInstance;
+        rcpEditorComponent.createdRecipe.emit({
+          addMode: true,
+          recipe: newRecipe
+        });
+
+        const recipes: Recipe[] = [ {...recipe, id: 2000 } ];
+        const expected = cold('a', { a: recipes });
+        expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
+        let expectedLoading = cold('a', { a: true } );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        
+        // fixture.detectChanges();
+        // const snackBar = deRcpEditorComponent.nativeElement.closest('body').querySelector('.cdk-overlay .mat-snack-bar-container')
+        // expect(snackBar).toBeTruthy('snackbar is shown');
+
+        tick(1001);
+        fixture.detectChanges();
+
+        expectedLoading = cold('a', { a: false} );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        tick(1000);
+      }));
+
+
+    });
 
     describe(`route='/edit-recipe/:id'; recipe is in persistant state`, () => {
       const path = '/edit-recipe/1001';
@@ -237,7 +311,7 @@ describe('RecipeMakerComponent', () => {
         // navigate to RecipeMakerComponent
         router.navigate([path]);
         // intercept the call to server; route '/api/recipes/totalN'
-        loadTotalNSpy.and.returnValue(of(2));
+        loadTotalNSpy.and.returnValue(of(1));
         // getHttpGetSpy.and.returnValue(of(2));
       }));
 
@@ -283,6 +357,77 @@ describe('RecipeMakerComponent', () => {
         const matSpinner = fixture.debugElement.query(By.css('.mat-spinner'));
         expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
       });
+
+      it('should update new recipe and succesfully save it on the server', fakeAsync(() => {
+        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', title_slugged: 'another-recipe' };
+        httpPutSpy.and.returnValue(of(updatedRecipe).pipe(delay(1000)));
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+
+        fixture.detectChanges();
+        deRcpEditorComponent = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        rcpEditorComponent = deRcpEditorComponent.componentInstance;
+        rcpEditorComponent.createdRecipe.emit({
+          addMode: false,
+          recipe: updatedRecipe
+        });
+
+        const recipes: Recipe[] = [ updatedRecipe ];
+        const expected = cold('a', { a: recipes });
+        expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
+        let expectedLoading = cold('a', { a: true } );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        
+        // fixture.detectChanges();
+        // const snackBar = deRcpEditorComponent.nativeElement.closest('body').querySelector('.cdk-overlay .mat-snack-bar-container')
+        // expect(snackBar).toBeTruthy('snackbar is shown');
+
+        tick(1001);
+        fixture.detectChanges();
+
+        expectedLoading = cold('a', { a: false} );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        tick(1000);
+      }));
+
+      it('should update new recipe and cancel Persistant because of the error on the server', fakeAsync(() => {
+        const error: HttpErrorResponse = new HttpErrorResponse({
+          error: new Error('recipe is not saved'),
+          status: 400,
+          url: 'api/recipe/1001'
+        });
+        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', title_slugged: 'another-recipe' };
+
+        httpPutSpy.and.returnValue(throwError(error).pipe(delay(1000)));
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+
+        fixture.detectChanges();
+        deRcpEditorComponent = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        rcpEditorComponent = deRcpEditorComponent.componentInstance;
+        rcpEditorComponent.createdRecipe.emit({
+          addMode: false,
+          recipe: updatedRecipe
+        });
+
+        // recipe should be saved in Persistant State
+        const recipes: Recipe[] = [ updatedRecipe ];
+        const expected = cold('a', { a: recipes });
+        expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
+        let expectedLoading = cold('a', { a: true } );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        
+        // fixture.detectChanges();
+        // const snackBar = deRcpEditorComponent.nativeElement.closest('body').querySelector('.cdk-overlay .mat-snack-bar-container')
+        // expect(snackBar).toBeTruthy('snackbar is shown');
+
+        tick(1001);
+        fixture.detectChanges();
+
+        expectedLoading = cold('a', { a: false} );
+        expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
+        tick(1000);
+      }));
+
+
 
     });
 
@@ -394,7 +539,7 @@ describe('RecipeMakerComponent', () => {
         tick(1200);
       }));
 
-
+    
     });
   });
 
