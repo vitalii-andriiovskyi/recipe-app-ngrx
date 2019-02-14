@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { take, tap, takeUntil } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
 import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
@@ -20,11 +20,13 @@ import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, Cr
     ])
   ]
 })
-export class RecipeEditorComponent implements OnInit {
+export class RecipeEditorComponent implements OnInit, OnDestroy {
   @Input() recipe$: Observable<Recipe>;
   @Input() username: string;
 
   @Output() createdRecipe = new EventEmitter<CreatedRecipeEvtObj>();
+
+  private _destroy$ = new Subject();
 
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
@@ -65,16 +67,21 @@ export class RecipeEditorComponent implements OnInit {
 
   ngOnInit() {
     this.recipe$.pipe(
-      take(1), // maybe I should use 'takeUntil' and additional Subject which emits values in 'ngOnDestroy'
+      // take(1), // maybe I should use 'takeUntil' and additional Subject which emits values in 'ngOnDestroy'
       tap(rcp => {
         // gets recipe and fills the form in order to update the existing recipe
         if (rcp) { 
           this.addMode = false;
           this.fillRecipeForm(rcp);
         }
-      })
+      }),
+      takeUntil(this._destroy$)
     ).subscribe();
 
+  }
+
+  ngOnDestroy() {
+    this._destroy$.next();
   }
 
   createIngredient(): FormGroup {
