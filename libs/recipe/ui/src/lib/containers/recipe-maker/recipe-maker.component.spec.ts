@@ -1,14 +1,14 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { RecipeMakerComponent } from './recipe-maker.component';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { User, Recipe } from '@recipe-app-ngrx/models';
 import { RecipeEditorComponent } from '../../components/recipe-editor/recipe-editor.component';
 import { Component, NgModule, DebugElement } from '@angular/core';
 import { NxModule } from '@nrwl/nx';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { NgrxDataModule } from 'ngrx-data';
+import { NgrxDataModule, EntityOp, EntityDataService, DataServiceError, RequestData } from 'ngrx-data';
 import { RcpEntityStoreModule } from '@recipe-app-ngrx/rcp-entity-store';
 import { TemporaryIdGenerator, ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +20,8 @@ import { By } from '@angular/platform-browser';
 import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 import { cold } from 'jasmine-marbles';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
+import { delay } from 'rxjs/operators';
 
 const recipe: Recipe = {
   id: 1001,
@@ -66,6 +68,11 @@ describe('RecipeMakerComponent', () => {
   let getHttpGetSpy: jasmine.Spy;
 
   let router: Router;
+  let recipeEntityCollectionService: RecipeEntityCollectionService;
+  let recipeDataService: any;
+  let entityDataService: EntityDataService;
+  let loadTotalNSpy: jasmine.Spy;
+  let getByIdSpy: jasmine.Spy;
 
   const user = {
     _id: '',
@@ -127,9 +134,14 @@ describe('RecipeMakerComponent', () => {
     fixture.detectChanges();
     router = TestBed.get(Router);
     deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+
+    entityDataService = TestBed.get(EntityDataService);
+    recipeDataService = entityDataService.getService('Recipe');
+    loadTotalNSpy = spyOn(recipeDataService, 'getTotalNRecipes');
+    getByIdSpy = spyOn(recipeDataService, 'getById');
   });
 
-  describe(`loggedIn='false' and user isn't authenticated`, () => {
+  describe(`loggedIn='false'; user isn't authenticated`, () => {
     it(`shouldn't create RecipeMakerComponent; route='/create-recipe'`, fakeAsync(() => {
       const path = '/create-recipe';
       expect(deRcpMakerComponent).toBeFalsy(`there's no the RecipeMakerComponent`);
@@ -154,7 +166,7 @@ describe('RecipeMakerComponent', () => {
   });
 
 
-  describe(`loggedIn='true' and user isn authenticated`, () => {
+  describe(`loggedIn='true'; user is authenticated`, () => {
     beforeEach(async(() => {
       loggedIn$.next(true);
       authencticatedUser$.next(user);
@@ -169,7 +181,8 @@ describe('RecipeMakerComponent', () => {
         // pass data to ActivatedRoute.paramMap
         activatedRouteParamMap$.next(convertToParamMap({}));
         // intercept the call to server; route '/api/recipes/totalN'
-        getHttpGetSpy.and.returnValue(of(2));
+        loadTotalNSpy.and.returnValue(of(2));
+        // getHttpGetSpy.and.returnValue(of(2));
       }));
 
       it(`component should be created`, () => {
@@ -214,6 +227,175 @@ describe('RecipeMakerComponent', () => {
       });
 
     })
+
+    describe(`route='/edit-recipe/:id'; recipe is in persistant state`, () => {
+      const path = '/edit-recipe/1001';
+
+      beforeEach(async(() => {
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+        recipeEntityCollectionService.createAndDispatch(EntityOp.ADD_ONE, recipe);
+        // navigate to RecipeMakerComponent
+        router.navigate([path]);
+        // intercept the call to server; route '/api/recipes/totalN'
+        loadTotalNSpy.and.returnValue(of(2));
+        // getHttpGetSpy.and.returnValue(of(2));
+      }));
+
+      it(`component should be created`, () => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        expect(deRcpMakerComponent).toBeTruthy('is created');
+      });
+
+      it(`recipeById$ and recipe$ pass 'recipe'`, () => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        rcpMakerComponent = deRcpMakerComponent.componentInstance;
+
+        const expected = cold('a', { a: recipe });
+        expect(rcpMakerComponent.recipeById$).toBeObservable(expected);
+        expect(rcpMakerComponent.recipe$).toBeObservable(expected);
+      });
+
+      it(`loading$ pass false`, fakeAsync(() => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        rcpMakerComponent = deRcpMakerComponent.componentInstance;
+        rcpMakerComponent.loading$.subscribe(val => {
+          expect(val).toBeFalsy('loading$ passes false');
+        });
+
+        tick(1000);
+      }));
+
+      it(`RecipeEditorComponent is created; .error and mat-spinner aren't created`, () => {
+        fixture.detectChanges();
+
+        const rcpEditorComp = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeTruthy('RecipeEditorComponent is created');
+        expect(rcpEditorComp.componentInstance.recipeForm.value.id).toBe(recipe.id, recipe.id);
+
+        const errorContainer = fixture.debugElement.query(By.css('.error'));
+        expect(errorContainer).toBeFalsy('.error isn\'t created');
+        const matSpinner = fixture.debugElement.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
+      });
+
+    });
+
+    describe(`route='/edit-recipe/:id'; recipe isn't in persistant state`, () => {
+      const path = '/edit-recipe/1000';
+      const recipe100: Recipe = { ...recipe, id: 1000 };
+
+      beforeEach(async(() => {
+        recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+        
+      }));
+
+      it(`component should be created`, fakeAsync(() => {
+        // intercept the call to server; route '/api/recipes/totalN'
+        loadTotalNSpy.and.returnValue(of(2));
+        getByIdSpy.and.returnValue(of(recipe100).pipe(delay(1)) );
+        // navigate to RecipeMakerComponent
+        router.navigate([path]);
+        
+        tick();
+        fixture.detectChanges();
+
+        deRcpMakerComponent = fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        expect(deRcpMakerComponent).toBeTruthy('is created');
+        tick(1200);
+
+      }));
+
+      it(`should load recipe from the server`, fakeAsync(() => {
+        // intercept the call to server; route '/api/recipes/totalN'
+        loadTotalNSpy.and.returnValue(of(2));
+        getByIdSpy.and.returnValue(of(recipe100).pipe(delay(1000)) );
+        // navigate to RecipeMakerComponent
+        router.navigate([path]);
+        
+        tick(1);
+        fixture.detectChanges();
+        tick(1);
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        let matSpinner = deRcpMakerComponent.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+        let error = deRcpMakerComponent.query(By.css('.error'));
+        expect(error).toBeFalsy(`there's no .error Element`);
+        let rcpEditorComp = deRcpMakerComponent.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeFalsy('RecipeEditorComponent isn\'t created');
+
+        tick(1001);
+        fixture.detectChanges();
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        matSpinner = deRcpMakerComponent.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeFalsy('mat-spinner shows loading');
+        
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        rcpMakerComponent = deRcpMakerComponent.componentInstance;
+        const expected = cold('a', { a: recipe100 });
+        expect(rcpMakerComponent.recipe$).toBeObservable(expected);
+
+        rcpEditorComp = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeTruthy('RecipeEditorComponent is created');
+        expect(rcpEditorComp.componentInstance.recipeForm.value.id).toBe(recipe100.id, recipe100.id);
+
+        error = deRcpMakerComponent.query(By.css('.error'));
+        expect(error).toBeFalsy(`there's no .error Element`);
+
+        tick(1200);
+      }));
+
+      it(`should show the error when can't load recipe from the server`, fakeAsync(() => {
+        const reqData: RequestData = {
+          method: 'GET',
+          url: 'api/recipe/1000'
+        }
+        const err = new DataServiceError(new Error('error'), reqData);
+        // intercept the call to server; route '/api/recipes/totalN'
+        loadTotalNSpy.and.returnValue(of(2));
+        getByIdSpy.and.returnValue(throwError(err).pipe(delay(1000)) );
+        // navigate to RecipeMakerComponent
+        router.navigate([path]);
+        
+        tick(1);
+        fixture.detectChanges();
+        tick(1);
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        let matSpinner = deRcpMakerComponent.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+        let error = deRcpMakerComponent.query(By.css('.error'));
+        expect(error).toBeFalsy(`there's no .error Element`);
+        let rcpEditorComp = deRcpMakerComponent.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeFalsy('RecipeEditorComponent isn\'t created');
+
+        tick(1001);
+        fixture.detectChanges();
+        
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        matSpinner = deRcpMakerComponent.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeFalsy('mat-spinner shows loading');
+
+        rcpEditorComp = deRcpMakerComponent.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeFalsy('RecipeEditorComponent isn\'t created');
+        
+        error = deRcpMakerComponent.query(By.css('.error'));
+        expect(error).toBeTruthy(`there's no .error Element`);
+
+        tick(1200);
+      }));
+
+
+    });
   });
 
 });
