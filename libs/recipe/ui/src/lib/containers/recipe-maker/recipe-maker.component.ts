@@ -90,4 +90,26 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 
+  manageByCreatedRecipe(ev: CreatedRecipeEvtObj) {
+    if (ev.addMode) {
+      this.recipeEntityService.add(ev.recipe, { tag: this.componentName }).pipe(
+        tap(() => this.openSnackBar('Recipe saved', '&#10006;')),
+        catchError(err => {
+          const correlationId = err.payload ? err.payload.entity.id : err.requestData.data.id;
+          this.recipeEntityService.cancel(correlationId, '', { tag: this.componentName });
+          return of({})
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe();
+    } else {
+      this.recipeEntityService.update(ev.recipe, { tag: this.componentName });      
+    }
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 1000,
+    });
+  }
+
 }
