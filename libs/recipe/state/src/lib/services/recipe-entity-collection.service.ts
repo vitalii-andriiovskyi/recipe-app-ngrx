@@ -112,7 +112,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     )
 
     const result$ = merge(recipeWithoutId$, recipeWithId$).pipe(
-      switchMap(rcp => super.add(rcp))
+      switchMap(rcp => super.add(rcp, options))
     )
 
     return result$;
