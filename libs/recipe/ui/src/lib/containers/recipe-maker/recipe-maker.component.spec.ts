@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { RecipeMakerComponent } from './recipe-maker.component';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { User, Recipe } from '@recipe-app-ngrx/models';
 import { RecipeEditorComponent } from '../../components/recipe-editor/recipe-editor.component';
 import { Component, NgModule, DebugElement } from '@angular/core';
@@ -15,10 +15,11 @@ import { HttpClient } from '@angular/common/http';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { AuthFacade, AuthGuard } from '@recipe-app-ngrx/auth/state';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
+import { Router, ParamMap, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 import { cold } from 'jasmine-marbles';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const recipe: Recipe = {
   id: 1001,
@@ -55,6 +56,10 @@ describe('RecipeMakerComponent', () => {
 
   const loggedIn$ = new BehaviorSubject<boolean>(false);
   const authencticatedUser$ = new BehaviorSubject<User>(null);
+  const activatedRouteParamMap$ = new BehaviorSubject<ParamMap>(convertToParamMap({}));
+  const activatedRoute = {
+    paramMap: activatedRouteParamMap$.asObservable()
+  };
 
   let loginRedirectSpy: jasmine.Spy;
   let getHttpPostSpy: jasmine.Spy;
@@ -81,24 +86,6 @@ describe('RecipeMakerComponent', () => {
     getHttpPostSpy = httpSpy.post;
     getHttpGetSpy = httpSpy.get;
 
-    // @NgModule({
-    //   imports: [],
-    //   providers: [
-    //     { provide: ENTITY_METADATA_TOKEN, multi: true, useValue: recipeEntityMetadata },
-    //     // { provide: RecipeDataService, useValue: recipeDataServiceSpy }
-    //     RecipeDataService,
-    //     EntityCollectionReducerRegistry
-    //   ]
-    // })
-    // class CustomFeatureModule {
-    //   constructor(
-    //     entityDataService: EntityDataService,
-    //     recipeDataService: RecipeDataService,
-    //   ) {
-    //     entityDataService.registerService('Recipe', recipeDataService);
-    //   }
-    // }
-
     @NgModule({
       imports: [
         NxModule.forRoot(),
@@ -107,12 +94,6 @@ describe('RecipeMakerComponent', () => {
         // StoreRouterConnectingModule.forRoot(),
         RcpEntityStoreModule,
       ],
-      // providers: [ RecipeEntityCollectionService ]
-      // providers: [
-      //   AppEntityServices,
-      //   { provide: EntityServices, useExisting: AppEntityServices },
-      //   { provide: ENTITY_COLLECTION_META_REDUCERS, useValue: [recipeMetaReducer] }
-      // ]
     })
     class RootModule {}
  
@@ -120,6 +101,7 @@ describe('RecipeMakerComponent', () => {
       imports: [ 
         RootModule,
         SharedComponentsModule,
+        NoopAnimationsModule,
         RouterTestingModule.withRoutes([
           { path: 'create-recipe', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
           { path: 'edit-recipe/:id', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
@@ -133,6 +115,7 @@ describe('RecipeMakerComponent', () => {
         { provide: AuthFacade, useValue: authFacadeSpy },
         { provide: HttpClient, useValue: httpSpy },
         { provide: ENV_RCP, useValue: { production: false } },
+        { provide: ActivatedRoute, useValue: activatedRoute },
         LogService
       ]
     }).compileComponents();
@@ -171,8 +154,67 @@ describe('RecipeMakerComponent', () => {
   });
 
 
+  describe(`loggedIn='true' and user isn authenticated`, () => {
+    beforeEach(async(() => {
+      loggedIn$.next(true);
+      authencticatedUser$.next(user);
+    }));
 
+    describe(`route='/create-recipe'`, () => {
+      const path = '/create-recipe';
+
+      beforeEach(async(() => {
+        // navigate to RecipeMakerComponent
+        router.navigate([path]);
+        // pass data to ActivatedRoute.paramMap
+        activatedRouteParamMap$.next(convertToParamMap({}));
+        // intercept the call to server; route '/api/recipes/totalN'
+        getHttpGetSpy.and.returnValue(of(2));
+      }));
+
+      it(`component should be created`, () => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        expect(deRcpMakerComponent).toBeTruthy('is created');
+      });
+
+      it(`nonRecipe$ and recipe$ pass null`, () => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        rcpMakerComponent = deRcpMakerComponent.componentInstance;
+
+        const expected = cold('a', { a: null });
+        expect(rcpMakerComponent.nonRecipe$).toBeObservable(expected);
+        expect(rcpMakerComponent.recipe$).toBeObservable(expected);
+      });
  
+      it(`loading$ pass false`, fakeAsync(() => {
+        fixture.detectChanges();
+
+        deRcpMakerComponent =  fixture.debugElement.query(By.css('rcp-recipe-maker'));
+        rcpMakerComponent = deRcpMakerComponent.componentInstance;
+        rcpMakerComponent.loading$.subscribe(val => {
+          expect(val).toBeFalsy('loading$ passes false');
+        });
+
+        tick(1000);
+      }));
+
+      it(`RecipeEditorComponent is created; .error and mat-spinner aren't created`, () => {
+        fixture.detectChanges();
+
+        const rcpEditorComp = fixture.debugElement.query(By.css('rcp-recipe-editor'));
+        expect(rcpEditorComp).toBeTruthy('RecipeEditorComponent is created');
+        const errorContainer = fixture.debugElement.query(By.css('.error'));
+        expect(errorContainer).toBeFalsy('.error isn\'t created');
+        const matSpinner = fixture.debugElement.query(By.css('.mat-spinner'));
+        expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
+      });
+
+    })
+  });
 
 });
 
