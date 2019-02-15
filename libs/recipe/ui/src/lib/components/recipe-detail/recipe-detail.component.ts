@@ -12,7 +12,10 @@ export class RecipeDetailComponent implements OnInit {
   @Input() recipe: Recipe;
 
   displayedColumns = ['ingredientName', 'ingredientQuantity'];
-  
+  categoriesList = recipeCategoriesList;
+  categoryName: string;
+  categoryUrl: string;
+
   constructor() { }
 
   ngOnInit() {
