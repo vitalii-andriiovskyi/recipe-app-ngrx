@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Recipe, recipeCategoriesList } from '@recipe-app-ngrx/models';
 
 @Component({
   selector: 'rcp-recipe-detail',
@@ -7,7 +8,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeDetailComponent implements OnInit {
+  @Input() loggedIn: boolean;
+  @Input() recipe: Recipe;
 
+  displayedColumns = ['ingredientName', 'ingredientQuantity'];
+  
   constructor() { }
 
   ngOnInit() {
