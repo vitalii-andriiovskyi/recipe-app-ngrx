@@ -166,7 +166,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     if (typeof item.category === 'string') {
       result = item.category === category;
     } else {
-      result = item.category.indexOf(category) > -1;
+      result = item.category.url === category;
     }
     return result;
   }
