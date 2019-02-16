@@ -2,13 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, Subject, merge, of } from 'rxjs';
 import { tap, map, filter, switchMap, takeUntil, shareReplay, delay, catchError } from 'rxjs/operators';
+import { ofEntityOp, EntityOp } from 'ngrx-data';
+import { MatSnackBar } from '@angular/material';
 
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe, CreatedRecipeEvtObj, User } from '@recipe-app-ngrx/models';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
-import { ofEntityOp, EntityOp } from 'ngrx-data';
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
-import { MatSnackBar } from '@angular/material';
+import { RecipeMaker } from '../../services/recipe-maker';
 
 @Component({
   selector: 'rcp-recipe-maker',
@@ -27,13 +28,14 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
   error$: Observable<string>;
   loading$: Observable<boolean>;
 
-  user$: Observable<{}>;
+  username: string;
   paramMapId: string;
   constructor(
     private activatedRoute: ActivatedRoute, 
     private appEntityServices: AppEntityServices,
     private authFacade: AuthFacade,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private recipeMaker: RecipeMaker
   ) {
     this.recipeEntityService = appEntityServices.recipeEntityCollectionService;
   }
@@ -83,7 +85,10 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
     );
 
     this.recipeEntityService.loadTotalNRecipes('RecipeMakerComponent');
-    this.user$ = this.authFacade.authencticatedUser$;
+    this.authFacade.authencticatedUser$.pipe(
+      tap(user => this.username = user['username']),
+      takeUntil(this.destroy$)
+    ).subscribe();
   }
 
   ngOnDestroy() {
@@ -91,8 +96,9 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
   }
 
   manageByCreatedRecipe(ev: CreatedRecipeEvtObj) {
+    const recipe = this.recipeMaker.create({... ev.recipe, user_username: this.username, date_created: new Date(), category: { url: ev.recipe.category}});
     if (ev.addMode) {
-      this.recipeEntityService.add(ev.recipe, { tag: this.componentName }).pipe(
+      this.recipeEntityService.add(recipe, { tag: this.componentName }).pipe(
         tap(() => this.openSnackBar('Recipe saved', '&#10006;')),
         catchError(err => {
           const correlationId = err.payload ? err.payload.entity.id : err.requestData.data.id;
@@ -102,10 +108,10 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       ).subscribe();
     } else {
-      this.recipeEntityService.update(ev.recipe, { tag: this.componentName });      
+      this.recipeEntityService.update(recipe, { tag: this.componentName });      
     }
   }
-
+  
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 1000,
