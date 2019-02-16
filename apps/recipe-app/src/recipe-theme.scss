@@ -49,12 +49,12 @@ $primary: map-get($recipe-app-theme, primary);
 $warn: map-get($recipe-app-theme, warn);
 
 $recipe-typography: mat-typography-config(
-  $headline: mat-typography-level(2.5em, 1.5, 500),
-  $title: mat-typography-level(2em, 1.5, 500),
-  $subheading-2: mat-typography-level(1.5em, 1.5, 500),
-  $subheading-1: mat-typography-level(1em, 1.5, 500),
+  $headline: mat-typography-level(2.2em, 1.5, 300),
+  $title: mat-typography-level(1.8em, 1.5, 300),
+  $subheading-2: mat-typography-level(1.3em, 1.5, 300),
+  $subheading-1: mat-typography-level(1em, 1.5, 300),
   $body-1: mat-typography-level(16px, 1.6, 300),
-  $body-2: mat-typography-level(16px, 1.6, 500),
-  $button: mat-typography-level(16px, 1.6, 500),
+  $body-2: mat-typography-level(16px, 1.6, 300),
+  $button: mat-typography-level(16px, 1.6, 300),
   $input: mat-typography-level(16px, 1.125, 400)
 );
