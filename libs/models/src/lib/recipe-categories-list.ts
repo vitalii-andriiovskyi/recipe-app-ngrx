@@ -1,6 +1,6 @@
 // Maybe this file shouldn't be in this this lib. But for this test project it could be
 export interface RecipeCategory {
-  value: string;
+  value?: string;
   url: string;
 }
 
