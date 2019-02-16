@@ -35,7 +35,7 @@ describe('RecipeEntityCollectionService', () => {
     cookTime: 12,
     servingsNumber: 6,
 
-    category: 'dessert',
+    category: { url: 'dessert', value: 'Desserts'},
     user_username: 'rcp_user',
     date_created: new Date(),
   };
@@ -214,19 +214,19 @@ describe('RecipeEntityCollectionService', () => {
       expect(belognsToCategory).toBeFalsy('false');
     });
 
-    it(`should return 'true' when category of the recipe is string[]`, () => {
-      const anotherRecipe: Recipe = { ...recipe };
-      anotherRecipe.category = ['dessert', 'cookie'];
-      const belognsToCategory = recipeEntityCollectionService.belongToCategory('dessert', recipe);
-      expect(belognsToCategory).toBeTruthy('true');
-    });
+    // it(`should return 'true' when category of the recipe is string[]`, () => {
+    //   const anotherRecipe: Recipe = { ...recipe };
+    //   anotherRecipe.category = ['dessert', 'cookie'];
+    //   const belognsToCategory = recipeEntityCollectionService.belongToCategory('dessert', recipe);
+    //   expect(belognsToCategory).toBeTruthy('true');
+    // });
 
-    it(`should return 'true' when category of the recipe is string[]`, () => {
-      const anotherRecipe: Recipe = { ...recipe };
-      anotherRecipe.category = ['dessert', 'cookie'];
-      const belognsToCategory = recipeEntityCollectionService.belongToCategory('salad', recipe);
-      expect(belognsToCategory).toBeFalsy('false');
-    });
+    // it(`should return 'true' when category of the recipe is string[]`, () => {
+    //   const anotherRecipe: Recipe = { ...recipe };
+    //   anotherRecipe.category = ['dessert', 'cookie'];
+    //   const belognsToCategory = recipeEntityCollectionService.belongToCategory('salad', recipe);
+    //   expect(belognsToCategory).toBeFalsy('false');
+    // });
   });
 
   describe(`method 'belongToUser()'`, () => {
@@ -249,7 +249,7 @@ describe('RecipeEntityCollectionService', () => {
         page: 1,
         itemsPerPage: 6
       };
-      const recipes: Recipe[] = [recipe, {...recipe, id: 1, category: 'salad'}];
+      const recipes: Recipe[] = [ recipe, { ...recipe, id: 1, category: { url: 'salad'}}];
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
       
@@ -319,7 +319,7 @@ describe('RecipeEntityCollectionService', () => {
         page: 1,
         itemsPerPage: 6
       };
-      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: 'salad'}];
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: { url: 'salad'}}];
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
       
@@ -351,7 +351,7 @@ describe('RecipeEntityCollectionService', () => {
         page: 1,
         itemsPerPage: 6
       };
-      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: 'salad'}];
+      const recipes: Recipe[] = [recipe, {...recipe, id: 1, user_username: 'test_user', category: { url: 'salad'}}];
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
       recipeEntityCollectionService.createAndDispatch(EntityOp.QUERY_ALL_SUCCESS, recipes, { tag: 'API' });
       
@@ -370,9 +370,9 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', date_created: new Date(4)},
-        {...recipe, id: 3, category: 'salad', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, date_created: new Date(4)},
+        {...recipe, id: 3, category: { url: 'salad'}, date_created: new Date(5)}
       ];
 
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
@@ -391,9 +391,9 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: '_user', date_created: new Date(4)},
-        {...recipe, id: 3, category: 'salad', user_username: 'test_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: '_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(5)}
       ];
 
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
@@ -412,9 +412,9 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: '_user', date_created: new Date(4)},
-        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: '_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: { url: 'salad'}, user_username: 'te_user', date_created: new Date(5)}
       ];
 
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
@@ -433,9 +433,9 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
-        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: { url: 'salad'}, user_username: 'te_user', date_created: new Date(5)}
       ];
 
       recipeEntityCollectionService.createAndDispatch(RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
@@ -456,8 +456,8 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         // recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(4)},
         // {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
       ];
       
@@ -481,9 +481,9 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
-        {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 3, category: { url: 'salad'}, user_username: 'te_user', date_created: new Date(5)}
       ];
       
       // getHttpGetSpy.and.returnValue(of(recipes));
@@ -512,12 +512,12 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
       ];
 
       const response: Recipe[] = [
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'te_user', date_created: new Date(5)}
       ]
       
       getHttpGetSpy.and.returnValue(of(response));
@@ -540,8 +540,8 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         // recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(4)},
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(4)},
         // {...recipe, id: 3, category: 'salad', user_username: 'te_user', date_created: new Date(5)}
       ];
       
@@ -565,12 +565,12 @@ describe('RecipeEntityCollectionService', () => {
       };
       const recipes: Recipe[] = [
         recipe,
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
       ];
 
       const response: Recipe[] = [
-        {...recipe, id: 1, category: 'salad', user_username: 'test_user', date_created: new Date(2)},
-        {...recipe, id: 2, category: 'salad', user_username: 'test_user', date_created: new Date(5)}
+        {...recipe, id: 1, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(2)},
+        {...recipe, id: 2, category: { url: 'salad'}, user_username: 'test_user', date_created: new Date(5)}
       ]
       
       getHttpGetSpy.and.returnValue(of(response));
