@@ -19,9 +19,9 @@ export const unitGroups: UnitGroup[] = [
   {
     name: 'Spoons',
     units: [
-      { value: 'Tablespoon' },
-      { value: 'Dessert spoon' },
-      { value: 'Teaspoon' },
+      { value: 'Tablespoon(s)' },
+      { value: 'Dessert spoon(s)' },
+      { value: 'Teaspoon(s)' },
     ]
   },
   { 
@@ -30,6 +30,13 @@ export const unitGroups: UnitGroup[] = [
       { value: 'kg' },
       { value: 'g' },
       { value: 'lb' }
+    ]
+  },
+  { 
+    name: 'Others' ,
+    units: [
+      { value: 'piece(s)' },
+      { value: 'unit(s)' },
     ]
   },
 ]
