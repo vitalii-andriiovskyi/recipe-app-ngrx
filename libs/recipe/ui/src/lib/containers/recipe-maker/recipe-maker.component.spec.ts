@@ -44,7 +44,7 @@ const recipe: Recipe = {
   cookTime: 12,
   servingsNumber: 6,
 
-  category: 'desserts',
+  category: { url: 'desserts' },
   user_username: 'test_user',
   date_created: new Date(),
 };
@@ -80,7 +80,7 @@ describe('RecipeMakerComponent', () => {
 
   const user = {
     _id: '',
-    username: 'test_name',
+    username: 'test_user',
     password: '',
     firstName: '',
     lastName: '',
@@ -232,7 +232,13 @@ describe('RecipeMakerComponent', () => {
       });
 
       it('should create new recipe and succesfully save it on the server', fakeAsync(() => {
-        const newRecipe = { ...recipe, id: 0 };
+        const newRecipe = { ...recipe, id: 0, category: { value: 'Desserts', url: 'desserts'}};
+        const recipeFormValue: any = { ...newRecipe };
+        recipeFormValue.category = recipeFormValue.category.url;
+        delete recipeFormValue.date_created;
+        delete recipeFormValue.title_slugged;
+        delete recipeFormValue.user_username;
+
         getHttpPostSpy.and.returnValue(of(newRecipe).pipe(delay(1000)));
         recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
 
@@ -241,10 +247,10 @@ describe('RecipeMakerComponent', () => {
         rcpEditorComponent = deRcpEditorComponent.componentInstance;
         rcpEditorComponent.createdRecipe.emit({
           addMode: true,
-          recipe: newRecipe
+          recipe: recipeFormValue
         });
 
-        const recipes: Recipe[] = [ {...recipe, id: 2000 } ];
+        const recipes: Recipe[] = [ {...newRecipe, id: 2000 } ];
         const expected = cold('a', { a: recipes });
         expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
         let expectedLoading = cold('a', { a: true } );
@@ -268,7 +274,13 @@ describe('RecipeMakerComponent', () => {
           status: 400,
           url: 'api/recipe/1001'
         });
-        const newRecipe = { ...recipe, id: 0 };
+        const newRecipe = { ...recipe, id: 0, category: { value: 'Desserts', url: 'desserts'}};
+        const recipeFormValue: any = { ...newRecipe };
+        
+        recipeFormValue.category = recipeFormValue.category.url;
+        delete recipeFormValue.date_created;
+        delete recipeFormValue.title_slugged;
+        delete recipeFormValue.user_username;
 
         getHttpPostSpy.and.returnValue(throwError(error).pipe(delay(1000)));
         recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
@@ -278,10 +290,10 @@ describe('RecipeMakerComponent', () => {
         rcpEditorComponent = deRcpEditorComponent.componentInstance;
         rcpEditorComponent.createdRecipe.emit({
           addMode: true,
-          recipe: newRecipe
+          recipe: recipeFormValue
         });
 
-        const recipes: Recipe[] = [ {...recipe, id: 2000 } ];
+        const recipes: Recipe[] = [ {...newRecipe, id: 2000 } ];
         const expected = cold('a', { a: recipes });
         expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
         let expectedLoading = cold('a', { a: true } );
@@ -359,7 +371,14 @@ describe('RecipeMakerComponent', () => {
       });
 
       it('should update new recipe and succesfully save it on the server', fakeAsync(() => {
-        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', title_slugged: 'another-recipe' };
+        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', category: { value: 'Desserts', url: 'desserts'} };
+        const recipeFormValue: any = { ...updatedRecipe };
+        
+        recipeFormValue.category = recipeFormValue.category.url;
+        delete recipeFormValue.date_created;
+        delete recipeFormValue.title_slugged;
+        delete recipeFormValue.user_username;
+
         httpPutSpy.and.returnValue(of(updatedRecipe).pipe(delay(1000)));
         recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
 
@@ -368,10 +387,11 @@ describe('RecipeMakerComponent', () => {
         rcpEditorComponent = deRcpEditorComponent.componentInstance;
         rcpEditorComponent.createdRecipe.emit({
           addMode: false,
-          recipe: updatedRecipe
+          recipe: recipeFormValue
         });
 
-        const recipes: Recipe[] = [ updatedRecipe ];
+        // UpdatedRecipe still has `title_slugged=recipe-1`. RecipeMaker will rewrite it to right one, which is correct
+        const recipes: Recipe[] = [ {...updatedRecipe, title_slugged: 'another-recipe'} ];
         const expected = cold('a', { a: recipes });
         expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
         let expectedLoading = cold('a', { a: true } );
@@ -395,7 +415,13 @@ describe('RecipeMakerComponent', () => {
           status: 400,
           url: 'api/recipe/1001'
         });
-        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', title_slugged: 'another-recipe' };
+        const updatedRecipe: Recipe = {...recipe, title: 'Another recipe', category: { value: 'Desserts', url: 'desserts'} };
+        const recipeFormValue: any = { ...updatedRecipe };
+        
+        recipeFormValue.category = recipeFormValue.category.url;
+        delete recipeFormValue.date_created;
+        delete recipeFormValue.title_slugged;
+        delete recipeFormValue.user_username;
 
         httpPutSpy.and.returnValue(throwError(error).pipe(delay(1000)));
         recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
@@ -405,12 +431,14 @@ describe('RecipeMakerComponent', () => {
         rcpEditorComponent = deRcpEditorComponent.componentInstance;
         rcpEditorComponent.createdRecipe.emit({
           addMode: false,
-          recipe: updatedRecipe
+          recipe: recipeFormValue
         });
 
         // recipe should be saved in Persistant State
-        const recipes: Recipe[] = [ updatedRecipe ];
+        // UpdatedRecipe still has `title_slugged=recipe-1`. RecipeMaker will rewrite it to right one, which is correct
+        const recipes: Recipe[] = [ {...updatedRecipe, title_slugged: 'another-recipe'} ];
         const expected = cold('a', { a: recipes });
+        // Can't compare dates. Dates are the same in comparing objects, however dates objects are different;
         expect(recipeEntityCollectionService.entities$).toBeObservable(expected);
         let expectedLoading = cold('a', { a: true } );
         expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
