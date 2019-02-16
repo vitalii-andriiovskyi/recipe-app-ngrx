@@ -5,7 +5,7 @@
       <mat-spinner *ngIf="loading$ | async; else rcpEditor" diameter="70" strokeWidth="5" mode="indeterminate"></mat-spinner>
       <ng-template #rcpEditor>
     
-    <rcp-recipe-editor *ngIf="!(paramMapId && !(recipe$ | async))" [username]="(user$ | async)?.username" 
+    <rcp-recipe-editor *ngIf="!(paramMapId && !(recipe$ | async))" 
                              [recipe$]="recipe$" 
                              (createdRecipe)="manageByCreatedRecipe($event)"></rcp-recipe-editor>
       </ng-template>
