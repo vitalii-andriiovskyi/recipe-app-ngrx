@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { take, tap, takeUntil } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
-import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, RecipeMaker } from '@recipe-app-ngrx/models';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj } from '@recipe-app-ngrx/models';
 
 @Component({
   selector: 'rcp-recipe-editor',
@@ -22,7 +22,6 @@ import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, Cr
 })
 export class RecipeEditorComponent implements OnInit, OnDestroy {
   @Input() recipe$: Observable<Recipe>;
-  @Input() username: string;
 
   @Output() createdRecipe = new EventEmitter<CreatedRecipeEvtObj>();
 
@@ -104,14 +103,12 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
   removeStep(id: number) { this.steps.removeAt(id); }
 
   saveRecipe() {
-    let recipe: Recipe;
     const { valid, dirty, value} = this.recipeForm;
     
     if (valid && dirty) {
-      recipe = RecipeMaker.create({...value, user_username: this.username, date_created: new Date()});
       this.createdRecipe.emit({
         addMode: this.addMode,
-        recipe: recipe
+        recipe: value
       });
     }
   }
@@ -121,6 +118,7 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
     delete rcp.title_slugged;
     delete rcp.date_created;
     delete rcp.user_username;
+    rcp.category = rcp.category.url;
 
     this.recipeForm.setValue(rcp);
   }
