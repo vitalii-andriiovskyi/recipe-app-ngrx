@@ -1,3 +1,4 @@
+<!-- .breadcrump should be extracted into separate Component -->
 <div class="breadcrump">
   <div class="breadcrump-item"><a [routerLink]="['/']">Home</a></div>
   <div class="breadcrump-item"><a [routerLink]="['/recipes', 'all']">Recipes</a></div>
@@ -59,7 +60,7 @@
     <header>
       <h2 class="mat-h2">Directions</h2>
       <div fxLayout="row" fxLayoutAlign="start center"
-           *ngIf="recipe.preparationTime && recipe.cookTime" class="cooking-time-info icon-wrapper-prepend">
+           *ngIf="recipe.preparationTime || recipe.cookTime" class="cooking-time-info icon-wrapper-prepend">
         <div><mat-icon color="primary">access_time</mat-icon></div>
         
         <div *ngIf="recipe.preparationTime">
