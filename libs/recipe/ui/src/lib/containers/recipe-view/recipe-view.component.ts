@@ -2,8 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
-import { Subject } from 'rxjs';
+import { Subject, Observable, combineLatest } from 'rxjs';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
+import { Recipe } from '@recipe-app-ngrx/models';
+import { tap, filter, map, takeUntil, shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'rcp-recipe-view',
@@ -16,6 +18,8 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
   componentName = 'RecipeViewComponent';
   recipeEntityService: RecipeEntityCollectionService;
 
+  recipe$: Observable<Recipe>;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private authFacade: AuthFacade,
@@ -25,6 +29,21 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.recipe$ = combineLatest(
+      this.activatedRoute.paramMap.pipe(map(paramMap => paramMap.get('id'))),
+      this.recipeEntityService.entityMap$
+    ).pipe(
+      map(([id, entityMap]) => {
+        const recipe = entityMap[id];
+
+        if (!recipe) {
+          this.recipeEntityService.getByKey(id, { tag: this.componentName });
+        }
+        return recipe;
+      }),
+      takeUntil(this._destroy$),
+      shareReplay(1)
+    );
   }
 
   ngOnDestroy() {
