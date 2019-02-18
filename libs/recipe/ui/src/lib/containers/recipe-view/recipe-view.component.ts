@@ -23,6 +23,8 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
   loading$: Observable<boolean>;
   error$: Observable<string>;
 
+  loggedIn$: Observable<any>;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private authFacade: AuthFacade,
@@ -59,7 +61,9 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
       // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
       delay(1),
       takeUntil(this._destroy$)
-    )
+    );
+
+    this.loggedIn$ = this.authFacade.loggedIn$;
   }
 
   ngOnDestroy() {
