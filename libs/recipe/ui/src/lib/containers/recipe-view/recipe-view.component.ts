@@ -5,7 +5,7 @@ import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
-import { tap, filter, map, takeUntil, shareReplay } from 'rxjs/operators';
+import { tap, filter, map, takeUntil, shareReplay, delay } from 'rxjs/operators';
 
 @Component({
   selector: 'rcp-recipe-view',
@@ -19,6 +19,7 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
   recipeEntityService: RecipeEntityCollectionService;
 
   recipe$: Observable<Recipe>;
+  loading$: Observable<boolean>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -43,6 +44,11 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this._destroy$),
       shareReplay(1)
+    );
+
+    this.loading$ = this.recipeEntityService.loading$.pipe(
+      delay(1),
+      takeUntil(this._destroy$)
     );
   }
 
