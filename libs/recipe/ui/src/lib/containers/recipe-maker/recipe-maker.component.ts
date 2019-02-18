@@ -52,7 +52,7 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
         const recipe = entityMap[id];
 
         if (!recipe) {
-          this.recipeEntityService.getByKey(id);
+          this.recipeEntityService.getByKey(id, { tag: this.componentName });
         }
         return recipe;
       }),
