@@ -1,3 +1,27 @@
-<p>
-  recipe-view works!
-</p>
+<!-- .breadcrump should be extracted into separate Component -->
+<!-- <div class="breadcrump">
+  <div class="breadcrump-item"><a [routerLink]="['/']">Home</a></div>
+  <div class="breadcrump-item"><a [routerLink]="['/recipes', 'all']">Recipes</a></div>
+  <div class="breadcrump-item"><a [routerLink]="['/recipes', recipe.category.url]">{{recipe.category.value}}</a></div>
+</div> -->
+ <!-- /.breadcrump -->
+
+<div class="content-wrapper">
+  <p class="error" *ngIf="error$ | async as errMessage; else loadShowRecipe">{{errMessage}}</p>
+  
+  <ng-template #loadShowRecipe>
+    <div class="recipe-detail-wrapper">
+      <p *ngIf="loading$ | async; else rcpEditor">
+        <mat-spinner diameter="70" strokeWidth="5" mode="indeterminate"></mat-spinner>
+      </p>
+      
+      <ng-template #rcpEditor>
+        <rcp-recipe-detail *ngIf="recipe$ | async as recipe" 
+                           [recipe]="recipe" 
+                           [loggedIn]="loggedIn$ | async"></rcp-recipe-detail>
+      </ng-template>
+
+    </div> <!-- /.recipe-detail-wrapper -->
+  </ng-template>
+
+</div> <!-- /.content-wrapper -->
