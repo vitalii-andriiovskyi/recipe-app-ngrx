@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 .container {
   width: 100%;
   max-width: 1330px;
-  padding: 0 30px;
+  padding: 0 15px;
   margin: 0 auto;
 }
 
@@ -48,11 +48,11 @@ a {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 3px;
+    bottom: 1px;
     border-bottom: 1px dotted transparent;
     transition: all 0.3s;
   }
-  &:hover {
+  &:hover:not(.mat-mini-fab) {
     text-decoration: none;
     color: mat-color($accent, 800);
     &::after {
@@ -65,13 +65,17 @@ a {
   font-weight: 400;
 }
 
+.mat-tooltip {
+  font-size: 12px;
+}
+
 .list-numbered-markers {
   margin: 0;
   padding: 0;
   list-style-type: none; 
   > li {
     position: relative;
-    padding: 0 0 40px;
+    padding: 3px 0 0 40px;
     margin: 0;
     &::before {
       position: absolute;
@@ -83,6 +87,8 @@ a {
       background-color: mat-color($accent, 800);
       color: #fff;
       font-weight: 400;
+      text-align: center;
+      line-height: 30px;
     }
   }
 }
@@ -153,11 +159,13 @@ rcp-logout-confirmation-dialog {
 } 
 
 .breadcrump {
+  display: flex;
+  flex-flow: row;
   &-item {
     position: relative;
     &:not(:last-child) {
-      padding-right: 10px;
-      margin-right: 10px;
+      padding-right: 0.7em;
+      margin-right: 0.3em;
       &:after {
         content: '/';
         position: absolute;
@@ -176,6 +184,8 @@ rcp-logout-confirmation-dialog {
 
 .recipe-item-body {
   .mat-table {
+    max-width: 600px;
+    min-width: 400px;
     thead {
       tr {
         &:first-child {
@@ -205,5 +215,13 @@ rcp-logout-confirmation-dialog {
   }
   .mat-h2 {
     font-size: 1.5em;
+  }
+
+  .recipe-item-body {
+    .mat-table {
+      min-width: 0;
+      // max-width: 400px;
+      width: 100%;
+    }
   }
 }
