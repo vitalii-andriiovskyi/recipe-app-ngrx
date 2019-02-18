@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
 import { Subject } from 'rxjs';
+import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 
 @Component({
   selector: 'rcp-recipe-view',
@@ -12,11 +13,16 @@ import { Subject } from 'rxjs';
 export class RecipeViewComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject()
 
+  componentName = 'RecipeViewComponent';
+  recipeEntityService: RecipeEntityCollectionService;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private authFacade: AuthFacade,
     private appEntityServices: AppEntityServices
-  ) { }
+  ) {
+    this.recipeEntityService = appEntityServices.recipeEntityCollectionService;
+  }
 
   ngOnInit() {
   }
