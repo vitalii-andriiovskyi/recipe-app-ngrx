@@ -1,10 +1,3 @@
-<!-- .breadcrump should be extracted into separate Component -->
-<div class="breadcrump">
-  <div class="breadcrump-item"><a [routerLink]="['/']">Home</a></div>
-  <div class="breadcrump-item"><a [routerLink]="['/recipes', 'all']">Recipes</a></div>
-  <div class="breadcrump-item"><a [routerLink]="['/recipes', recipe.category.url]">{{recipe.category.value}}</a></div>
-</div> <!-- /.breadcrump -->
-
 <header class="recipe-item-header">
   <div *ngIf="loggedIn" fxLayout="row" fxLayoutAlign="end" class="edit-btn-wrapper">
     <a [routerLink]="['/edit-recipe', recipe.id]" 
