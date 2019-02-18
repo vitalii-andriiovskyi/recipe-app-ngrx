@@ -12,24 +12,10 @@ export class RecipeDetailComponent implements OnInit {
   @Input() recipe: Recipe;
 
   displayedColumns = ['ingredientName', 'ingredientQuantity'];
-  categoriesList = recipeCategoriesList;
-  categoryName: string;
-  categoryUrl: string;
-
+  
   constructor() { }
 
   ngOnInit() {
-  }
-
-  // This method is used in RecipeEntityCollectionService. Maybe I should extract it to separate file
-  belongToCategory(category: string, item: Recipe): boolean {
-    let result: boolean;
-    if (typeof item.category === 'string') {
-      result = item.category === category;
-    } else {
-      result = item.category.indexOf(category) > -1;
-    }
-    return result;
   }
 
 }
