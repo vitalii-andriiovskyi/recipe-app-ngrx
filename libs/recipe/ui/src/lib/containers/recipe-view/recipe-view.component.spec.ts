@@ -1,16 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { Component, DebugElement, NgModule } from '@angular/core';
 import { ParamMap, convertToParamMap, ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 
 import { NxModule } from '@nrwl/nx';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { EntityOp } from 'ngrx-data';
+import { EntityOp, RequestData } from 'ngrx-data';
 
 import { RecipeViewComponent } from './recipe-view.component';
 import { Recipe } from '@recipe-app-ngrx/models';
@@ -20,6 +20,8 @@ import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
 import { RecipeDetailComponent } from '../../components/recipe-detail/recipe-detail.component';
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
+import { cold } from 'jasmine-marbles';
+import { delay } from 'rxjs/operators';
 
 const recipe: Recipe = {
   id: 1001,
@@ -148,21 +150,135 @@ describe('RecipeViewComponent', () => {
       recipeEntityCollectionService.createAndDispatch(EntityOp.ADD_ONE, recipe);
       // navigate to RecipeViewComponent
       router.navigate([path]);
+      activatedRouteParamMap$.next(convertToParamMap({id: 1001}));
     }));
 
     it(`component should be created`, () => {
       fixture.detectChanges();
 
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-maker'));
-      expect(deRcpViewComponent).toBeTruthy('is created');
+      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      expect(deRcpViewComponent).toBeTruthy('RecipeViewComponent is created');
     });
 
-    it(`should show RecipeDetailComponent`, () => {
+    it(`should show RecipeDetailComponent; .error and mat-spinner aren't created`, () => {
       fixture.detectChanges();
       
       deRcpDetailComponent = fixture.debugElement.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeTruthy('is created');
+      expect(deRcpDetailComponent).toBeTruthy('RecipeDetailComponent is created');
+
+      const errorContainer = fixture.debugElement.query(By.css('.error'));
+      expect(errorContainer).toBeFalsy('.error isn\'t created');
+      const matSpinner = fixture.debugElement.query(By.css('.mat-spinner'));
+      expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
     });
+
+    it(`recipe$ pass 'recipe'`, () => {
+      fixture.detectChanges();
+
+      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      rcpViewComponent = deRcpViewComponent.componentInstance;
+
+      const expected = cold('a', { a: recipe });
+      expect(rcpViewComponent.recipe$).toBeObservable(expected);
+    });
+
+    it(`loading$ pass false`, fakeAsync(() => {
+      fixture.detectChanges();
+
+      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      rcpViewComponent = deRcpViewComponent.componentInstance;
+      rcpViewComponent.loading$.subscribe(val => {
+        expect(val).toBeFalsy('loading$ passes false');
+      });
+
+      tick(1000);
+    }));
+  });
+
+  describe(`route='/recipe/:id'; recipe is in persistant state`, () => {
+    const path = '/recipe/1001';
+
+    beforeEach(async(() => {
+      recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+    }));
+
+    it(`should load recipe from the server`, fakeAsync(() => {
+      getHttpGetSpy.and.returnValue(of(recipe).pipe(delay(1000)) );
+      // navigate to RecipeMakerComponent
+      router.navigate([path]);
+      
+      tick(1);
+      fixture.detectChanges();
+      tick(1);
+      fixture.detectChanges();
+
+      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      let matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
+      expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+      let error = deRcpViewComponent.query(By.css('.error'));
+      expect(error).toBeFalsy(`there's no .error Element`);
+      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
+      expect(deRcpDetailComponent).toBeFalsy('RecipeDetailComponent isn\'t created');
+
+      tick(1001);
+      fixture.detectChanges();
+      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+      matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
+      expect(matSpinner).toBeFalsy('mat-spinner shows loading');
+      
+      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+      rcpViewComponent = deRcpViewComponent.componentInstance;
+      const expected = cold('a', { a: recipe });
+      expect(rcpViewComponent.recipe$).toBeObservable(expected);
+
+      deRcpDetailComponent = fixture.debugElement.query(By.css('rcp-recipe-detail'));
+      expect(deRcpDetailComponent).toBeTruthy('RecipeDetailComponent is created');
+      expect(deRcpDetailComponent.componentInstance.recipe.id).toBe(recipe.id, recipe.id);
+
+      error = deRcpViewComponent.query(By.css('.error'));
+      expect(error).toBeFalsy(`there's no .error Element`);
+
+      tick(1200);
+    }));
+
+    it(`should show the error when can't load recipe from the server`, fakeAsync(() => {
+      const errorRes: HttpErrorResponse = new HttpErrorResponse({
+        error: new Error('recipe is not saved'),
+        status: 400,
+        url: 'api/recipe/1001'
+      });
+      getHttpGetSpy.and.returnValue(throwError(errorRes).pipe(delay(1000)) );
+      // navigate to RecipeMakerComponent
+      router.navigate([path]);
+      
+      tick(1);
+      fixture.detectChanges();
+      tick(1);
+      fixture.detectChanges();
+
+      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+      let matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
+      expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+      let error = deRcpViewComponent.query(By.css('.error'));
+      expect(error).toBeFalsy(`there's no .error Element`);
+      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
+      expect(deRcpDetailComponent).toBeFalsy('RecipeEditorComponent isn\'t created');
+
+      tick(1001);
+      fixture.detectChanges();
+      
+      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
+      expect(matSpinner).toBeFalsy('mat-spinner shows loading');
+
+      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
+      expect(deRcpDetailComponent).toBeFalsy('RecipeEditorComponent isn\'t created');
+      
+      error = deRcpViewComponent.query(By.css('.error'));
+      expect(error).toBeTruthy(`there's no .error Element`);
+
+      tick(1200);
+    }));
   });
 });
 
@@ -175,6 +291,6 @@ class PageNotFoundComponent { }
 
 @Component({
   selector: 'rcp-test',
-  template: `<div>test component</div><router-outlet></router-outlet>`
+  template: `<div>RecipeViewComponent</div><router-outlet></router-outlet>`
 })
 class TestComponent { }
