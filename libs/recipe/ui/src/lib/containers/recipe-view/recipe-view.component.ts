@@ -1,12 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { tap, map, takeUntil, shareReplay, delay } from 'rxjs/operators';
+
+import { ofEntityOp, EntityOp } from 'ngrx-data';
+
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
-import { Subject, Observable, combineLatest } from 'rxjs';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
-import { tap, filter, map, takeUntil, shareReplay, delay } from 'rxjs/operators';
-import { ofEntityOp, EntityOp } from 'ngrx-data';
 
 @Component({
   selector: 'rcp-recipe-view',
