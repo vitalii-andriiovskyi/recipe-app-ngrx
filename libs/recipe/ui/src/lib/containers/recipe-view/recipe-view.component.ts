@@ -6,6 +6,7 @@ import { Subject, Observable, combineLatest } from 'rxjs';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
 import { tap, filter, map, takeUntil, shareReplay, delay } from 'rxjs/operators';
+import { ofEntityOp, EntityOp } from 'ngrx-data';
 
 @Component({
   selector: 'rcp-recipe-view',
@@ -20,6 +21,7 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
 
   recipe$: Observable<Recipe>;
   loading$: Observable<boolean>;
+  error$: Observable<string>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -50,6 +52,14 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
       delay(1),
       takeUntil(this._destroy$)
     );
+
+    this.error$ = this.recipeEntityService.errors$.pipe(
+      ofEntityOp(EntityOp.QUERY_BY_KEY_ERROR),
+      map(errorAction => errorAction.payload.data.error ? errorAction.payload.data.error.message : 'Oops! An error occurred.'),
+      // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
+      delay(1),
+      takeUntil(this._destroy$)
+    )
   }
 
   ngOnDestroy() {
