@@ -5,12 +5,19 @@
 </div> <!-- /.breadcrump -->
 
 <header class="recipe-item-header">
+  <div *ngIf="loggedIn" fxLayout="row" fxLayoutAlign="end" class="edit-btn-wrapper">
+    <a [routerLink]="['/edit-recipe', recipe.id]" 
+        mat-mini-fab color="accent" matTooltip="Edit recipe" color="primary">
+      <mat-icon>edit</mat-icon>
+    </a>
+  </div>
+
   <h1 class="mat-h1">{{recipe.title}}</h1>
-  <div fxLayout="row" fxLayoutAlign="space-between">
-    <div>
-      <span>Recipe by:</span> <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a>
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
+    <div fxFlexOrder="1" fxFlexOrder.lt-sm="2">
+      <span>Recipe by: </span> <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a>
     </div>
-    <div><time [dateTime]="recipe.date_created.toISOString()">{{recipe.date_created | date:''}}</time></div>
+    <div fxFlexOrder="2" fxFlexOrder.lt-sm="1"><time [dateTime]="recipe.date_created.toISOString()">{{recipe.date_created | date}}</time></div>
   </div>
 </header> <!-- /.recipe-item-header -->
 
@@ -22,9 +29,10 @@
   <section class="ingredients-section">
     <header>
       <h2 class="mat-h2">Ingredients</h2>
-      <div fxLayout="row" fxLayoutAlign="start center" *ngIf="recipe.servingsNumber" class="icon-and-text-1line">
+      <div fxLayout="row" fxLayoutAlign="start center" *ngIf="recipe.servingsNumber" 
+          class="icon-and-text-1line icon-wrapper-prepend">
         <div><mat-icon color="primary">bubble_chart</mat-icon></div>
-        <div><span>{{recipe.servingsNumber}}</span> servings</div>
+        <div><span  class="fw-400">{{recipe.servingsNumber}}</span> servings</div>
       </div>
     </header>
 
@@ -51,8 +59,8 @@
     <header>
       <h2 class="mat-h2">Directions</h2>
       <div fxLayout="row" fxLayoutAlign="start center"
-           *ngIf="recipe.preparationTime && recipe.cookTime" class="cooking-time-info">
-        <div><mat-icon color="primary"></mat-icon></div>
+           *ngIf="recipe.preparationTime && recipe.cookTime" class="cooking-time-info icon-wrapper-prepend">
+        <div><mat-icon color="primary">access_time</mat-icon></div>
         
         <div *ngIf="recipe.preparationTime">
           <span>Prep</span>
@@ -77,11 +85,11 @@
     </ul>
   </section>
 
-  <section *ngIf="recipe.nutriotionFacts">
+  <section *ngIf="recipe.nutritionFacts">
     <header>
       <h2 class="mat-h2">Nutriotion Facts</h2>
     </header>
-    <p>{{recipe.nutriotionFacts}}</p>
+    <p>{{recipe.nutritionFacts}}</p>
   </section>
   <p *ngIf="recipe.footnotes"><u>Footnotes</u>: <br>{{recipe.footnotes}}</p>
 </div> <!-- /.recipe-item-body -->
