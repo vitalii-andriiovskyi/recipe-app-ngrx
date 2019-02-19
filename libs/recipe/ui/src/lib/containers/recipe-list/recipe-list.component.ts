@@ -3,6 +3,7 @@ import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Observable, Subject } from 'rxjs';
 import { Recipe } from '@recipe-app-ngrx/models';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'rcp-recipe-list',
@@ -27,10 +28,17 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.filteredRecipes$ = this.recipeEntityService.filteredEntitiesByAllFilters$;
     this.countFilteredRecipes$ = this.recipeEntityService.countFilteredRecipes$;
+    this.loadRecipes();
   }
 
   ngOnDestroy() {
     this._destroy$.next();
+  }
+
+  loadRecipes() {
+    this.recipeEntityService.loadRecipesByFilters({ tag: this.componentName }).pipe(
+      takeUntil(this._destroy$)
+    ).subscribe();
   }
 
 }
