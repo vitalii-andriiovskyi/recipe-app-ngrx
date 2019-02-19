@@ -7,9 +7,11 @@ import { RecipeMakerComponent } from './containers/recipe-maker/recipe-maker.com
 import { RecipeDetailComponent } from './components/recipe-detail/recipe-detail.component';
 import { AuthGuard } from '@recipe-app-ngrx/auth/state';
 import { RecipeViewComponent } from './containers/recipe-view/recipe-view.component';
+import { RecipePreviewComponent } from './components/recipe-preview/recipe-preview.component';
 
 export { RecipeEditorComponent } from './components/recipe-editor/recipe-editor.component';
 export { RecipeDetailComponent } from './components/recipe-detail/recipe-detail.component';
+export { RecipePreviewComponent } from './components/recipe-preview/recipe-preview.component';
 
 export const recipeUiRoutes: Route[] = [
   { path: 'create-recipe', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
@@ -22,7 +24,7 @@ export const recipeUiRoutes: Route[] = [
     SharedComponentsModule,
     RouterModule.forChild(recipeUiRoutes)
   ],
-  declarations: [RecipeEditorComponent, RecipeMakerComponent, RecipeDetailComponent, RecipeViewComponent],
-  exports: [ RecipeEditorComponent, RecipeDetailComponent ]
+  declarations: [RecipeEditorComponent, RecipeMakerComponent, RecipeDetailComponent, RecipeViewComponent, RecipePreviewComponent],
+  exports: [ RecipeEditorComponent, RecipeDetailComponent, RecipePreviewComponent ]
 })
 export class RecipeUiModule {}
