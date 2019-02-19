@@ -37,6 +37,9 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
 }
 
+.content-wrapper {
+  padding: 2vw 0;
+}
 
 a {
   position: relative;
@@ -113,6 +116,13 @@ a {
 
 .mat-elevation-z8 {
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.mat-card:not([class*='mat-elevation-z']) {
+  @include mat-elevation(6, mat-color($primary, 800), 0.9);
+  &:hover {
+    @include mat-elevation(8, mat-color($primary), 1.2);
+  }
 }
 
 rcp-login-form, rcp-filter {
@@ -208,6 +218,13 @@ rcp-logout-confirmation-dialog {
   }
 }
 
+.recipe-preview-card {
+  .mat-card-header-text {
+    margin: 0;
+    width: 100%;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .mat-h1 {
     font-size: 1.8em;
@@ -223,5 +240,11 @@ rcp-logout-confirmation-dialog {
       // max-width: 400px;
       width: 100%;
     }
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .content-wrapper {
+    padding: 30px 0;
   }
 }

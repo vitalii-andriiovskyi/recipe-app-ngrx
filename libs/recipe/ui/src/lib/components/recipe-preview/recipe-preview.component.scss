@@ -1,0 +1,47 @@
+.mat-card {
+  &-header {
+    width: 100%;
+    .mat-card-title {
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  &-title {
+    text-align: center;
+    line-height: 1.1;
+  }
+  &-subtitle {
+    margin-bottom: 5px;
+  }
+  &-image {
+    margin-bottom: 8px;
+  }
+  &-content {
+    position: relative;
+    overflow: hidden;
+    height: 75px;
+    &::after {
+      content: '';
+      z-index: 2;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1.5em;
+      background-image: linear-gradient(transparent, #fff);
+    }
+  }
+  &-actions {
+    padding: 0;
+    margin: 10px 0 0;
+    text-align: right;
+  }
+  > .mat-card-actions {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
