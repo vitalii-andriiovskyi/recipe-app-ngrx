@@ -7,10 +7,10 @@
     <mat-card-subtitle>By: <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a></mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-  <p *ngIf="recipe.description; else descriptionFallback">{{recipe.description}}</p>
-  <ng-template #descriptionFallback>
-    <p>{{recipe.title}} is awesome and tasty.</p>
-  </ng-template>
+    <p *ngIf="recipe.description; else descriptionFallback">{{recipe.description}}</p>
+    <ng-template #descriptionFallback>
+      <p>{{recipe.title}} is awesome and tasty.</p>
+    </ng-template>
   </mat-card-content>
   <mat-card-actions>
     <a mat-flat-button color="accent" [routerLink]="['/recipe', recipe.id]">View recipe</a>
