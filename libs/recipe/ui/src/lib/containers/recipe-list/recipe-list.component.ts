@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
+import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 
 @Component({
   selector: 'rcp-recipe-list',
@@ -6,8 +8,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./recipe-list.component.scss']
 })
 export class RecipeListComponent implements OnInit {
+  recipeEntityService: RecipeEntityCollectionService;
 
-  constructor() { }
+  constructor(
+    private appEntityServices: AppEntityServices,
+
+  ) {
+    this.recipeEntityService = appEntityServices.recipeEntityCollectionService;
+  }
 
   ngOnInit() {
   }
