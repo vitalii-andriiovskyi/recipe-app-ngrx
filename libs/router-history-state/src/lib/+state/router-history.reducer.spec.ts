@@ -18,7 +18,8 @@ describe('RouterHistory Reducer', () => {
         },
         queryParams: {
           cat: 'desserts'
-        }
+        },
+        routeConfig: null
       }
       let action = new RouterHistoryUpdated(updatedRouter);
       const result: RouterHistoryState = routerHistoryReducer(
@@ -39,7 +40,8 @@ describe('RouterHistory Reducer', () => {
         params: {
           id: 'salads'
         },
-        queryParams: { }
+        queryParams: { },
+        routeConfig: null
       }
       action = new RouterHistoryUpdated(updatedRouter);
       const result2: RouterHistoryState = routerHistoryReducer(
