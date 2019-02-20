@@ -1,5 +1,5 @@
 import { RouterStateSerializer } from '@ngrx/router-store';
-import { RouterStateSnapshot, Params } from '@angular/router';
+import { RouterStateSnapshot, Params, Route } from '@angular/router';
 
 /**
  * The RouterStateSerializer takes the current RouterStateSnapshot
@@ -14,6 +14,7 @@ export interface RouterStateUrl {
   url: string;
   params: Params;
   queryParams: Params;
+  routeConfig: Route;
 }
 
 export class CustomRouterStateSerializer
@@ -26,10 +27,10 @@ export class CustomRouterStateSerializer
     }
 
     const { url, root: { queryParams } } = routerState;
-    const { params } = route;
+    const { params, routeConfig } = route;
 
     // Only return an object including the URL, params and query params
     // instead of the entire snapshot
-    return { url, params, queryParams };
+    return { url, params, queryParams, routeConfig };
   }
 }
