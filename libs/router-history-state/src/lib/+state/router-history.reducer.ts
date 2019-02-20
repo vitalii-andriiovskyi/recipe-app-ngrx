@@ -28,12 +28,14 @@ export const initialState: RouterHistoryState = {
   previousRouter: {
     url: '/',
     params: {},
-    queryParams: {}
+    queryParams: {},
+    routeConfig: null
   },
   currentRouter: {
     url: '/',
     params: {},
-    queryParams: {}
+    queryParams: {},
+    routeConfig: null
   }
 };
 
