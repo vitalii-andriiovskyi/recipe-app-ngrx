@@ -3,13 +3,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil, tap, delay, map } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material';
 
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
+import { EntityOp, ofEntityOp } from 'ngrx-data';
 
 @Component({
   selector: 'rcp-recipe-list',
@@ -40,6 +41,8 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   filteredRecipes$: Observable<Recipe[]>;
   countFilteredRecipes$: Observable<number>;
+  loading$: Observable<boolean>;
+  error$: Observable<string>;
 
   private _destroy$ = new Subject();
   constructor(
@@ -52,9 +55,24 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.router.navigate(['./'], { relativeTo: this.route, queryParams: { page: 0, itemsPage: this.pageSize } })
+    
     this.filteredRecipes$ = this.recipeEntityService.filteredEntitiesByAllFilters$;
     this.countFilteredRecipes$ = this.recipeEntityService.countFilteredRecipes$;
+    this.loading$ = this.recipeEntityService.loading$.pipe(
+      delay(1),
+      takeUntil(this._destroy$)
+    );
+
+    this.error$ = this.recipeEntityService.errors$.pipe(
+      ofEntityOp(EntityOp.QUERY_BY_KEY_ERROR),
+      map(errorAction => errorAction.payload.data.error ? errorAction.payload.data.error.message : 'Oops! An error occurred.'),
+      // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
+      delay(1),
+      takeUntil(this._destroy$)
+    );
+
     this.loadRecipes();
+
   }
 
   ngOnDestroy() {
