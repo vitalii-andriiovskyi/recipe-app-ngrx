@@ -44,20 +44,14 @@ describe('RouterHistoryEffects', () => {
       const action = {
         type: ROUTER_NAVIGATION,
         payload: {
+          // The app uses CustomRouterSerializer. Therefore the payload.routerState will allways have the type of RouterStateUrl
           routerState: {
             url: 'recipes/desserts',
-            root: {
-              firstChild: {
-                routeConfig: {
-                  path: 'recipes/desserts'
-                },
-                paramMap: {
-                  get: (id: string) => 'desserts'
-                },
-                params: { id: 'desserts' },
-              } as unknown as ActivatedRouteSnapshot,
-              queryParams: { cat: 'some-cat' }
-            } as unknown as ActivatedRouteSnapshot
+            params: { id: 'desserts' },
+            queryParams: { cat: 'some-cat' },
+            routeConfig: {
+              path: 'recipes/desserts'
+            }
           },
           event: {}
         }
@@ -66,7 +60,10 @@ describe('RouterHistoryEffects', () => {
       const router: RouterStateUrl = {
         url: 'recipes/desserts',
         params: { id: 'desserts' },
-        queryParams: { cat: 'some-cat' }
+        queryParams: { cat: 'some-cat' },
+        routeConfig: {
+          path: 'recipes/desserts'
+        }
       }
 
       actions = hot('-a---', { a: action });
