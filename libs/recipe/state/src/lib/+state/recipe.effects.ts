@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Route } from '@angular/router';
 
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
@@ -14,6 +14,7 @@ import { RecipeFilters, recipeCategoryAll } from '@recipe-app-ngrx/models';
 import { isRecipeCategory } from '../services/utils';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
 import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
+import { RouterStateUrl } from '@recipe-app-ngrx/utils';
 
 @Injectable()
 export class RecipeEffects {
@@ -33,19 +34,25 @@ export class RecipeEffects {
     )),
   );
 
-  @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: ActivatedRouteSnapshot, oldFilters: RecipeFilters) => {
-    const id = route.paramMap.get('id'),
+  @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: RouterStateUrl, oldFilters: RecipeFilters) => {
+    const id = route.params['id'],
           isCat = isRecipeCategory(id),
           isCatAll = id === recipeCategoryAll.url,
           filters: RecipeFilters = {
             category: (isCat && id) ? id : null,
             username: (!isCat && !isCatAll && id) ? id : null,
-            page: +route.params['page'] || 1,
-            itemsPerPage: +route.params['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
+            page: +route.queryParams['page'] || 1,
+            itemsPerPage: +route.queryParams['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
           },
 
           filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
-   
+
+    // This comparing prevents the additional call to the server to find out the number of recipes according to filters
+    // when filters don't change. But it leads to trap when the server respondes the error. The code sets to `countFilteredRecipes` the  `state.ids.length`
+    // and it won't changed until the filters get changed
+    // Solution: maybe add special 'errorMarker' to the state and set it to `true` in the case of the error
+    // if (errorMarker === true) dispatch RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES
+    // For this demo app, current situation is acceptable
     if (oldFilters.category === filters.category && oldFilters.username === filters.username) {
       return [filtersUpdatedAction];
     }
@@ -62,7 +69,7 @@ export class RecipeEffects {
     private recipeEntityCollectionService: RecipeEntityCollectionService
   ) { }
 
-  private _handleNavigation(segment: string, callback: (a: ActivatedRouteSnapshot, filters?: RecipeFilters) => EntityAction[]) {
+  private _handleNavigation(segment: string, callback: (a: RouterStateUrl, filters?: RecipeFilters) => EntityAction[]) {
     return this.actions$.pipe(
       ofType(ROUTER_NAVIGATION),
       map(firstSegment),
@@ -73,6 +80,6 @@ export class RecipeEffects {
   }
 }
 
-function firstSegment(ra: RouterNavigationAction): ActivatedRouteSnapshot {
-  return ra.payload.routerState.root.firstChild;
+function firstSegment(ra: RouterNavigationAction): RouterStateUrl {
+  return ra.payload.routerState as unknown as RouterStateUrl;
 }
