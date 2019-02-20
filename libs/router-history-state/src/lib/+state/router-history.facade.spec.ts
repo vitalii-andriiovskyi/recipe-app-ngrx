@@ -77,7 +77,8 @@ describe('RouterHistoryFacade', () => {
         let routerState: RouterStateUrl = {
           url: 'recipes/desserts',
           params: { id: 'desserts' },
-          queryParams: { cat: 'some-cat' }
+          queryParams: { cat: 'some-cat' },
+          routeConfig: null
         };
 
         store.dispatch( new RouterHistoryUpdated(routerState));
@@ -92,7 +93,8 @@ describe('RouterHistoryFacade', () => {
         routerState = {
           url: 'recipe/salad',
           params: { id: 'salad' },
-          queryParams: { }
+          queryParams: { },
+          routeConfig: null
         };
 
         store.dispatch( new RouterHistoryUpdated(routerState));
@@ -125,7 +127,8 @@ describe('RouterHistoryFacade', () => {
         let routerState: RouterStateUrl = {
           url: 'recipes/desserts',
           params: { id: 'desserts' },
-          queryParams: { cat: 'some-cat' }
+          queryParams: { cat: 'some-cat' },
+          routeConfig: null
         };
 
         store.dispatch( new RouterHistoryUpdated(routerState));
@@ -150,7 +153,8 @@ describe('RouterHistoryFacade', () => {
         routerState = {
           url: 'recipe/salad',
           params: { id: 'salad' },
-          queryParams: { }
+          queryParams: { },
+          routeConfig: null
         };
 
         store.dispatch( new RouterHistoryUpdated(routerState));
