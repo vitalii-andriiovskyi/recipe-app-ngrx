@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, Route } from '@angular/router';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
 
-import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction } from 'ngrx-data';
+import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction, DataServiceError, EntityActionDataServiceError, Logger } from 'ngrx-data';
 import { of } from 'rxjs';
 import { exhaustMap, catchError, map, filter, flatMap, tap, withLatestFrom } from 'rxjs/operators';
 
@@ -26,13 +26,7 @@ export class RecipeEffects {
     )),
   );
 
-  @Effect() queryCountFilteredRecipes$ = this.actions$.pipe(
-    ofEntityOp([RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES]),
-    exhaustMap(action => this.recipeDataService.getCountFilteredRecipes(action.payload.data).pipe(
-      map(data => this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'})),
-      catchError(err => of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'})))
-    )),
-  );
+  @Effect() queryCountFilteredRecipes$ = this._queryCountFilteredRecipes();
 
   @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: RouterStateUrl, oldFilters: RecipeFilters) => {
     const id = route.params['id'],
@@ -66,7 +60,8 @@ export class RecipeEffects {
     private actions$: Actions,
     private recipeDataService: RecipeDataService,
     private entityActionFactory: EntityActionFactory,
-    private recipeEntityCollectionService: RecipeEntityCollectionService
+    private recipeEntityCollectionService: RecipeEntityCollectionService,
+    private logger: Logger
   ) { }
 
   private _handleNavigation(segment: string, callback: (a: RouterStateUrl, filters?: RecipeFilters) => EntityAction[]) {
@@ -77,6 +72,29 @@ export class RecipeEffects {
       withLatestFrom(this.recipeEntityCollectionService.filters$),
       flatMap(a => callback(a[0], a[1]))
     );
+  }
+
+  private _queryCountFilteredRecipes() {
+    // this variable could be omited using 'forkJoin'. But I don't know how to pass EntityAction to 'catchError'
+    let entityAction: EntityAction;
+    
+    return this.actions$.pipe(
+      ofEntityOp([RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES]),
+      tap(action => entityAction = action),
+      exhaustMap(action => this.recipeDataService.getCountFilteredRecipes(action.payload.data).pipe(
+        map(data => this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'})),
+        catchError(err => {
+          const errorData: EntityActionDataServiceError = this._makeEntityActionDataServiceErr(err, entityAction);
+          this.logger.error(errorData);
+          return of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'})) 
+        })
+      )),
+    );
+  }
+
+  private _makeEntityActionDataServiceErr(err: any, action: EntityAction): EntityActionDataServiceError {
+    const error = err instanceof DataServiceError ? err : new DataServiceError(err, null);
+    return { error, originalAction: action };
   }
 }
 
