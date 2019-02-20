@@ -1,7 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
+
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
+
 import { MatPaginator } from '@angular/material';
 
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
@@ -11,9 +14,24 @@ import { Recipe } from '@recipe-app-ngrx/models';
 @Component({
   selector: 'rcp-recipe-list',
   templateUrl: './recipe-list.component.html',
-  styleUrls: ['./recipe-list.component.scss']
+  styleUrls: ['./recipe-list.component.scss'],
+  animations: [
+    trigger('seqFadeInUp', [
+      transition(':enter', [
+        query('.recipe-preview-wrapper', [
+          style({ opacity: 0, transform: 'translateY(30px)' }),
+          stagger(75, [
+            animate('0.5s ease-in-out', style({ opacity: 1, transform: 'translateY(0)'}))
+          ])
+        ])
+      ])
+    ])
+  ]
 })
 export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
+  @HostBinding('@seqFadeInUp')
+  public animatePage = true; 
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   componentName = 'RecipeListComponent';
