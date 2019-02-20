@@ -2,7 +2,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ActivatedRouteSnapshot, ParamMap } from '@angular/router';
 import { Component, NgModule } from '@angular/core';
 
@@ -14,7 +14,7 @@ import { StoreModule } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { StoreRouterConnectingModule, ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
 
-import { EntityActionFactory, EntityOp, NgrxDataModule, ENTITY_METADATA_TOKEN, EntityCollectionReducerRegistry, EntityDataService } from 'ngrx-data';
+import { EntityActionFactory, EntityOp, NgrxDataModule, ENTITY_METADATA_TOKEN, EntityCollectionReducerRegistry, EntityDataService, DataServiceError, RequestData, EntityActionDataServiceError } from 'ngrx-data';
 
 import { NxModule } from '@nrwl/nx';
 import { hot, cold } from '@nrwl/nx/testing';
@@ -135,22 +135,35 @@ describe('RecipeEffects', () => {
     });
 
     it('should return ERROR action, when the server responds with an error ', () => {
-      const countFilteredRecipes = 101;
       const options: RecipeFilters = { 
         category: 'Bread',
         username: '',
         page: 1,
         itemsPerPage: 6
-      }
+      };
+      const reqData: RequestData = {
+        method: 'GET',
+        url: 'api/recipes/countFilteredRecipes'
+      };
+      const httpErrorRes = new HttpErrorResponse({
+        error: "Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes",
+        status : 504,
+        statusText : "Gateway Timeout",
+        url : "http://localhost:4200/api/recipes/countFilteredRecipes",
+      })
+
+      const err = new DataServiceError(httpErrorRes, reqData);
+     
 
       const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, options);
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'});
+      const errorData: EntityActionDataServiceError = { error: err, originalAction: action};
+      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'});
 
       actions$ = hot('-a---', { a: action });
-      const response = cold('-#', {}, { error: 'err' });
+      const response = cold('-#', null,  err );
+      getCountFilteredRecipesSpy.and.returnValue(response);
       const expected = cold('--b', { b: completion });
 
-      getCountFilteredRecipesSpy.and.returnValue(response);
       expect(effects.queryCountFilteredRecipes$).toBeObservable(expected);
     });
   });
