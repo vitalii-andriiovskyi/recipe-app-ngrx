@@ -15,6 +15,11 @@ export { RecipeDetailComponent } from './components/recipe-detail/recipe-detail.
 export { RecipePreviewComponent } from './components/recipe-preview/recipe-preview.component';
 
 export const recipeUiRoutes: Route[] = [
+  { 
+    path: '',
+    redirectTo: '/recipes/all',
+    pathMatch: 'full'
+  },
   { path: 'create-recipe', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
   { path: 'edit-recipe/:id', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
   { path: 'recipe/:id', component: RecipeViewComponent },
