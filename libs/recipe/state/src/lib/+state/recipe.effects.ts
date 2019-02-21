@@ -18,14 +18,8 @@ import { RouterStateUrl } from '@recipe-app-ngrx/utils';
 
 @Injectable()
 export class RecipeEffects {
-  @Effect() totalNRecipes$ = this.actions$.pipe(
-    ofEntityOp([RecipeEntityOp.QUERY_TOTAL_N_RECIPES]),
-    exhaustMap(action => this.recipeDataService.getTotalNRecipes().pipe(
-      map(data => this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'})),
-      catchError(err => of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'})))
-    )),
-  );
-
+  @Effect() totalNRecipes$ = this._totalNRecipes();
+  
   @Effect() queryCountFilteredRecipes$ = this._queryCountFilteredRecipes();
 
   @Effect() navigateToRecipes$ = this._handleNavigation('recipes/:id', (route: RouterStateUrl, oldFilters: RecipeFilters) => {
@@ -87,6 +81,24 @@ export class RecipeEffects {
           const errorData: EntityActionDataServiceError = this._makeEntityActionDataServiceErr(err, entityAction);
           this.logger.error(errorData);
           return of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'})) 
+        })
+      )),
+    );
+  }
+
+  private _totalNRecipes() {
+    // this variable could be omited using 'forkJoin'. But I don't know how to pass EntityAction to 'catchError'
+    let entityAction: EntityAction;
+
+    return this.actions$.pipe(
+      ofEntityOp([RecipeEntityOp.QUERY_TOTAL_N_RECIPES]),
+      tap(action => entityAction = action),
+      exhaustMap(action => this.recipeDataService.getTotalNRecipes().pipe(
+        map(data => this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS as unknown as EntityOp, data, {tag: 'API'})),
+        catchError(err => {
+          const errorData: EntityActionDataServiceError = this._makeEntityActionDataServiceErr(err, entityAction);
+          this.logger.error(errorData);
+          return of(this.entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'}))
         })
       )),
     );
