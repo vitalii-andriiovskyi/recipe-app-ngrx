@@ -102,11 +102,32 @@ describe('RecipeEffects', () => {
     });
 
     it('should return ERROR action, when the server responds with an error ', () => {
+      const options: RecipeFilters = { 
+        category: 'Bread',
+        username: '',
+        page: 1,
+        itemsPerPage: 6
+      };
+      const reqData: RequestData = {
+        method: 'GET',
+        url: 'api/recipes/countFilteredRecipes'
+      };
+      const httpErrorRes = new HttpErrorResponse({
+        error: "Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes",
+        status : 504,
+        statusText : "Gateway Timeout",
+        url : "http://localhost:4200/api/recipes/countFilteredRecipes",
+      })
+
+      const err = new DataServiceError(httpErrorRes, reqData);
+     
+
       const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp);
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, null, {tag: 'API'});
+      const errorData: EntityActionDataServiceError = { error: err, originalAction: action};
+      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'});
 
       actions$ = hot('-a---', { a: action });
-      const response = cold('-#', {}, { error: 'err' });
+      const response = cold('-#', {}, err);
       const expected = cold('--b', { b: completion });
 
       getTotalNRecipesSpy.and.returnValue(response);
