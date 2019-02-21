@@ -1,3 +1,32 @@
-<p>
-  recipe-list works!
-</p>
+<div class="content-wrapper">
+
+  <div class="error" *ngIf="error$ | async as errMessage; else loadShowRecipes">{{errMessage}}</div>
+  
+  <ng-template #loadShowRecipes>
+    <div class="recipe-list-wrapper">
+      <div *ngIf="loading$ | async; else rcpList" fxLayout="row" fxLayoutAlign="center">
+        <mat-spinner diameter="70" strokeWidth="5" mode="indeterminate"></mat-spinner>
+      </div>
+      
+      <ng-template #rcpList>
+        <div fxLayout.xs="column" fxLayout="row wrap" fxLayoutGap="30px grid"
+             fxLayoutGap.lt-lg="15px grid" fxLayoutGap.xs="15px" class="row">
+          <div class="recipe-preview-wrapper" fxFlex="33.3%" fxFlex.md="50%" fxFlex.sm="50%" fxFlex.xs="100%" 
+               *ngFor="let recipe of filteredRecipes$ | async">
+            <rcp-recipe-preview [recipe]="recipe"></rcp-recipe-preview>
+          </div>
+        </div> 
+      </ng-template>
+
+    </div> <!-- /.recipe-list-wrapper -->
+  </ng-template>
+
+  <!-- <div fxLayout.xs="column" fxLayout="row wrap" fxLayoutGap="30px grid" fxLayoutGap.lt-lg="15px grid" fxLayoutGap.xs="15px" class="row">
+    <div class="recipe-preview-wrapper" fxFlex="33.3%" fxFlex.md="50%" fxFlex.sm="50%" fxFlex.xs="100%" 
+        *ngFor="let recipe of recipes">
+      <rcp-recipe-preview [recipe]="recipe"></rcp-recipe-preview>
+    </div>
+  </div>  -->
+
+  <mat-paginator [length]="countFilteredRecipes$ | async" [pageSize]="pageSize"></mat-paginator>
+</div> <!-- /.content-wrapper -->
