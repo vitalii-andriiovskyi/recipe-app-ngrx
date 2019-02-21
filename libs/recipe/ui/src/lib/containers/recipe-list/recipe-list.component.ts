@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, tap, delay, map } from 'rxjs/operators';
+import { takeUntil, tap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material';
 import { EntityOp, ofEntityOp } from 'ngrx-data';
@@ -56,8 +56,15 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.router.navigate(['./'], { relativeTo: this.route, queryParams: { page: 0, itemsPage: this.pageSize } })
+    this.router.navigate(['./'], { relativeTo: this.route, queryParams: { page: 0, itemsPage: this.pageSize } });
     
+    this.route.paramMap.pipe(
+      map(paramMap => paramMap.get('id')),
+      distinctUntilChanged(),
+      tap(() => this.router.navigate(['./'], { relativeTo: this.route, queryParams: { page: 0, itemsPage: this.pageSize } })),
+      takeUntil(this._destroy$)
+    ).subscribe();
+
     this.filteredRecipes$ = this.recipeEntityService.filteredEntitiesByAllFilters$;
     this.countFilteredRecipes$ = this.recipeEntityService.countFilteredRecipes$;
     this.loading$ = this.recipeEntityService.loading$.pipe(
@@ -66,7 +73,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     this.error$ = this.recipeEntityService.errors$.pipe(
-      ofEntityOp(EntityOp.QUERY_ALL, RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR),
+      ofEntityOp([EntityOp.QUERY_MANY_ERROR, RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR]),
       map(errorAction => errorAction.payload.data.error ? errorAction.payload.data.error.message : 'Oops! An error occurred.'),
       // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
       delay(1),
