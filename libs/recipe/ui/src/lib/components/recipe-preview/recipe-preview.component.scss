@@ -1,4 +1,7 @@
 .mat-card {
+  box-sizing: border-box;
+  max-width: 300px;
+  margin-bottom: 20px;
   &-header {
     width: 100%;
     .mat-card-title {
@@ -43,5 +46,11 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .mat-card {
+    margin: 0 auto 20px;
   }
 }
