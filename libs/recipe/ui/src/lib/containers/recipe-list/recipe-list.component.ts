@@ -6,11 +6,11 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil, tap, delay, map } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material';
+import { EntityOp, ofEntityOp } from 'ngrx-data';
 
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
-import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
+import { RecipeEntityCollectionService, RecipeEntityOp } from '@recipe-app-ngrx/recipe/state';
 import { Recipe } from '@recipe-app-ngrx/models';
-import { EntityOp, ofEntityOp } from 'ngrx-data';
 
 @Component({
   selector: 'rcp-recipe-list',
@@ -24,7 +24,9 @@ import { EntityOp, ofEntityOp } from 'ngrx-data';
           stagger(75, [
             animate('0.5s ease-in-out', style({ opacity: 1, transform: 'translateY(0)'}))
           ])
-        ])
+        ], { 
+          optional: true
+        })
       ])
     ])
   ]
@@ -64,7 +66,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     this.error$ = this.recipeEntityService.errors$.pipe(
-      ofEntityOp(EntityOp.QUERY_BY_KEY_ERROR),
+      ofEntityOp(EntityOp.QUERY_ALL, RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR),
       map(errorAction => errorAction.payload.data.error ? errorAction.payload.data.error.message : 'Oops! An error occurred.'),
       // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
       delay(1),
