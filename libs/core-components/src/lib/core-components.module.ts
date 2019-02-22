@@ -5,6 +5,7 @@ import { RouterModule, Route } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
+import { SidenavComponent } from './sidenav/sidenav.component';
 
 export const coreComponentsRoutes: Route[] = [
   { path: '**', component: PageNotFoundComponent }
@@ -12,8 +13,9 @@ export const coreComponentsRoutes: Route[] = [
 
 const components = [
   HeaderComponent,
-  PageNotFoundComponent
-]
+  PageNotFoundComponent,
+  SidenavComponent
+];
 
 @NgModule({
   imports: [

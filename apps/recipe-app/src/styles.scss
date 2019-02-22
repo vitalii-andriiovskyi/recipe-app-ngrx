@@ -32,6 +32,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container {
+  box-sizing: border-box;
   width: 100%;
   max-width: 1330px;
   padding: 0 15px;
@@ -39,7 +40,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .content-wrapper {
-  padding: 2vw 0;
+  padding: 3.5vw 0 2vw;
 }
 
 a {
@@ -125,6 +126,49 @@ a {
     @include mat-elevation(8, mat-color($primary), 1.2);
   }
 }
+
+.mat-toolbar-single-row {
+  @include mat-elevation(6, mat-color($primary, 800), 0.5);
+}
+
+.mat-nav-list {
+  .mat-list-item {
+    div.mat-list-item-content {
+      padding: 0;
+    }
+    &.mat-list-item-with-avatar {
+      div.mat-list-item-content {
+        .mat-list-text {
+          padding-left: 8px;
+        }
+      }
+    }
+  }
+  .mat-list-text {
+    a {
+      color: #000;
+      transition: all 0.4s;
+      outline: none;
+      &.active {
+        color: mat-color($accent);
+        &::after {
+          right: 0;
+          border-bottom: 1px dotted mat-color($accent);
+        }
+      }
+      &::after {
+        right: 100%;
+      }
+      &:hover, &:focus {
+        outline: none;
+        color: mat-color($accent);
+        &::after {
+          right: 0;
+        }
+      }
+    }
+  }
+} 
 
 rcp-login-form, rcp-filter {
   .mat-card-title {
@@ -249,6 +293,14 @@ rcp-logout-confirmation-dialog {
   }
 } 
 
+@media screen and (max-width: 959px) {
+  div.mat-drawer {
+    &-backdrop {
+      right: -15px;
+      left: -15px;
+    }
+  }
+}
 
 @media screen and (max-width: 600px) {
   .mat-h1 {
@@ -270,6 +322,6 @@ rcp-logout-confirmation-dialog {
 
 @media screen and (min-width: 1500px) {
   .content-wrapper {
-    padding: 30px 0;
+    padding: 50px 0 30px;
   }
 }

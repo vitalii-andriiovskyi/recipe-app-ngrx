@@ -1,5 +1,6 @@
 .mat-toolbar-single-row {
   height: auto;
+  padding: 0;
 }
 .nav-logo {
   color: #fff;
@@ -10,7 +11,8 @@
   }
 }
 .container {
-  padding: 10px 0;
+  box-sizing: border-box;
+  padding: 10px 15px;
 }
 
 .top-menu-wrapper {
@@ -41,7 +43,7 @@
 
 @media screen and (max-width: 959px) {
   .header-content {
-    a {
+    > a {
       font-size: 0.9em;
     }
   }
@@ -49,7 +51,7 @@
 
 @media screen and (max-width: 599px) {
   .container {
-    padding: 5px 0;
+    padding: 5px 15px;
   }
   .top-menu-wrapper {
     > a {

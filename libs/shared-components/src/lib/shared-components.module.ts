@@ -13,7 +13,9 @@ import {  MatToolbarModule,
           MatProgressSpinnerModule,
           MatTableModule,
           MatCardModule,
-          MatPaginatorModule
+          MatPaginatorModule,
+          MatListModule,
+          MatSidenavModule
         } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -38,7 +40,9 @@ const modules = [
   MatProgressSpinnerModule,
   MatTableModule,
   MatCardModule,
-  MatPaginatorModule
+  MatPaginatorModule,
+  MatListModule,
+  MatSidenavModule
 ]
 @NgModule({
   imports: [
