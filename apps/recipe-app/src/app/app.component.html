@@ -1,3 +1,18 @@
 <rcp-header></rcp-header>
 
-<router-outlet></router-outlet>
+<div class="container" fxLayout="row" fxLayout.lt-md="column">
+  <div class="col" fxFlex="25%">
+    <ul>
+      <li *ngFor="let item of [1, 2, 3, 4, 5, 6]">Item {{item}}</li>
+    </ul>
+  </div>
+  <div class="col" fxFlex="75%">
+    <!-- <div fxLayout="row wrap" fxLayoutGap="30px grid">
+      <div fxFlex="33.3%" *ngFor="let rcp of recipe">
+        <rcp-recipe-preview [recipe]="rcp"></rcp-recipe-preview>
+      </div>
+    </div> -->
+    <!-- <rcp-recipe-detail [recipe]="recipe" [loggedIn]="loggedIn"></rcp-recipe-detail>  -->
+    <router-outlet></router-outlet>
+  </div>
+</div> <!-- /.container -->

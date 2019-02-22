@@ -6,3 +6,4 @@ export * from './lib/recipe-categories-list';
 export * from './lib/recipe-filters.model';
 export * from './lib/filter-observer.model';
 export * from './lib/counter.model';
+export * from './lib/unit.model';

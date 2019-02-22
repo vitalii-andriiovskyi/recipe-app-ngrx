@@ -36,6 +36,15 @@
       ],
       "@recipe-app-ngrx/recipe/state": [
         "libs/recipe/state/src/index.ts"
+      ],
+      "@recipe-app-ngrx/recipe/ui": [
+        "libs/recipe/ui/src/index.ts"
+      ],
+      "@recipe-app-ngrx/core-components": [
+        "libs/core-components/src/index.ts"
+      ],
+      "@recipe-app-ngrx/router-history-state": [
+        "libs/router-history-state/src/index.ts"
       ]
     }
   },

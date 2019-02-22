@@ -19,16 +19,95 @@
 
 html, body { height: 100%; }
 body { 
+  overflow-x: hidden;
   margin: 0; 
   font-family: Roboto, "Helvetica Neue", sans-serif; 
   font-weight: 300; 
   font-size: 16px;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 500;
+  font-weight: 400;
 }
 
+.container {
+  width: 100%;
+  max-width: 1330px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.content-wrapper {
+  padding: 2vw 0;
+}
+
+a {
+  position: relative;
+  color: mat-color($accent, 800);
+  text-decoration: none;
+  font-weight: 400;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    border-bottom: 1px dotted transparent;
+    transition: all 0.3s;
+  }
+  &:hover:not(.mat-mini-fab) {
+    text-decoration: none;
+    color: mat-color($accent, 800);
+    &::after {
+      border-bottom: 1px dotted mat-color($accent, 800);
+    }
+  }
+}
+
+.fw-400 {
+  font-weight: 400;
+}
+
+.mat-tooltip {
+  font-size: 12px;
+}
+
+.list-numbered-markers {
+  margin: 0;
+  padding: 0;
+  list-style-type: none; 
+  > li {
+    position: relative;
+    padding: 3px 0 0 40px;
+    margin: 0;
+    &::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: mat-color($accent, 800);
+      color: #fff;
+      font-weight: 400;
+      text-align: center;
+      line-height: 30px;
+    }
+  }
+}
+
+
+.list-numbered-markers {
+	counter-reset: list1;
+  > li {
+    &:before {
+      counter-increment: list1;
+      content: counter(list1) "";
+    }
+  }
+}
+      
 .mat-flat-button.mat-accent {
   transition: all 0.4s;
   &:hover {
@@ -38,6 +117,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .mat-elevation-z8 {
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.mat-card:not([class*='mat-elevation-z']) {
+  @include mat-elevation(6, mat-color($primary, 800), 0.9);
+  &:hover {
+    @include mat-elevation(8, mat-color($primary), 1.2);
+  }
 }
 
 rcp-login-form, rcp-filter {
@@ -74,9 +160,116 @@ rcp-logout-confirmation-dialog {
   }
 }
 
-.container {
-  width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
+.ingredient-wrapper, .step-wrapper {
+  .heading {
+    border-top: 1px dashed mat-color($accent, 800);
+    & > span {
+      background-color: mat-color($accent, 800);
+    }
+  }
+} 
+
+.breadcrump {
+  display: flex;
+  flex-flow: row;
+  &-item {
+    position: relative;
+    &:not(:last-child) {
+      padding-right: 0.7em;
+      margin-right: 0.3em;
+      &:after {
+        content: '/';
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+  }
 }
 
+.recipe-item-header {
+  time {
+    color: mat-color($primary, 800)
+  }
+}
+
+.recipe-item-body {
+  .mat-table {
+    max-width: 600px;
+    min-width: 400px;
+    thead {
+      tr {
+        &:first-child {
+          background-color: mat-color($accent, 50);
+        }
+      }
+    }
+    tbody {
+      tr { 
+        transition: background-color 0.3s;
+        &:nth-child(even) {
+          background-color: mat-color($accent, 100);
+        }
+        &:hover {
+          background-color: mat-color($accent, 400);
+        }
+      }
+    }
+    @include mat-elevation(6, mat-color($primary, 800), 0.9);
+  }
+}
+
+.recipe-preview-card {
+  .mat-card-header-text {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.mat-paginator {
+  margin: 30px 0;
+  border-top: 1px solid rgba(mat-color($primary), 0.3);
+  border-bottom: 1px solid rgba(mat-color($primary), 0.3);
+  font-size: 1em;
+  &-page-size {
+    .mat-select-trigger {
+      font-size: 1em;
+    }
+  
+  }
+  &-page-size-label { 
+    color: #000;
+    + div {
+      // font-weight: 400;
+      color: #000;
+    }
+  }
+  &-range-label {
+    color: #000;
+  }
+} 
+
+
+@media screen and (max-width: 600px) {
+  .mat-h1 {
+    font-size: 1.8em;
+    line-height: 1.1;
+  }
+  .mat-h2 {
+    font-size: 1.5em;
+  }
+
+  .recipe-item-body {
+    .mat-table {
+      min-width: 0;
+      // max-width: 400px;
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .content-wrapper {
+    padding: 30px 0;
+  }
+}

@@ -37,6 +37,15 @@
     },
     "recipe-state": {
       "tags": []
+    },
+    "recipe-ui": {
+      "tags": []
+    },
+    "core-components": {
+      "tags": []
+    },
+    "router-history-state": {
+      "tags": []
     }
   }
 }

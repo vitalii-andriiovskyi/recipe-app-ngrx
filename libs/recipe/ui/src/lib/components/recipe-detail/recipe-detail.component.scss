@@ -1,0 +1,132 @@
+.recipe-item-header {
+  .edit-btn-wrapper {
+    margin-top: 15px;
+    + .mat-h1 {
+      margin-bottom: 25px;
+    }
+  }
+}
+.mat-h1 {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.mat-h2 {
+  border-bottom: 1px solid rgba(#000, 0.3);
+}
+
+.icon-wrapper-prepend {
+  .mat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+    line-height: 50px;
+  }
+}
+
+.icon-and-text-1line {
+  > div {
+    &:first-child {
+      line-height: 0.9;
+    }
+  }
+}
+
+.ingredients-section {
+  .icon-and-text-1line {
+    margin-left: -5px;
+  }
+}
+.mat-table {
+  margin: 16px 0 35px;
+  tr {
+    height: auto;
+  }
+  td {
+    box-sizing: border-box;
+    min-width: 150px;
+    &.mat-cell,
+    &.mat-footer-cell {
+      border: none;
+      &:first-of-type {
+        min-width: 200px;
+        padding-left: 15px;
+      }
+      &:last-of-type {
+        padding-right: 15px;
+      }
+    }
+  }
+  th {
+    &.mat-header-cell {
+      border: none;
+      &:first-of-type {
+        padding-left: 15px;
+      }
+      &:last-of-type {
+        padding-right: 15px;
+      }
+    }
+  }
+  td, th {
+    padding: 10px 15px;
+  }
+}
+
+.cooking-time-info {
+  > div {
+    &:first-child {
+      margin-left: -2px;
+      line-height: 0.75em;
+    }
+    &:not(:first-child) {
+      padding-left: 16px;
+      margin-left: 16px;
+      border-left: 1px solid rgba(#000, 0.2);
+      & > span {
+        display: block;
+      }
+    }
+    &:nth-child(2) {
+      padding-left: 10px;
+      margin-left: 0;
+      border-left: none;
+    }
+  }
+  &.icon-wrapper-prepend {
+    .mat-icon {
+      width: 45px;
+      height: 45px;
+      font-size: 45px;
+      line-height: 45px;
+    }
+  }
+}
+
+.steps {
+  margin: 20px 0;
+  > li {
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .mat-table {
+    td {
+      min-width: 0;
+      width: 50%;
+      &.mat-cell,
+      &.mat-footer-cell {
+        &:first-of-type {
+          min-width: 0;
+        }
+      }
+    }
+  }
+
+  .recipe-item-header {
+    .edit-btn-wrapper {
+      margin-top: 10px;
+    }
+  }
+}

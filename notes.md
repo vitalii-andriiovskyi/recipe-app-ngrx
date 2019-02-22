@@ -14,3 +14,8 @@ Then that method makes query to the remote server. If the server responds with d
 Also `EntityEffects` fires Error action in the case when there's no implementation for actions remembered above. 
 
 The method `entityCollectionReducerRegistry.registerReducer('EntityName', customReducer)` overwrites the reducer provided by `ngrx-data` library. 
+
+
+## Angular Material: mat-select
+- To show droplist click on `.mat-select-trigger`.
+- To hide droplist click on `.cdk-overlay-container .cdk-ovelay-backdrop`

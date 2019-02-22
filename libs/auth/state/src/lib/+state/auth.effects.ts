@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { DataPersistence } from '@nrwl/nx';
 import { of } from 'rxjs';
-import { map, exhaustMap, catchError, tap } from 'rxjs/operators';
+import { map, exhaustMap, catchError, tap, withLatestFrom } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 
 import { AuthPartialState } from './auth.reducer';
@@ -21,6 +21,7 @@ import { LocalStorageService } from '@recipe-app-ngrx/utils';
 import { AuthService } from '../services/auth.service';
 import { LogoutConfirmationDialogComponent } from '@recipe-app-ngrx/auth/login-ui';
 import { Router } from '@angular/router';
+import { RouterHistoryFacade } from '@recipe-app-ngrx/router-history-state';
 
 @Injectable()
 export class AuthEffects {
@@ -66,7 +67,14 @@ export class AuthEffects {
   loginSuccess$ = this.actions$.pipe(
     ofType(AuthActionTypes.LoginSuccess),
     // -- maybe should load additional data for authenticated users
-    tap(() => this.router.navigate(['/recipes/newest']))
+    withLatestFrom(this.routerHistoryFacade.previousRouter$),
+    tap(([action, router]) => this.router.navigate([router.url]))
+  );
+
+  @Effect({ dispatch: false })
+  loginRedirect$ = this.actions$.pipe(
+    ofType(AuthActionTypes.LoginRedirect),
+    tap(() => this.router.navigate(['/login']))
   );
   
   constructor(
@@ -75,6 +83,7 @@ export class AuthEffects {
     private authService: AuthService,
     private localeStorageService: LocalStorageService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private routerHistoryFacade: RouterHistoryFacade
   ) {}
 }

@@ -26,6 +26,6 @@ export class RecipeDataService extends DefaultDataService<Recipe>{
     const params = new HttpParams();
     params.set('category', filters.category);
     params.set('username', filters.username);
-    return this.execute('GET', 'api/recipes/countFilteredRecipes, null', { params });
+    return this.execute('GET', 'api/recipes/countFilteredRecipes', null, { params });
   }
 }

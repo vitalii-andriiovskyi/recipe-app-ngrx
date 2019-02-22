@@ -4,7 +4,7 @@ import { select, Store } from '@ngrx/store';
 
 import { AuthPartialState } from './auth.reducer';
 import { authQuery } from './auth.selectors';
-import { Login, Logout } from './auth.actions';
+import { Login, Logout, LoginRedirect } from './auth.actions';
 import { AuthUserVW } from '@recipe-app-ngrx/models';
 
 @Injectable()
@@ -28,5 +28,9 @@ export class AuthFacade {
    */
   logout() {
     this.store.dispatch(new Logout());
+  }
+
+  loginRedirect() {
+    this.store.dispatch(new LoginRedirect());
   }
 }

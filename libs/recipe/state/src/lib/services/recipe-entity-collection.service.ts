@@ -37,8 +37,6 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   filteredEntitiesByCategory$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
     filter(data => !!data[0]['category'] && !data[0]['username']),
     map(data => {
-      if(data[0]['category'] === recipeCategoryAll.url) return data;
-
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
         return this.belongToCategory(data[0]['category'], recipe)
       });
@@ -63,11 +61,9 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   filteredEntitiesByCategoryAndUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
     filter(data => !!data[0]['username'] && !!data[0]['category']),
     map(data => {
-      const isRecipeCategoryAll = data[0]['category'] === recipeCategoryAll.url;
-
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
         const belongsToUser = this.belongToUser(data[0]['username'], recipe);
-        const belongsToCategory = isRecipeCategoryAll || this.belongToCategory(data[0]['category'], recipe);
+        const belongsToCategory = this.belongToCategory(data[0]['category'], recipe);
         return  belongsToUser && belongsToCategory;
       });
 
@@ -76,10 +72,15 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
+  filteredEntitiesByNeitherCategoryNorUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
+    filter(data => !data[0]['username'] && !data[0]['category'])
+  );
+
   filteredEntitiesByCategoryUserCommon$: Observable<[RecipeFilters, Recipe[]]> = merge(
     this.filteredEntitiesByCategory$,
     this.filteredEntitiesByUser$,
     this.filteredEntitiesByCategoryAndUser$,
+    this.filteredEntitiesByNeitherCategoryNorUser$
   );
 
   filteredEntitiesByAllFilters$: Observable<Recipe[]> = this.filteredEntitiesByCategoryUserCommon$.pipe(
@@ -111,7 +112,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     )
 
     const result$ = merge(recipeWithoutId$, recipeWithId$).pipe(
-      switchMap(rcp => super.add(rcp))
+      switchMap(rcp => super.add(rcp, options))
     )
 
     return result$;
@@ -165,7 +166,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     if (typeof item.category === 'string') {
       result = item.category === category;
     } else {
-      result = item.category.indexOf(category) > -1;
+      result = item.category.url === category;
     }
     return result;
   }

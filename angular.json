@@ -387,6 +387,90 @@
           }
         }
       }
+    },
+    "recipe-ui": {
+      "root": "libs/recipe/ui",
+      "sourceRoot": "libs/recipe/ui/src",
+      "projectType": "library",
+      "prefix": "rcp",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/recipe/ui/src/test.ts",
+            "tsConfig": "libs/recipe/ui/tsconfig.spec.json",
+            "karmaConfig": "libs/recipe/ui/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/recipe/ui/tsconfig.lib.json",
+              "libs/recipe/ui/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "core-components": {
+      "root": "libs/core-components",
+      "sourceRoot": "libs/core-components/src",
+      "projectType": "library",
+      "prefix": "rcp",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/core-components/src/test.ts",
+            "tsConfig": "libs/core-components/tsconfig.spec.json",
+            "karmaConfig": "libs/core-components/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/core-components/tsconfig.lib.json",
+              "libs/core-components/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "router-history-state": {
+      "root": "libs/router-history-state",
+      "sourceRoot": "libs/router-history-state/src",
+      "projectType": "library",
+      "prefix": "rcp",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/router-history-state/src/test.ts",
+            "tsConfig": "libs/router-history-state/tsconfig.spec.json",
+            "karmaConfig": "libs/router-history-state/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/router-history-state/tsconfig.lib.json",
+              "libs/router-history-state/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
