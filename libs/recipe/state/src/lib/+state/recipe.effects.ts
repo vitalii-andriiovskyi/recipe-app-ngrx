@@ -29,7 +29,7 @@ export class RecipeEffects {
           filters: RecipeFilters = {
             category: (isCat && id) ? id : null,
             username: (!isCat && !isCatAll && id) ? id : null,
-            page: +route.queryParams['page'] || 1,
+            page: +route.queryParams['page'] || 0,
             itemsPerPage: +route.queryParams['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
           },
 
