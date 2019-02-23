@@ -10,6 +10,7 @@ import { EffectsModule } from '@ngrx/effects';
 
 export { RecipeEntityCollectionService } from './services/recipe-entity-collection.service';
 export { recipeMetaReducer } from './+state/recipe.reducer';
+export { RecipeEntityOp } from './+state/recipe.actions';
 
 @NgModule({
   imports: [

@@ -1,0 +1,8 @@
+<div class="content-wrapper">
+  <mat-nav-list>
+    <mat-list-item *ngFor="let navItem of categoriesList">
+      <a matLine [routerLink]="['/recipes', navItem.url]" routerLinkActive="active">{{navItem.value}}</a>
+      <mat-icon matListIcon color="accent">local_dining</mat-icon>
+    </mat-list-item>
+  </mat-nav-list>
+</div> <!-- /.content-wrapper -->

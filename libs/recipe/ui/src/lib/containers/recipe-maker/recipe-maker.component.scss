@@ -1,0 +1,18 @@
+.content-wrapper {
+  padding: 2vw 0;
+}
+
+.recipe-editor-wrapper {
+  max-width: 400px;
+}
+
+.error {
+  text-align: center;
+}
+
+
+@media screen and (min-width: 1500px) {
+  .content-wrapper {
+    padding: 30px 0;
+  }
+}

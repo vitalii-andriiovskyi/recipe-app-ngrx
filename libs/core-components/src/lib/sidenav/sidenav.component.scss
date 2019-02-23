@@ -1,0 +1,17 @@
+.mat-nav-list {
+  padding-right: 30px;
+  padding-top: 0;
+  margin-left: -6px;
+  .mat-list-item {
+    height: auto;
+    font-size: 1.1em;
+    div.mat-list-item-content {
+      padding: 0;
+    }
+    &:hover, 
+    &:focus {
+      background-color: transparent;
+    }
+  }
+} 
+

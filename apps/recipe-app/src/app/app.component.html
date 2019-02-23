@@ -1,3 +1,17 @@
 <rcp-header></rcp-header>
 
-<router-outlet></router-outlet>
+<div class="container">
+  <mat-sidenav-container>
+    <mat-sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" #snav [opened]="mobileQuery.matches ? false : true">
+      <rcp-sidenav></rcp-sidenav>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div class="open-sidenav-btn-wrapper" fxHide fxShow.lt-md="true" >
+        <button mat-flat-button color="accent" (click)="snav.toggle()">Open menu</button>
+      </div>
+     
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div> <!-- /.container -->

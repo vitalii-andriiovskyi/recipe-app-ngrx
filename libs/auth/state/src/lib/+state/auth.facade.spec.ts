@@ -1,9 +1,14 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { readFirst } from '@nrwl/nx/testing';
+import { MatDialog } from '@angular/material';
+import { of, throwError } from 'rxjs';
 
-import { EffectsModule } from '@ngrx/effects';
 import { StoreModule, Store } from '@ngrx/store';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { EffectsModule } from '@ngrx/effects';
+import { Router } from '@angular/router';
 
 import { NxModule } from '@nrwl/nx';
 
@@ -14,10 +19,8 @@ import { authQuery } from './auth.selectors';
 import { Login, Logout } from './auth.actions';
 import { AuthState, initialState, authReducer } from './auth.reducer';
 import { AuthService } from '../services/auth.service';
-import { MatDialog } from '@angular/material';
 import { User } from '@recipe-app-ngrx/models';
-import { of, throwError } from 'rxjs';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
 
 interface TestSchema {
   auth: AuthState;
@@ -29,6 +32,8 @@ describe('AuthFacade', () => {
   let getLoginSpy: jasmine.Spy;
   let getLogoutSpy: jasmine.Spy;
   let getMatDialogOpenSpy: jasmine.Spy;
+  let routerService: Router;
+
   const userTest = {
     _id: '',
     username: 'test_name',
@@ -52,13 +57,16 @@ describe('AuthFacade', () => {
         imports: [
           StoreModule.forFeature('auth', authReducer, { initialState }),
           EffectsModule.forFeature([AuthEffects]),
-          RouterTestingModule
+          RouterTestingModule.withRoutes([
+            { path: '**', component: PageNotFoundComponent }
+          ])
         ],
         providers: [
           AuthFacade,
           { provide: AuthService, useValue: authServiceSpy},
           { provide: MatDialog, useValue: matDialogSpy }
-        ]
+        ],
+        declarations: [ PageNotFoundComponent ]
       })
       class CustomFeatureModule {}
 
@@ -67,7 +75,9 @@ describe('AuthFacade', () => {
           NxModule.forRoot(),
           StoreModule.forRoot({}),
           EffectsModule.forRoot([]),
-          CustomFeatureModule
+          CustomFeatureModule,
+          StoreRouterConnectingModule,
+          RouterHistoryStateModule
         ]
       })
       class RootModule {}
@@ -233,7 +243,15 @@ describe('AuthFacade', () => {
       } catch (err) {
         done.fail(err);
       }
-    })
+    });
+
+    it(`loginRedirect() should call router.navigate(['/login'])`, () => {
+      routerService = TestBed.get(Router);
+      spyOn(routerService, 'navigate').and.callThrough();
+      facade.loginRedirect();
+
+      expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
+    });
 
     /**
      * Use `AuthLoaded` to manually submit list for state management
@@ -261,3 +279,11 @@ describe('AuthFacade', () => {
     // });
   });
 });
+
+@Component({
+  selector: 'rcp-page-not-found',
+  template: '<p>test</p>'
+})
+class PageNotFoundComponent {
+
+}
