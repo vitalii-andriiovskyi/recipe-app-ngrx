@@ -27,12 +27,15 @@ const RecipeSchema: Schema = new Schema(
       }
     ],
     footnotes: String,
-    nutritionFat: String,
-    preparetionTime: Number,
+    nutritionFacts: String,
+    preparationTime: Number,
     cookTime: Number,
     servingsNumber: Number,
 
-    category: [{ type: String, required: true }],
+    category: { 
+      url: { type: String, required: true },
+      value: String,
+    },
     user_username: { type: String, required: true },
     date_created: Date,
   },
@@ -43,7 +46,7 @@ const RecipeSchema: Schema = new Schema(
 );
 
 RecipeSchema.pre('save', function(next: HookNextFunction) {
-  if (typeof this['category'] === 'string') this['category'] = [ this['category'] ];
+  // if (typeof this['category'] === 'string') this['category'] = [ this['category'] ];
   increment('recipes', this, next);
 });
 
