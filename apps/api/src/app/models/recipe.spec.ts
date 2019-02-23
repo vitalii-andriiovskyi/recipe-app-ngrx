@@ -20,12 +20,12 @@ describe(`RecipeModel`, () => {
     steps: [],
     images: [],
     footnotes: 'string',
-    nutritionFat: 'string',
-    preparetionTime: 12,
+    nutritionFacts: 'string',
+    preparationTime: 12,
     cookTime: 12,
     servingsNumber: 6,
 
-    category: 'dessert',
+    category: { url: 'dessert' },
     user_username: 'test_user',
     date_created: new Date(),
   }
@@ -63,7 +63,7 @@ describe(`RecipeModel`, () => {
     MongooseStub.disconnect(done);
   });
 
-  it(`should save the recipe, set its 'id' to 1 and 'category' to string[]`, async done => {
+  it(`should save the recipe, set its 'id' to 1`, async done => {
     try {
       let counterM: Counter = await CounterModel.findById('recipes');
       expect(counterM.seq).toBe(0);

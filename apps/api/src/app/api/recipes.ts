@@ -42,17 +42,17 @@ export class RecipesApi {
   public getRecipes(req: Request, res: Response, next: NextFunction) {
     const queryParams = req.query,
           username = queryParams.username, 
-          categoryValue = queryParams.category,
+          categoryUrl = queryParams.category,
           pageNumber = parseInt(queryParams.page, 10) || 0,
           itemsPerPage = parseInt(queryParams.itemsPerPage, 10),
 
           queryObj = {
             user_username: username,
-            category: { $in: categoryValue }
+            'category.url': categoryUrl
           };
 
     if (!username) { delete queryObj.user_username };
-    if (!categoryValue) { delete queryObj.category };
+    if (!categoryUrl) { delete queryObj['category.url'] };
     
     RecipeModel.find(queryObj)
       .sort({ date_created: -1 })
@@ -155,15 +155,15 @@ export class RecipesApi {
   public getCountFilteredRecipes(req: Request, res: Response, next: NextFunction) {
     const queryParams = req.query,
           username = queryParams.username, 
-          categoryValue = queryParams.category,
+          categoryUrl = queryParams.category,
 
           queryObj = {
             user_username: username,
-            category: { $in: categoryValue }
+            'category.url': categoryUrl
           };
 
     if (!username) { delete queryObj.user_username };
-    if (!categoryValue) { delete queryObj.category };
+    if (!categoryUrl) { delete queryObj['category.url'] };
     
     RecipeModel.countDocuments(queryObj)
       .then(count => { 

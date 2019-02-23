@@ -24,12 +24,12 @@ describe(`RecipesApi`, () => {
     steps: ['step-1', 'step-2', 'step-3'],
     images: [],
     footnotes: 'string',
-    nutritionFat: 'string',
-    preparetionTime: 12,
+    nutritionFacts: 'string',
+    preparationTime: 12,
     cookTime: 12,
     servingsNumber: 6,
 
-    category: 'dessert',
+    category: { url: 'dessert', value: 'Dessert'},
     user_username: 'test_user',
     date_created: new Date(0),
   };
@@ -40,10 +40,10 @@ describe(`RecipesApi`, () => {
     {...recipe, id: 2, title: 'Recipe 3', date_created: new Date(2)},
     {...recipe, id: 3, title: 'Recipe 4', date_created: new Date(3)},
     {...recipe, id: 4, title: 'Recipe 5', date_created: new Date(4)},
-    {...recipe, id: 5, title: 'Recipe 6', category: ['salad', 'dessert'], date_created: new Date(5), user_username: 'test_user_an'},
-    {...recipe, id: 6, title: 'Recipe 7', category: ['salad'], date_created: new Date(6), user_username: 'test_user_an'},
-    {...recipe, id: 7, title: 'Recipe 8', category: ['salad'], date_created: new Date(7)},
-    {...recipe, id: 8, title: 'Recipe 9', category: ['salad'], date_created: new Date(8), user_username: 'test_user_an'},
+    {...recipe, id: 5, title: 'Recipe 6', category: { url: 'salad', value: 'Salad'}, date_created: new Date(5), user_username: 'test_user_an'},
+    {...recipe, id: 6, title: 'Recipe 7', category: { url: 'salad', value: 'Salad'}, date_created: new Date(6), user_username: 'test_user_an'},
+    {...recipe, id: 7, title: 'Recipe 8', category: { url: 'salad', value: 'Salad'}, date_created: new Date(7)},
+    {...recipe, id: 8, title: 'Recipe 9', category: { url: 'salad', value: 'Salad'}, date_created: new Date(8), user_username: 'test_user_an'},
   ];
 
   const params: {[field: string]: string} = {
@@ -99,7 +99,7 @@ describe(`RecipesApi`, () => {
       const loadedRecipes = response.body;
 
       expect(loadedRecipes.length).toBe(2);
-      expect(loadedRecipes[0].title).toBe('Recipe 6');
+      expect(loadedRecipes[0].title).toBe('Recipe 5');
     }, 10000);
 
     it(`should get 2 recipes by category='dessert' and username='test_user'`, async () => {
@@ -330,14 +330,14 @@ describe(`RecipesApi`, () => {
       done();
     });
 
-    it(`should return countFilteredRecipes=6`, async () => {
+    it(`should return countFilteredRecipes=5; category='dessert', username=null`, async () => {
        paramsForCount = {
         category: 'dessert',
         username: null
       }
       const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
       expect(response.status).toBe(200);
-      expect(response.body).toBe(6);
+      expect(response.body).toBe(5);
     });
 
     it(`should return countFilteredRecipes=6`, async () => {
