@@ -52,7 +52,7 @@ const routes: Routes = [
     RecipeUiModule,
     // CoreComponentsModule has the route { path: '**', component: PageNotFoundComponent }. Therefore in must be imported after all modules with Routes
     CoreComponentsModule,
-    RouterModule.forRoot(routes, { initialNavigation: 'enabled' }),
+    RouterModule.forRoot(routes, { initialNavigation: 'enabled', onSameUrlNavigation: 'reload' }),
   ],
   providers: [
     { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
