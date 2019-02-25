@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { DataPersistence } from '@nrwl/nx';
 import { of } from 'rxjs';
-import { map, exhaustMap, catchError, tap, withLatestFrom } from 'rxjs/operators';
+import { map, exhaustMap, catchError, tap, withLatestFrom, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 
 import { AuthPartialState } from './auth.reducer';
@@ -22,6 +22,7 @@ import { AuthService } from '../services/auth.service';
 import { LogoutConfirmationDialogComponent } from '@recipe-app-ngrx/auth/login-ui';
 import { Router } from '@angular/router';
 import { RouterHistoryFacade } from '@recipe-app-ngrx/router-history-state';
+import { AuthFacade } from './auth.facade';
 
 @Injectable()
 export class AuthEffects {
@@ -68,7 +69,9 @@ export class AuthEffects {
     ofType(AuthActionTypes.LoginSuccess),
     // -- maybe should load additional data for authenticated users
     withLatestFrom(this.routerHistoryFacade.previousRouter$),
-    tap(([action, router]) => this.router.navigate([router.url]))
+    tap(([action, route]) => {
+      this.router.navigate([ route.url.split('?')[0] ], { queryParams: route.queryParams});
+    })
   );
 
   @Effect({ dispatch: false })
