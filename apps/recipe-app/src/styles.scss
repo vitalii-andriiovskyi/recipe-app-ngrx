@@ -127,6 +127,10 @@ a {
   }
 }
 
+.cdk-global-scrollblock {
+  overflow: auto;
+}
+
 .mat-toolbar-single-row {
   @include mat-elevation(6, mat-color($primary, 800), 0.5);
 }
@@ -201,6 +205,20 @@ rcp-login-form, rcp-filter {
 rcp-logout-confirmation-dialog {
   .mat-dialog-title {
     color: mat-color($accent, 800);
+  }
+}
+
+rcp-recipe-editor {
+  .mat-form-field {
+    &.ng-dirty {
+      .mat-form-field-label {
+        color: rgba(mat-color($primary, 600), 0.54);
+      }
+      .mat-form-field-underline {
+        background-color: rgba(mat-color($primary, 600), 0.42);
+      }
+  
+    }
   }
 }
 
