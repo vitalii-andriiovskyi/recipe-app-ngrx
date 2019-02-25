@@ -9,7 +9,7 @@ import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 export class HeaderComponent implements OnInit {
   logoName = 'Recipe App';
   userMenuData: any[] = [
-    { url: '/create-user', itemText: 'CreateUser' }
+    { url: '/create-recipe', itemText: 'Create Recipe' }
   ];
   
   loggedIn$ = this.authFacade.loggedIn$;
