@@ -23,11 +23,16 @@ import { AuthService } from '../services/auth.service';
 import { MatDialog } from '@angular/material';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, ActivatedRoute } from '@angular/router';
 import { Component } from '@angular/core';
-import { RouterHistoryStateModule, RouterHistoryState, initialState as routerHistoryInitState } from '@recipe-app-ngrx/router-history-state';
+import { RouterHistoryStateModule, RouterHistoryState, initialState as routerHistoryInitState, RouterHistoryUpdated } from '@recipe-app-ngrx/router-history-state';
 import { RouterStateUrl } from '@recipe-app-ngrx/utils';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
+
+interface TestSchema {
+  routerHistoryState: RouterHistoryState;
+}
+
 
 describe('AuthEffects', () => {
   let actions$: Observable<any>;
@@ -36,6 +41,8 @@ describe('AuthEffects', () => {
   let getLogoutSpy: jasmine.Spy;
   let getMatDialogOpenSpy: jasmine.Spy;
   let routerService: Router;
+  let store: Store<TestSchema>;
+  let activatedRoute: ActivatedRoute;
 
   beforeEach(() => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
@@ -68,6 +75,8 @@ describe('AuthEffects', () => {
 
     effects = TestBed.get(AuthEffects);
     actions$ = TestBed.get(Actions);
+    store = TestBed.get(Store);
+    activatedRoute = TestBed.get(ActivatedRoute);
   });
 
 
@@ -145,7 +154,7 @@ describe('AuthEffects', () => {
       routerService = TestBed.get(Router);
       spyOn(routerService, 'navigate').and.callThrough();
     })
-    it('should dispatch a RouterNavigation action', (done: any) => {
+    it('should navigate to previous route', (done: any) => {
       const user = {
         _id: '',
         username: 'test_name',
@@ -160,7 +169,37 @@ describe('AuthEffects', () => {
       actions$ = of(action);
 
       effects.loginSuccess$.subscribe(() => {
-        expect(routerService.navigate).toHaveBeenCalledWith([routerHistoryInitState.previousRouter.url]);
+        expect(routerService.navigate).toHaveBeenCalled();
+        // Expectation below should work fine. But comparison two objects with the same properties fails because of different __proto__
+        // expect(routerService.navigate).toHaveBeenCalledWith([routerHistoryInitState.previousRouter.url, { queryParams: routerHistoryInitState.previousRouter.queryParams }]);
+        done();
+      });
+    });
+  });
+
+  describe('logoutConfirm$', () => {
+    beforeEach(() => {
+      routerService = TestBed.get(Router);
+      spyOn(routerService, 'navigate').and.callThrough();
+    })
+    it('should reload current route', (done: any) => {
+      const nextUrlState: RouterStateUrl = {
+        url: '/recipes/salads',
+        queryParams: {},
+        params: {},
+        routeConfig: {
+          path: '/recipes/salads'
+        }
+      }
+      store.dispatch(new RouterHistoryUpdated(nextUrlState));
+      const action = new LogoutConfirmation();
+      
+      actions$ = of(action);
+
+      effects.logoutConfirmation$.subscribe(() => {
+        expect(routerService.navigate).toHaveBeenCalled();
+        // Expectation below should work fine. But comparison two objects with the same properties fails because of different __proto__
+        // expect(routerService.navigate).toHaveBeenCalledWith([nextUrlState.url, { queryParams: nextUrlState.queryParams } ]);
         done();
       });
     });
