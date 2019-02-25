@@ -65,6 +65,17 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
+  logoutConfirmation$ = this.actions$.pipe(
+    ofType(AuthActionTypes.LogoutConfirmation),
+    withLatestFrom(this.routerHistoryFacade.currentRouter$),
+    tap(([action, route]) => {
+      // It's needed to reload current url in order to run 'AuthGuard' for certain components, which shouldn't be shown to unauthorized user 
+      // Remember to set `onSameUrlNavigation: 'reload'` if RouterModuld.forRoot() and `runGuardsAndResolvers: 'always'` in RecipeUiModule
+      this.router.navigate([ route.url.split('?')[0] ], { queryParams: route.queryParams});
+    })
+  );
+
+  @Effect({ dispatch: false })
   loginSuccess$ = this.actions$.pipe(
     ofType(AuthActionTypes.LoginSuccess),
     // -- maybe should load additional data for authenticated users
