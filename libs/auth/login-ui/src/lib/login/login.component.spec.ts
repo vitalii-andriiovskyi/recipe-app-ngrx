@@ -22,6 +22,9 @@ import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { readFirst } from '@nrwl/nx/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
+import { RouterStateSerializer } from '@ngrx/router-store';
+import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 
 export function newEvent(eventName: string, bubbles = false, cancelable = false) {
   const evt = document.createEvent('CustomEvent');  // MUST be 'CustomEvent'
@@ -70,6 +73,7 @@ describe('LoginComponent', () => {
           StoreModule.forRoot({}),
           EffectsModule.forRoot([]),
           AuthStateModule,
+          RouterHistoryStateModule,
           RouterTestingModule
         ],
         declarations: [ LoginComponent, LoginFormComponent, LogoutConfirmationDialogComponent, TestComponent ],
@@ -80,7 +84,8 @@ describe('LoginComponent', () => {
         imports: [RootModule],
         providers: [
           { provide: AuthService, useValue: authServiceSpy},
-          { provide: MatDialog, useValue: matDialogSpy }
+          { provide: MatDialog, useValue: matDialogSpy },
+          { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
         ]
       });
 
