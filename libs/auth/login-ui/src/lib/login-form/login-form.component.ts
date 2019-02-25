@@ -23,11 +23,11 @@ export class LoginFormComponent implements OnInit {
   @Output() submitted = new EventEmitter<AuthUserVW>();
 
   form: FormGroup = new FormGroup({
-    username: new FormControl('', [
+    username: new FormControl('rcp_user', [
       Validators.required,
       Validators.minLength(4)
     ]),
-    password: new FormControl('', [
+    password: new FormControl('1111', [
       Validators.required,
       Validators.minLength(4)
     ]),
