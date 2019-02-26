@@ -1,13 +1,13 @@
 .recipe-item-header {
   .edit-btn-wrapper {
-    margin-top: 15px;
+    // margin-top: 15px;
     + .mat-h1 {
-      margin-bottom: 25px;
+      margin: 15px 0 25px;
     }
   }
 }
 .mat-h1 {
-  margin-top: 15px;
+  margin-top: 0;
   text-align: center;
 }
 
