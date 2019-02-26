@@ -20,9 +20,9 @@ export const recipeUiRoutes: Route[] = [
     redirectTo: '/recipes/all',
     pathMatch: 'full'
   },
-  { path: 'create-recipe', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
-  { path: 'edit-recipe/:id', component: RecipeMakerComponent, canActivate: [ AuthGuard ] },
-  { path: 'recipe/:id', component: RecipeViewComponent },
+  { path: 'create-recipe', component: RecipeMakerComponent, canActivate: [ AuthGuard ], runGuardsAndResolvers: 'always' },
+  { path: 'edit-recipe/:id', component: RecipeMakerComponent, canActivate: [ AuthGuard ], runGuardsAndResolvers: 'always' },
+  { path: 'recipe/:id/:title', component: RecipeViewComponent },
   { path: 'recipes/:id', component: RecipeListComponent },
 ];
 
