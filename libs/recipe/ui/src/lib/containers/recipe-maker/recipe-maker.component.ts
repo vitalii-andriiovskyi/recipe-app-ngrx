@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, Subject, merge, of } from 'rxjs';
-import { tap, map, filter, switchMap, takeUntil, shareReplay, delay, catchError } from 'rxjs/operators';
+import { tap, map, filter, takeUntil, shareReplay, delay, catchError } from 'rxjs/operators';
 import { ofEntityOp, EntityOp } from 'ngrx-data';
 import { MatSnackBar } from '@angular/material';
 
@@ -98,23 +98,36 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
   manageByCreatedRecipe(ev: CreatedRecipeEvtObj) {
     const recipe = this.recipeMaker.create({... ev.recipe, user_username: this.username, date_created: new Date(), category: { url: ev.recipe.category}});
     if (ev.addMode) {
-      this.recipeEntityService.add(recipe, { tag: this.componentName }).pipe(
-        tap(() => this.openSnackBar('Recipe saved', '&#10006;')),
+      this.recipeEntityService.addOptimistic(recipe, { tag: this.componentName }).pipe(
+        tap(() => this.openSnackBar('Recipe saved', '✖')),
+        // The recipe returned from the server has new id, so it's better to remove the one saved optimistically
+        tap(value => this.recipeEntityService.removeOneFromCache(value.correlationId)),
         catchError(err => {
+          this.openSnackBar(`Recipe didn't get saved on the server. Try again`, '✖');
           const correlationId = err.payload ? err.payload.entity.id : err.requestData.data.id;
           this.recipeEntityService.cancel(correlationId, '', { tag: this.componentName });
+          // this.recipeEntityService.removeOneFromCache(correlationId);
           return of({})
         }),
         takeUntil(this.destroy$)
       ).subscribe();
     } else {
-      this.recipeEntityService.update(recipe, { tag: this.componentName });      
+      this.recipeEntityService.update(recipe, { tag: this.componentName }).pipe(
+        tap(() => this.openSnackBar('Recipe updated', '✖')),
+        catchError(err => {
+          this.openSnackBar(`Recipe didn't get updated on the server. Try again`, '✖');
+          const correlationId = err.payload ? err.payload.entity.id : err.requestData.data.id;
+          this.recipeEntityService.cancel(correlationId, '', { tag: this.componentName });
+          return of({})
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe();;      
     }
   }
   
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 1000,
+      duration: 2000,
     });
   }
 
