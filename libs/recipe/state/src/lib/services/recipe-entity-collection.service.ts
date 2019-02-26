@@ -94,13 +94,14 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  add(recipe: Recipe, options?: EntityActionOptions) {
+  addOptimistic(recipe: Recipe, options?: EntityActionOptions) {
+    let id: number;
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !rcp.id),
       mergeMap(rcp => 
         (this.selectors$ as any).totalNRecipes$.pipe(
           map(totalNRecipes => {
-            const id = this.idGenerator.createId(totalNRecipes as number);
+            id = this.idGenerator.createId(totalNRecipes as number);
             return { ...rcp, id }
           })
         )
@@ -109,11 +110,14 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
 
     const recipeWithId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !!rcp.id)
-    )
-
+    );
+    
     const result$ = merge(recipeWithoutId$, recipeWithId$).pipe(
-      switchMap(rcp => super.add(rcp, options))
-    )
+      switchMap(rcp => super.add(rcp, { ...options, correlationId: rcp.id })),
+      map(createdRcp => { 
+        return { recipe: createdRcp, correlationId: id } 
+      })
+    );
 
     return result$;
   }
