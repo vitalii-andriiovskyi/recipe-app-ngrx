@@ -48,7 +48,7 @@ describe(`RecipesApi`, () => {
 
   const params: {[field: string]: string} = {
     category: 'dessert',
-    username: null,
+    username: 'null',
     page: '0',
     itemsPerPage: '2'
   }
@@ -113,7 +113,7 @@ describe(`RecipesApi`, () => {
     }, 10000);
 
     it(`should get 2 recipes by category='null' and username='test_user'`, async () => {
-      const newParams = {...params, username: 'test_user', category: null};
+      const newParams = {...params, username: 'test_user', category: 'null'};
       await new Promise(resolve => setTimeout(resolve, 9000));
       const response = await request.get('/api/recipes').query(newParams);
       const loadedRecipes = response.body;
@@ -333,7 +333,7 @@ describe(`RecipesApi`, () => {
     it(`should return countFilteredRecipes=5; category='dessert', username=null`, async () => {
        paramsForCount = {
         category: 'dessert',
-        username: null
+        username: 'null'
       }
       const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
       expect(response.status).toBe(200);
@@ -342,7 +342,7 @@ describe(`RecipesApi`, () => {
 
     it(`should return countFilteredRecipes=6`, async () => {
       paramsForCount = {
-       category: null,
+       category: 'null',
        username: 'test_user'
       }
       const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
@@ -362,8 +362,8 @@ describe(`RecipesApi`, () => {
 
     it(`should return countFilteredRecipes=9`, async () => {
       paramsForCount = {
-        category: null,
-        username: null
+        category: 'null',
+        username: 'null'
       }
       const response = await request.get('/api/recipes/countFilteredRecipes').query(paramsForCount);
       expect(response.status).toBe(200);
