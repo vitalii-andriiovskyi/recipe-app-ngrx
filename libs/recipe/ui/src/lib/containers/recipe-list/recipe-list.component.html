@@ -15,6 +15,7 @@
                *ngFor="let recipe of filteredRecipes$ | async">
             <rcp-recipe-preview [recipe]="recipe"></rcp-recipe-preview>
           </div>
+          <div *ngIf="(filteredRecipes$ | async).length === 0">There's no recipes for this case yet</div>
         </div> 
       </ng-template>
 
