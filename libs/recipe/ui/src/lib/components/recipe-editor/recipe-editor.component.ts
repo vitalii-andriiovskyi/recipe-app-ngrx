@@ -27,6 +27,12 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
   @Output() createdRecipe = new EventEmitter<CreatedRecipeEvtObj>();
 
   private _destroy$ = new Subject();
+  // This observable is needed for disabling 'Save recipe' button. This an alternative of 
+  // [disabled]="recipeForm.invalid || recipeForm.pristine" which throws in the console `ExpressionChangedAfterItHasBeenCheckedError`
+  disabled$: Observable<boolean>;
+  invalid = 'INVALID';
+  valid = 'VALID';
+  makeInvalid$ = new BehaviorSubject(this.invalid);
 
   categories: Set<RecipeCategory> = recipeCategoriesList;
   units: UnitGroup[] = unitGroups;
@@ -78,6 +84,12 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
       takeUntil(this._destroy$)
     ).subscribe();
 
+    this.disabled$ = merge(this.makeInvalid$, this.recipeForm.statusChanges).pipe(
+      // delay(1),
+      distinctUntilChanged(),
+      map(value => value !== this.valid),
+    );
+
   }
 
   ngOnDestroy() {
@@ -104,11 +116,13 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
     this.ingredients.push(
       this.createIngredient(this.ingredients.length)
     );
+    this.makeInvalid$.next(this.invalid);
   }
   removeIngredient(id: number) { this.ingredients.removeAt(id); }
 
   addStep() { 
     this.steps.push( new FormControl('')); 
+    this.makeInvalid$.next(this.invalid);
   }
   removeStep(id: number) { this.steps.removeAt(id); }
 
