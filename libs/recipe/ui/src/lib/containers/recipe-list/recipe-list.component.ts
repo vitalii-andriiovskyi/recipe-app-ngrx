@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, HostBinding } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, merge, combineLatest } from 'rxjs';
 import { takeUntil, tap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material';
@@ -45,6 +45,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
   countFilteredRecipes$: Observable<number>;
   loading$: Observable<boolean>;
   error$: Observable<string>;
+  sumError$: Observable<string>;
 
   private _destroy$ = new Subject();
   constructor(
@@ -73,12 +74,22 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     this.error$ = this.recipeEntityService.errors$.pipe(
-      ofEntityOp([EntityOp.QUERY_MANY_ERROR, RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR]),
+      ofEntityOp([EntityOp.QUERY_MANY_ERROR]),
       map(errorAction => errorAction.payload.data.error ? errorAction.payload.data.error.message : 'Oops! An error occurred.'),
+      // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
+      // delay(1),
+      // takeUntil(this._destroy$)
+    );
+
+    this.sumError$ = combineLatest(this.error$, this.filteredRecipes$).pipe(
+      map(([error, recipes]) => {
+        const isErrorCase = error && recipes.length === 0;
+        return isErrorCase ? error : '';
+      }),
       // delay guards against `ExpressionChangedAfterItHasBeenCheckedError`
       delay(1),
       takeUntil(this._destroy$)
-    );
+    )
 
     this.loadRecipes();
 
