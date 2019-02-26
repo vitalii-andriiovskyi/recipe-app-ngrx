@@ -156,10 +156,10 @@ describe(`RecipesApi`, () => {
       expect(response.status).toBe(404);
     });
 
-    it(`should return error 500 when id of recipe is string`, async () => {
+    it(`should return error 404 when id of recipe is string`, async () => {
       const response = await request.get('/api/recipe/recipe');
       
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(404);
     });
   });
 
