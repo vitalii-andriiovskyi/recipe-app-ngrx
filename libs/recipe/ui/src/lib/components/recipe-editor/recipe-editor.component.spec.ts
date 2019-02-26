@@ -450,8 +450,7 @@ describe('RecipeEditorComponent', () => {
   
         matError = getMatError(quantityControl);
         expect(matError).toBeTruthy(`there's <mat-error>`);
-        expect(rcpEditorComponent.recipeForm.value.ingredients[0].quantity).toBe(null, null);
-  
+        expect(rcpEditorComponent.recipeForm.value.ingredients[0].quantity).toBe('', '');
         quantityControl.nativeElement.value = controlValue;
         quantityControl.nativeElement.dispatchEvent(newEvent('input'));
   
@@ -586,11 +585,11 @@ describe('RecipeEditorComponent', () => {
       }));
 
       it(`should create new ingredient (FormGroup), method createIngredient()`, () => {
-        const newIngredient: FormGroup = rcpEditorComponent.createIngredient();
+        const newIngredient: FormGroup = rcpEditorComponent.createIngredient(0);
         expect(newIngredient.value).toBeTruthy('new FormGroup is created');
-        expect(newIngredient.value.id).toBe(null, 'null');
+        expect(newIngredient.value.id).toBe(0, 0);
         expect(newIngredient.value.name).toBe('', '');
-        expect(newIngredient.value.quantity).toBe(null, 'null');
+        expect(newIngredient.value.quantity).toBe('', '');
         expect(newIngredient.value.unit).toBe('', '');
 
       });
