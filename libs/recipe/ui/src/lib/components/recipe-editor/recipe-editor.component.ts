@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Observable, Subject } from 'rxjs';
-import { take, tap, takeUntil } from 'rxjs/operators';
+import { Observable, Subject, merge, of, BehaviorSubject } from 'rxjs';
+import { take, tap, takeUntil, delay, map, distinctUntilChanged } from 'rxjs/operators';
 
 import { CommonErrorStateMatcher } from '@recipe-app-ngrx/utils';
-import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj } from '@recipe-app-ngrx/models';
+import { recipeCategoriesList, RecipeCategory, UnitGroup, unitGroups, Recipe, CreatedRecipeEvtObj, Ingredient } from '@recipe-app-ngrx/models';
+import { invalid } from '@angular/compiler/src/render3/view/util';
 
 @Component({
   selector: 'rcp-recipe-editor',
@@ -37,7 +38,7 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
     category: new FormControl('', [Validators.required]),
     description: new FormControl(''),
     ingredients: new FormArray([
-      this.createIngredient()
+      this.createIngredient(0)
     ], [Validators.required]),
     steps: new FormArray([
       new FormControl('')
@@ -83,23 +84,32 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
     this._destroy$.next();
   }
 
-  createIngredient(): FormGroup {
+  createIngredient(id: number, ingredient?: Ingredient): FormGroup {
+    ingredient = ingredient ? ingredient : {
+      id: id,
+      name: '',
+      unit: '',
+      quantity: 0
+    };
+
     return new FormGroup({
-      id: new FormControl(),
-      name: new FormControl(''),
-      unit: new FormControl(''),
-      quantity: new FormControl()
+      id: new FormControl(ingredient.id),
+      name: new FormControl(ingredient.name),
+      unit: new FormControl(ingredient.unit),
+      quantity: new FormControl(ingredient.quantity ? ingredient.quantity : '')
     });
   }
 
   addIngredient() {
     this.ingredients.push(
-      this.createIngredient()
+      this.createIngredient(this.ingredients.length)
     );
   }
   removeIngredient(id: number) { this.ingredients.removeAt(id); }
 
-  addStep() { this.steps.push( new FormControl('')); }
+  addStep() { 
+    this.steps.push( new FormControl('')); 
+  }
   removeStep(id: number) { this.steps.removeAt(id); }
 
   saveRecipe() {
@@ -120,7 +130,21 @@ export class RecipeEditorComponent implements OnInit, OnDestroy {
     delete rcp.user_username;
     rcp.category = rcp.category.url;
 
-    this.recipeForm.setValue(rcp);
+    while (this.steps.length) {
+      this.steps.removeAt(0);
+    }
+    while (this.ingredients.length) {
+      this.ingredients.removeAt(0);
+    }
+
+    this.recipeForm.patchValue(rcp);
+
+    rcp.steps.forEach((step: string) => {
+      this.steps.push( new FormControl(step) );
+    });
+    rcp.ingredients.forEach((ingredient: Ingredient) => {
+      this.ingredients.push(this.createIngredient(ingredient.id, ingredient));
+    });
   }
 
 }
