@@ -11,7 +11,7 @@
     <div fxFlexOrder="1" fxFlexOrder.lt-sm="2">
       <span>Recipe by: </span> <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a>
     </div>
-    <div fxFlexOrder="2" fxFlexOrder.lt-sm="1"><time [dateTime]="recipe.date_created.toISOString()">{{recipe.date_created | date}}</time></div>
+    <div fxFlexOrder="2" fxFlexOrder.lt-sm="1"><time [dateTime]="recipe.date_created">{{recipe.date_created | date}}</time></div>
   </div>
 </header> <!-- /.recipe-item-header -->
 
