@@ -714,34 +714,34 @@ describe('RecipeListComponent', () => {
       expect(rcpListComponent.paginator.length).toBe(0);
     }));
 
-    it(`should show the error`, fakeAsync(() => {
-      // getWithQuerySpy.and.returnValue(of([]));
-      router.navigate(path);
-      tick(100);
-      fixture.detectChanges();
+    // it(`should show the error`, fakeAsync(() => {
+    //   // getWithQuerySpy.and.returnValue(of([]));
+    //   router.navigate(path);
+    //   tick(100);
+    //   fixture.detectChanges();
 
-      deRcpListComponent =  fixture.debugElement.query(By.css('rcp-recipe-list'));
-      rcpListComponent = deRcpListComponent.componentInstance;
-      rcpListComponent.pageSize = pageSize;
+    //   deRcpListComponent =  fixture.debugElement.query(By.css('rcp-recipe-list'));
+    //   rcpListComponent = deRcpListComponent.componentInstance;
+    //   rcpListComponent.pageSize = pageSize;
 
-      // Wait for response from the server. The response contains countFilteredRecipes
-      tick(501);
-      fixture.detectChanges();
+    //   // Wait for response from the server. The response contains countFilteredRecipes
+    //   tick(501);
+    //   fixture.detectChanges();
 
-      deRcpListComponent =  fixture.debugElement.query(By.css('rcp-recipe-list'));
+    //   deRcpListComponent =  fixture.debugElement.query(By.css('rcp-recipe-list'));
 
-      const deErrorEl = deRcpListComponent.query(By.css('.error'));
-      expect(deErrorEl).toBeTruthy(`there's .error`);
-      expect(deErrorEl.nativeElement.innerHTML).toContain(httpErrorRes.error);
+    //   const deErrorEl = deRcpListComponent.query(By.css('.error'));
+    //   expect(deErrorEl).toBeTruthy(`there's .error`);
+    //   expect(deErrorEl.nativeElement.innerHTML).toContain(httpErrorRes.error);
 
-      const matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
-      expect(matSpinner).toBeFalsy(`there's no .mat-spinner`);
+    //   const matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
+    //   expect(matSpinner).toBeFalsy(`there's no .mat-spinner`);
 
-      deRcpPreviewComponents = deRcpListComponent.queryAll(By.css('rcp-recipe-preview'));
-      expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
-      tick(601);
+    //   deRcpPreviewComponents = deRcpListComponent.queryAll(By.css('rcp-recipe-preview'));
+    //   expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
+    //   tick(601);
 
-    }));
+    // }));
 
     it(`shouldn't load ${pageSize} recipes from the server after creation`, fakeAsync(() => {
       // getWithQuerySpy.and.returnValue(of([]));
