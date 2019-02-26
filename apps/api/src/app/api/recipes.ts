@@ -3,6 +3,7 @@ import { RecipeModel } from '../models/recipe';
 import { Recipe } from '@recipe-app-ngrx/models';
 import getLogger from '../utils/logger';
 import { CounterModel } from '../models/counter';
+import { HttpError } from '../utils/error';
 
 const logger = getLogger(module);
 
@@ -62,6 +63,7 @@ export class RecipesApi {
       .limit(itemsPerPage)
       // .slice([pageNumber, itemsPerPage])
       .then(recipes => { 
+        if (recipes.length === 0) throw new HttpError(404, 'Recipes are not found');
         res.status(200).json(recipes);
         next();
       })
@@ -78,6 +80,11 @@ export class RecipesApi {
     }
 
     const id: number = parseInt(req.params[PARAM_ID], 10);
+    if (!id) {
+      res.status(404).send('Recipe not found.');
+      next();
+      return;
+    }
 
     RecipeModel.findOne({ id: id }).then(recipe => {
       if (recipe === null) {
