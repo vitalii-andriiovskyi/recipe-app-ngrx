@@ -13,6 +13,6 @@
     </ng-template>
   </mat-card-content>
   <mat-card-actions>
-    <a mat-flat-button color="accent" [routerLink]="['/recipe', recipe.id]">View recipe</a>
+    <a mat-flat-button color="accent" [routerLink]="['/recipe', recipe.id, recipe.title_slugged]">View recipe</a>
   </mat-card-actions>
 </mat-card>
