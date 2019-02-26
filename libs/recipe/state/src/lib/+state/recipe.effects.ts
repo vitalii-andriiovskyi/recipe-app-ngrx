@@ -30,7 +30,7 @@ export class RecipeEffects {
             category: (isCat && id) ? id : null,
             username: (!isCat && !isCatAll && id) ? id : null,
             page: +route.queryParams['page'] || 0,
-            itemsPerPage: +route.queryParams['itemsPage'] || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
+            itemsPerPage: +route.queryParams['itemsPage'] || oldFilters.itemsPerPage || recipeEntityMetadata.Recipe.additionalCollectionState['filters'].itemsPerPage
           },
 
           filtersUpdatedAction: EntityAction = this.entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
