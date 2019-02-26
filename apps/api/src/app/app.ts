@@ -39,6 +39,8 @@ export class ExpressServer {
 
     //add api
     this.api();
+
+    this.handleErrors();
   }
 
   /**
@@ -113,13 +115,16 @@ export class ExpressServer {
     //   console.error(error);
     // });
 
+  }
+
+  public handleErrors() {
     this.app.use(expressErrorHandler);
 
     //catch 404 and forward to error handler
-    this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-      err.status = 404;
-      next(err);
-    });
+    // this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+    //   err.status = 404;
+    //   next(err);
+    // });
 
     const errorHandler = require('errorhandler');
     if (process.env.NODE_ENV === 'development') {
