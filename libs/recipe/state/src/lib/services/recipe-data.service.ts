@@ -23,9 +23,11 @@ export class RecipeDataService extends DefaultDataService<Recipe>{
   }
 
   getCountFilteredRecipes(filters: RecipeFilters): Observable<number> {
-    const params = new HttpParams();
-    params.set('category', filters.category);
-    params.set('username', filters.username);
+    const paramObj = {
+      'category': filters.category,
+      'username': filters.username
+    }
+    const params = new HttpParams({ fromObject: paramObj });
     return this.execute('GET', 'api/recipes/countFilteredRecipes', null, { params });
   }
 }
