@@ -265,7 +265,7 @@ describe('RecipeMakerComponent', () => {
 
         expectedLoading = cold('a', { a: false} );
         expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
-        tick(1000);
+        tick(10000);
       }));
 
       it('should create new recipe and cancel Persistant because of the error on the server', fakeAsync(() => {
@@ -308,7 +308,7 @@ describe('RecipeMakerComponent', () => {
 
         expectedLoading = cold('a', { a: false} );
         expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
-        tick(1000);
+        tick(10000);
       }));
 
 
@@ -406,7 +406,7 @@ describe('RecipeMakerComponent', () => {
 
         expectedLoading = cold('a', { a: false} );
         expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
-        tick(1000);
+        tick(10000);
       }));
 
       it('should update new recipe and cancel Persistant because of the error on the server', fakeAsync(() => {
@@ -452,7 +452,7 @@ describe('RecipeMakerComponent', () => {
 
         expectedLoading = cold('a', { a: false} );
         expect(recipeEntityCollectionService.loading$).toBeObservable(expectedLoading);
-        tick(1000);
+        tick(10000);
       }));
 
 
