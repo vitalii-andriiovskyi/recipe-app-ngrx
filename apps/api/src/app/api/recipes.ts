@@ -52,8 +52,10 @@ export class RecipesApi {
           };
 
     if (!username) { delete queryObj.user_username };
+    if (username === 'null') { delete queryObj.user_username };
     if (!categoryUrl) { delete queryObj['category.url'] };
-    
+    if (categoryUrl === 'null') { delete queryObj['category.url'] };
+       
     RecipeModel.find(queryObj)
       .sort({ date_created: -1 })
       .skip(pageNumber * itemsPerPage)
@@ -164,7 +166,9 @@ export class RecipesApi {
 
     if (!username) { delete queryObj.user_username };
     if (!categoryUrl) { delete queryObj['category.url'] };
-    
+    if (username === 'null') { delete queryObj.user_username };
+    if (categoryUrl === 'null') { delete queryObj['category.url'] };
+
     RecipeModel.countDocuments(queryObj)
       .then(count => { 
         res.status(200).json(count);
