@@ -41,7 +41,7 @@ The list of libraries which are reusable modules includes:
 * [models](./libs/models/src). These are different data models used in the project.
 * [utils](./libs/utils/src). It includes helpful services and functions.
 
-## Helpful sources used for the project
+## Helpful sources used while the project
 
 NGRX:
 * Theory:
