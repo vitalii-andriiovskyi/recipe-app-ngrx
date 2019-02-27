@@ -88,7 +88,7 @@ To install this project do these actions:
 - run `git clone https://github.com/vitalii-andriiovskyi/recipe-app-ngrx.git`
 - run `yarn` to install packages
 - create the db `rcp` in the `MongoDB`
-- import files from the folder `db` into `MongoDB`. The folder `db` is in the root of the project
+- import files from the folder [`db`](./db) into `MongoDB`. The folder `db` is in the root of the project
 
 To run the `api` use command `ng serve api`.  
 To run the `recipe-app` use command `ng serve recipe-app`.
