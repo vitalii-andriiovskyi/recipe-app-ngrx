@@ -63,6 +63,10 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
       map(paramMap => paramMap.get('id')),
       distinctUntilChanged(),
       tap(() => this.router.navigate(['./'], { relativeTo: this.route, queryParams: { page: 0, itemsPage: this.pageSize } })),
+      tap(() => { 
+        this.paginator.pageIndex = 0;
+        this.paginator.pageSize = this.pageSize
+      }),
       takeUntil(this._destroy$)
     ).subscribe();
 
