@@ -15,7 +15,8 @@ import {  MatToolbarModule,
           MatCardModule,
           MatPaginatorModule,
           MatListModule,
-          MatSidenavModule
+          MatSidenavModule,
+          MatDialogModule
         } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ const modules = [
   FlexLayoutModule,
   ReactiveFormsModule,
   
+  MatDialogModule,
   MatToolbarModule,
   MatIconModule,
   MatMenuModule,
