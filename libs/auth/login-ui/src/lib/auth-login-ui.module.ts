@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
-import { MatButtonModule, MatDialogModule, MatCardModule, MatFormFieldModule, MatInputModule } from '@angular/material';
-import { LoginFormComponent } from './login-form/login-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './login/login.component';
 import { Routes, RouterModule } from '@angular/router';
+
+import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
+import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
+import { LoginFormComponent } from './login-form/login-form.component';
+import { LoginComponent } from './login/login.component';
 
 export { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
 
@@ -15,13 +14,7 @@ const authRoutes: Routes = [
 
 @NgModule({
   imports: [
-    CommonModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
+    SharedComponentsModule,
     RouterModule.forChild(authRoutes)
   ],
   declarations: [LogoutConfirmationDialogComponent, LoginFormComponent, LoginComponent],
