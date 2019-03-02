@@ -16,8 +16,8 @@ mongoose.connection.on("error", error => {
   logger.error(error);
 });
 
-const app = server.bootstrap().app;
-app.listen(PORT, (err) => {
+export const app = server.bootstrap().app;
+app.listen(PORT, (err: any) => {
   if (err) { 
     logger.error(err);
   }
