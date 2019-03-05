@@ -1,4 +1,5 @@
 # RecipeAppNgrx
+The link to working [RecipeAppNgrx](http://35.158.177.110/).
 
 __Table of contents__
 * [The description of the project](#the-description-of-the-project)
