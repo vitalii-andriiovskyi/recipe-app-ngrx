@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { join } from 'path';
-import * as config from './config';
+import config from './config';
 import * as cors from 'cors';
 import * as cookieParser from 'cookie-parser';
 import * as expressJwt from 'express-jwt';

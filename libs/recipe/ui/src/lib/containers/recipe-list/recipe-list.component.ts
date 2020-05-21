@@ -35,7 +35,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
   @HostBinding('@seqFadeInUp')
   public animatePage = true; 
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   componentName = 'RecipeListComponent';
   pageSize = 3;

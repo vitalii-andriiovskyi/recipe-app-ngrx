@@ -1,13 +1,24 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { Component, DebugElement, NgModule } from '@angular/core';
-import { ParamMap, convertToParamMap, ActivatedRoute, Router } from '@angular/router';
+import {
+  ParamMap,
+  convertToParamMap,
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 
-import { NxModule } from '@nrwl/nx';
+import { NxModule } from '@nrwl/angular';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { EntityOp, RequestData } from 'ngrx-data';
@@ -55,11 +66,11 @@ const recipe: Recipe = {
       unit: 'kg'
     }
   ],
-  steps: [ 
+  steps: [
     `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto reiciendis rerum vitae nulla enim fugiat ipsa doloribus, ipsam officia corrupti.`,
     `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto reiciendis rerum vitae nulla enim fugiat ipsa doloribus, ipsam officia corrupti.`,
     `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto reiciendis rerum vitae nulla enim fugiat ipsa doloribus, ipsam officia corrupti.`,
-    `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto reiciendis rerum vitae nulla enim fugiat ipsa doloribus, ipsam officia corrupti.`,
+    `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto reiciendis rerum vitae nulla enim fugiat ipsa doloribus, ipsam officia corrupti.`
   ],
   images: [],
   footnotes: 'Some info',
@@ -70,7 +81,7 @@ const recipe: Recipe = {
 
   category: { url: 'desserts', value: 'Desserts' },
   user_username: 'test_user',
-  date_created: new Date(),
+  date_created: new Date()
 };
 
 describe('RecipeViewComponent', () => {
@@ -83,7 +94,9 @@ describe('RecipeViewComponent', () => {
   let deRcpDetailComponent: DebugElement;
 
   const loggedIn$ = new BehaviorSubject<boolean>(false);
-  const activatedRouteParamMap$ = new BehaviorSubject<ParamMap>(convertToParamMap({}));
+  const activatedRouteParamMap$ = new BehaviorSubject<ParamMap>(
+    convertToParamMap({})
+  );
   const activatedRoute = {
     paramMap: activatedRouteParamMap$.asObservable()
   };
@@ -106,13 +119,13 @@ describe('RecipeViewComponent', () => {
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
         // StoreRouterConnectingModule.forRoot(),
-        RcpEntityStoreModule,
-      ],
+        RcpEntityStoreModule
+      ]
     })
-    class RootModule {};
+    class RootModule {}
 
     TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         RootModule,
         SharedComponentsModule,
         NoopAnimationsModule,
@@ -121,7 +134,12 @@ describe('RecipeViewComponent', () => {
           { path: '**', component: PageNotFoundComponent }
         ])
       ],
-      declarations: [RecipeViewComponent, RecipeDetailComponent, PageNotFoundComponent, TestComponent ],
+      declarations: [
+        RecipeViewComponent,
+        RecipeDetailComponent,
+        PageNotFoundComponent,
+        TestComponent
+      ],
       providers: [
         { provide: AuthFacade, useValue: authFacadeSpy },
         { provide: HttpClient, useValue: httpSpy },
@@ -130,7 +148,6 @@ describe('RecipeViewComponent', () => {
         LogService
       ]
     }).compileComponents();
-
   }));
 
   beforeEach(() => {
@@ -146,36 +163,46 @@ describe('RecipeViewComponent', () => {
     const path = '/recipe/1001';
 
     beforeEach(async(() => {
-      recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+      recipeEntityCollectionService = TestBed.get(
+        RecipeEntityCollectionService
+      );
       recipeEntityCollectionService.createAndDispatch(EntityOp.ADD_ONE, recipe);
       // navigate to RecipeViewComponent
       router.navigate([path]);
-      activatedRouteParamMap$.next(convertToParamMap({id: 1001}));
+      activatedRouteParamMap$.next(convertToParamMap({ id: 1001 }));
     }));
 
     it(`component should be created`, () => {
       fixture.detectChanges();
 
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       expect(deRcpViewComponent).toBeTruthy('RecipeViewComponent is created');
     });
 
     it(`should show RecipeDetailComponent; .error and mat-spinner aren't created`, () => {
       fixture.detectChanges();
-      
-      deRcpDetailComponent = fixture.debugElement.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeTruthy('RecipeDetailComponent is created');
+
+      deRcpDetailComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-detail')
+      );
+      expect(deRcpDetailComponent).toBeTruthy(
+        'RecipeDetailComponent is created'
+      );
 
       const errorContainer = fixture.debugElement.query(By.css('.error'));
-      expect(errorContainer).toBeFalsy('.error isn\'t created');
+      expect(errorContainer).toBeFalsy(".error isn't created");
       const matSpinner = fixture.debugElement.query(By.css('.mat-spinner'));
-      expect(matSpinner).toBeFalsy('.mat-spinner isn\'t created');
+      expect(matSpinner).toBeFalsy(".mat-spinner isn't created");
     });
 
     it(`recipe$ pass 'recipe'`, () => {
       fixture.detectChanges();
 
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       rcpViewComponent = deRcpViewComponent.componentInstance;
 
       const expected = cold('a', { a: recipe });
@@ -185,7 +212,9 @@ describe('RecipeViewComponent', () => {
     it(`loading$ pass false`, fakeAsync(() => {
       fixture.detectChanges();
 
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       rcpViewComponent = deRcpViewComponent.componentInstance;
       rcpViewComponent.loading$.subscribe(val => {
         expect(val).toBeFalsy('loading$ passes false');
@@ -199,41 +228,60 @@ describe('RecipeViewComponent', () => {
     const path = '/recipe/1001';
 
     beforeEach(async(() => {
-      recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+      recipeEntityCollectionService = TestBed.get(
+        RecipeEntityCollectionService
+      );
     }));
 
     it(`should load recipe from the server`, fakeAsync(() => {
-      getHttpGetSpy.and.returnValue(of(recipe).pipe(delay(1000)) );
+      getHttpGetSpy.and.returnValue(of(recipe).pipe(delay(1000)));
       // navigate to RecipeMakerComponent
       router.navigate([path]);
-      
+
       tick(1);
       fixture.detectChanges();
       tick(1);
       fixture.detectChanges();
 
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       let matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
       expect(matSpinner).toBeTruthy('mat-spinner shows loading');
       let error = deRcpViewComponent.query(By.css('.error'));
       expect(error).toBeFalsy(`there's no .error Element`);
-      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeFalsy('RecipeDetailComponent isn\'t created');
+      deRcpDetailComponent = deRcpViewComponent.query(
+        By.css('rcp-recipe-detail')
+      );
+      expect(deRcpDetailComponent).toBeFalsy(
+        "RecipeDetailComponent isn't created"
+      );
 
       tick(1001);
       fixture.detectChanges();
-      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
       expect(matSpinner).toBeFalsy('mat-spinner shows loading');
-      
-      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       rcpViewComponent = deRcpViewComponent.componentInstance;
       const expected = cold('a', { a: recipe });
       expect(rcpViewComponent.recipe$).toBeObservable(expected);
 
-      deRcpDetailComponent = fixture.debugElement.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeTruthy('RecipeDetailComponent is created');
-      expect(deRcpDetailComponent.componentInstance.recipe.id).toBe(recipe.id, recipe.id);
+      deRcpDetailComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-detail')
+      );
+      expect(deRcpDetailComponent).toBeTruthy(
+        'RecipeDetailComponent is created'
+      );
+      expect(deRcpDetailComponent.componentInstance.recipe.id).toBe(
+        recipe.id,
+        recipe.id
+      );
 
       error = deRcpViewComponent.query(By.css('.error'));
       expect(error).toBeFalsy(`there's no .error Element`);
@@ -247,33 +295,45 @@ describe('RecipeViewComponent', () => {
         status: 400,
         url: 'api/recipe/1001'
       });
-      getHttpGetSpy.and.returnValue(throwError(errorRes).pipe(delay(1000)) );
+      getHttpGetSpy.and.returnValue(throwError(errorRes).pipe(delay(1000)));
       // navigate to RecipeMakerComponent
       router.navigate([path]);
-      
+
       tick(1);
       fixture.detectChanges();
       tick(1);
       fixture.detectChanges();
 
-      deRcpViewComponent =  fixture.debugElement.query(By.css('rcp-recipe-view'));
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       let matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
       expect(matSpinner).toBeTruthy('mat-spinner shows loading');
       let error = deRcpViewComponent.query(By.css('.error'));
       expect(error).toBeFalsy(`there's no .error Element`);
-      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeFalsy('RecipeEditorComponent isn\'t created');
+      deRcpDetailComponent = deRcpViewComponent.query(
+        By.css('rcp-recipe-detail')
+      );
+      expect(deRcpDetailComponent).toBeFalsy(
+        "RecipeEditorComponent isn't created"
+      );
 
       tick(1001);
       fixture.detectChanges();
-      
-      deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-view'));
+
+      deRcpViewComponent = fixture.debugElement.query(
+        By.css('rcp-recipe-view')
+      );
       matSpinner = deRcpViewComponent.query(By.css('.mat-spinner'));
       expect(matSpinner).toBeFalsy('mat-spinner shows loading');
 
-      deRcpDetailComponent = deRcpViewComponent.query(By.css('rcp-recipe-detail'));
-      expect(deRcpDetailComponent).toBeFalsy('RecipeEditorComponent isn\'t created');
-      
+      deRcpDetailComponent = deRcpViewComponent.query(
+        By.css('rcp-recipe-detail')
+      );
+      expect(deRcpDetailComponent).toBeFalsy(
+        "RecipeEditorComponent isn't created"
+      );
+
       error = deRcpViewComponent.query(By.css('.error'));
       expect(error).toBeTruthy(`there's no .error Element`);
 
@@ -282,15 +342,19 @@ describe('RecipeViewComponent', () => {
   });
 });
 
-
 @Component({
-  template: `<div>Page not Found</div>`,
+  template: `
+    <div>Page not Found</div>
+  `,
   selector: 'rcp-pnf'
 })
-class PageNotFoundComponent { }
+class PageNotFoundComponent {}
 
 @Component({
   selector: 'rcp-test',
-  template: `<div>RecipeViewComponent</div><router-outlet></router-outlet>`
+  template: `
+    <div>RecipeViewComponent</div>
+    <router-outlet></router-outlet>
+  `
 })
-class TestComponent { }
+class TestComponent {}

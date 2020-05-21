@@ -2,7 +2,7 @@ import {Document, model, Model, Schema, Types} from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { from, throwError, Observable, bindNodeCallback, of } from 'rxjs';
 import { exhaustMap, switchMap, map } from 'rxjs/operators';
-import * as config from '../config';
+import config from '../config';
 import * as jwt from 'jsonwebtoken';
 import { CommonError, CommonErrorTypes } from '../utils/error';
 import { User } from '@recipe-app-ngrx/models';
