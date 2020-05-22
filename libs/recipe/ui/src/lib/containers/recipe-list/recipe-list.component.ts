@@ -5,7 +5,7 @@ import { trigger, transition, query, style, stagger, animate } from '@angular/an
 import { Observable, Subject, merge, combineLatest } from 'rxjs';
 import { takeUntil, tap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 import { EntityOp, ofEntityOp } from '@ngrx/data';
 
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';

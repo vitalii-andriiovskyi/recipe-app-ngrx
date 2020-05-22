@@ -14,18 +14,16 @@ import {
   AuthService
 } from '@recipe-app-ngrx/auth/state';
 
-import { MatDialog, MatDialogModule } from '@angular/material';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { User, AuthUserVW } from '@recipe-app-ngrx/models';
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { LogoutConfirmationDialogComponent } from '../logout-confirmation-dialog/logout-confirmation-dialog.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatFormFieldModule,
-  MatInputModule
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';

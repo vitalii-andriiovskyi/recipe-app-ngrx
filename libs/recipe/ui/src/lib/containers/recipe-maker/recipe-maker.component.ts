@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, Subject, merge, of } from 'rxjs';
 import { tap, map, filter, takeUntil, shareReplay, delay, catchError } from 'rxjs/operators';
 import { ofEntityOp, EntityOp } from '@ngrx/data';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 import { Recipe, CreatedRecipeEvtObj, User } from '@recipe-app-ngrx/models';
@@ -43,10 +43,10 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.paramMapId = this.activatedRoute.snapshot.paramMap.get('id');
 
-    this.recipeById$ = combineLatest(
+    this.recipeById$ = combineLatest([
       this.activatedRoute.paramMap.pipe(map(paramMap => paramMap.get('id'))),
       this.recipeEntityService.entityMap$
-    ).pipe(
+    ]).pipe(
       filter(([id, entityMap]) => !!parseInt(id, 10)),
       map(([id, entityMap]) => {
         const recipe = entityMap[id];
@@ -78,7 +78,7 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     );
 
-    this.loading$ = combineLatest(this.recipeById$, this.recipeEntityService.loading$).pipe(
+    this.loading$ = combineLatest([this.recipeById$, this.recipeEntityService.loading$]).pipe(
       map(([recipe, loading]) => !recipe && loading),
       delay(1),
       takeUntil(this.destroy$)

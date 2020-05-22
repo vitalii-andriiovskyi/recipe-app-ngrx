@@ -21,7 +21,7 @@ import {
   LogoutDismiss
 } from './auth.actions';
 import { AuthService } from '../services/auth.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
 import {

@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog.component';
-import { MatButtonModule, MatDialogModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('LogoutConfirmationDialogComponent', () => {
   let component: LogoutConfirmationDialogComponent;

@@ -2,7 +2,7 @@ import { NgModule, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { readFirst } from '@nrwl/angular/testing';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 
 import { StoreModule, Store } from '@ngrx/store';

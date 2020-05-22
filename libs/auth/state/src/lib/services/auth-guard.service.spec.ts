@@ -5,7 +5,7 @@ import { StoreModule, Store } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { NxModule } from '@nrwl/angular';
 
 import { AuthGuard } from './auth-guard.service';

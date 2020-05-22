@@ -10,7 +10,7 @@ import {
   withLatestFrom,
   delay
 } from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AuthPartialState } from './auth.reducer';
 import {
