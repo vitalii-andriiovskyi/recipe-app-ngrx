@@ -6,7 +6,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 import { MatDialog } from '@angular/material';
-import { NxModule } from '@nrwl/nx';
+import { NxModule } from '@nrwl/angular';
 
 import { AuthGuard } from './auth-guard.service';
 import { authReducer, initialState, AuthState } from '../+state/auth.reducer';
@@ -25,7 +25,7 @@ interface TestSchema {
 describe('AuthGuard', () => {
   let authGuard: AuthGuard;
   let store: Store<TestSchema>;
-  
+
   const user = {
     _id: '',
     username: 'test_name',
@@ -36,7 +36,10 @@ describe('AuthGuard', () => {
   } as User;
 
   describe('used in NgModule', () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'login',
+      'logout'
+    ]);
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     beforeEach(() => {
@@ -45,15 +48,15 @@ describe('AuthGuard', () => {
           StoreModule.forFeature('auth', authReducer, { initialState }),
           EffectsModule.forFeature([AuthEffects]),
           RouterTestingModule.withRoutes([
-            { path: '**', component: PageNotFoundComponent},
-          ]),
+            { path: '**', component: PageNotFoundComponent }
+          ])
         ],
         providers: [
           AuthFacade,
-          { provide: AuthService, useValue: authServiceSpy},
+          { provide: AuthService, useValue: authServiceSpy },
           { provide: MatDialog, useValue: matDialogSpy }
         ],
-        declarations: [ PageNotFoundComponent]
+        declarations: [PageNotFoundComponent]
       })
       class CustomFeatureModule {}
 
@@ -93,11 +96,8 @@ describe('AuthGuard', () => {
   });
 });
 
-
 @Component({
   selector: 'rcp-page-not-found',
   template: '<p>test</p>'
 })
-class PageNotFoundComponent {
-
-}
+class PageNotFoundComponent {}

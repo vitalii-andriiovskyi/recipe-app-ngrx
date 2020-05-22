@@ -5,4 +5,4 @@ nconf.argv()
   .env()
   .file({file: join(__dirname, 'config.json')} );
 
-export = nconf;
+export default nconf;

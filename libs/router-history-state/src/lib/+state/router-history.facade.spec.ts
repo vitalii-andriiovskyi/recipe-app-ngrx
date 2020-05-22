@@ -1,19 +1,17 @@
 import { NgModule } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { readFirst } from '@nrwl/nx/testing';
+import { readFirst } from '@nrwl/angular/testing';
 
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule, Store } from '@ngrx/store';
 
-import { NxModule } from '@nrwl/nx';
+import { NxModule } from '@nrwl/angular';
 
 import { RouterHistoryEffects } from './router-history.effects';
 import { RouterHistoryFacade } from './router-history.facade';
 
 import { routerHistoryQuery } from './router-history.selectors';
-import {
-  RouterHistoryUpdated,
-} from './router-history.actions';
+import { RouterHistoryUpdated } from './router-history.actions';
 import {
   RouterHistoryState,
   initialState,
@@ -48,7 +46,7 @@ describe('RouterHistoryFacade', () => {
           NxModule.forRoot(),
           StoreModule.forRoot({}),
           EffectsModule.forRoot([]),
-          CustomFeatureModule,
+          CustomFeatureModule
         ]
       })
       class RootModule {}
@@ -66,12 +64,15 @@ describe('RouterHistoryFacade', () => {
         let currentRouter = await readFirst(facade.currentRouter$);
 
         expect(currentRouter.url).toBe(initialState.currentRouter.url);
-        // currentRouter.params and initialState.currentRouter.params are different empty objects and can't be compared 
+        // currentRouter.params and initialState.currentRouter.params are different empty objects and can't be compared
         expect(currentRouter.params).toBeTruthy('params');
         expect(Object.values(currentRouter.params).length).toBe(0, 'params');
-        // currentRouter.queryParams and initialState.currentRouter.queryParams are different empty objects and can't be compared 
+        // currentRouter.queryParams and initialState.currentRouter.queryParams are different empty objects and can't be compared
         expect(currentRouter.queryParams).toBeTruthy('queryParams');
-        expect(Object.values(currentRouter.queryParams).length).toBe(0, 'queryParams');
+        expect(Object.values(currentRouter.queryParams).length).toBe(
+          0,
+          'queryParams'
+        );
 
         // update routerStateUrl
         let routerState: RouterStateUrl = {
@@ -81,29 +82,29 @@ describe('RouterHistoryFacade', () => {
           routeConfig: null
         };
 
-        store.dispatch( new RouterHistoryUpdated(routerState));
+        store.dispatch(new RouterHistoryUpdated(routerState));
 
         currentRouter = await readFirst(facade.currentRouter$);
 
         expect(currentRouter.url).toBe(routerState.url);
         expect(currentRouter.params).toBe(routerState.params);
         expect(currentRouter.queryParams).toBe(routerState.queryParams);
-        
+
         // update routerStateUrl
         routerState = {
           url: 'recipe/salad',
           params: { id: 'salad' },
-          queryParams: { },
+          queryParams: {},
           routeConfig: null
         };
 
-        store.dispatch( new RouterHistoryUpdated(routerState));
+        store.dispatch(new RouterHistoryUpdated(routerState));
         currentRouter = await readFirst(facade.currentRouter$);
 
         expect(currentRouter.url).toBe(routerState.url);
         expect(currentRouter.params).toBe(routerState.params);
         expect(currentRouter.queryParams).toBe(routerState.queryParams);
-        
+
         done();
       } catch (err) {
         done.fail(err);
@@ -116,13 +117,16 @@ describe('RouterHistoryFacade', () => {
         let currentRouter = await readFirst(facade.currentRouter$);
 
         expect(previousRouter.url).toBe(initialState.previousRouter.url);
-        // previousRouter.params and initialState.previousRouter.params are different empty objects and can't be compared 
+        // previousRouter.params and initialState.previousRouter.params are different empty objects and can't be compared
         expect(previousRouter.params).toBeTruthy('params');
         expect(Object.values(previousRouter.params).length).toBe(0, 'params');
-        // previousRouter.queryParams and initialState.previousRouter.queryParams are different empty objects and can't be compared 
+        // previousRouter.queryParams and initialState.previousRouter.queryParams are different empty objects and can't be compared
         expect(previousRouter.queryParams).toBeTruthy('queryParams');
-        expect(Object.values(previousRouter.queryParams).length).toBe(0, 'queryParams');
-        
+        expect(Object.values(previousRouter.queryParams).length).toBe(
+          0,
+          'queryParams'
+        );
+
         // update routerStateUrl
         let routerState: RouterStateUrl = {
           url: 'recipes/desserts',
@@ -131,21 +135,23 @@ describe('RouterHistoryFacade', () => {
           routeConfig: null
         };
 
-        store.dispatch( new RouterHistoryUpdated(routerState));
+        store.dispatch(new RouterHistoryUpdated(routerState));
         previousRouter = await readFirst(facade.previousRouter$);
 
-        
         // current router becomes previous (in this case initialState.previousRouter), new router becomes current
         expect(previousRouter.url).toBe(initialState.previousRouter.url);
         // expect(previousRouter.params).toBe(initialState.previousRouter.params);
         // expect(previousRouter.queryParams).toBe(initialState.previousRouter.queryParams);
-        
-        // previousRouter.params and initialState.previousRouter.params are different empty objects and can't be compared 
+
+        // previousRouter.params and initialState.previousRouter.params are different empty objects and can't be compared
         expect(previousRouter.params).toBeTruthy('params');
         expect(Object.values(previousRouter.params).length).toBe(0, 'params');
-        // previousRouter.queryParams and initialState.previousRouter.queryParams are different empty objects and can't be compared 
+        // previousRouter.queryParams and initialState.previousRouter.queryParams are different empty objects and can't be compared
         expect(previousRouter.queryParams).toBeTruthy('queryParams');
-        expect(Object.values(previousRouter.queryParams).length).toBe(0, 'queryParams');
+        expect(Object.values(previousRouter.queryParams).length).toBe(
+          0,
+          'queryParams'
+        );
 
         currentRouter = await readFirst(facade.currentRouter$);
 
@@ -153,11 +159,11 @@ describe('RouterHistoryFacade', () => {
         routerState = {
           url: 'recipe/salad',
           params: { id: 'salad' },
-          queryParams: { },
+          queryParams: {},
           routeConfig: null
         };
 
-        store.dispatch( new RouterHistoryUpdated(routerState));
+        store.dispatch(new RouterHistoryUpdated(routerState));
 
         previousRouter = await readFirst(facade.previousRouter$);
 

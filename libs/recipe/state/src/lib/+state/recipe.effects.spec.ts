@@ -2,7 +2,11 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { HttpParams, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import {
+  HttpParams,
+  HttpErrorResponse,
+  HttpHeaders
+} from '@angular/common/http';
 import { ActivatedRouteSnapshot, ParamMap } from '@angular/router';
 import { Component, NgModule } from '@angular/core';
 
@@ -12,12 +16,26 @@ import { tap } from 'rxjs/operators';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { StoreRouterConnectingModule, ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
+import {
+  StoreRouterConnectingModule,
+  ROUTER_NAVIGATION,
+  RouterNavigationAction
+} from '@ngrx/router-store';
 
-import { EntityActionFactory, EntityOp, NgrxDataModule, ENTITY_METADATA_TOKEN, EntityCollectionReducerRegistry, EntityDataService, DataServiceError, RequestData, EntityActionDataServiceError } from 'ngrx-data';
+import {
+  EntityActionFactory,
+  EntityOp,
+  NgrxDataModule,
+  ENTITY_METADATA_TOKEN,
+  EntityCollectionReducerRegistry,
+  EntityDataService,
+  DataServiceError,
+  RequestData,
+  EntityActionDataServiceError
+} from 'ngrx-data';
 
-import { NxModule } from '@nrwl/nx';
-import { hot, cold } from '@nrwl/nx/testing';
+import { NxModule } from '@nrwl/angular';
+import { hot, cold } from '@nrwl/angular/testing';
 
 import { RecipeEffects } from './recipe.effects';
 import { RecipeEntityOp } from './recipe.actions';
@@ -36,14 +54,21 @@ describe('RecipeEffects', () => {
   let recipeEntityCollectionService: RecipeEntityCollectionService;
 
   beforeEach(() => {
-    const recipeDataServiceSpy = jasmine.createSpyObj('RecipeDataService', ['getTotalNRecipes', 'getCountFilteredRecipes']);
+    const recipeDataServiceSpy = jasmine.createSpyObj('RecipeDataService', [
+      'getTotalNRecipes',
+      'getCountFilteredRecipes'
+    ]);
     getTotalNRecipesSpy = recipeDataServiceSpy.getTotalNRecipes;
     getCountFilteredRecipesSpy = recipeDataServiceSpy.getCountFilteredRecipes;
 
     @NgModule({
       imports: [],
       providers: [
-        { provide: ENTITY_METADATA_TOKEN, multi: true, useValue: recipeEntityMetadata },
+        {
+          provide: ENTITY_METADATA_TOKEN,
+          multi: true,
+          useValue: recipeEntityMetadata
+        },
         { provide: RecipeDataService, useValue: recipeDataServiceSpy },
         EntityCollectionReducerRegistry
       ]
@@ -66,9 +91,9 @@ describe('RecipeEffects', () => {
         NgrxDataModule.forRoot({
           entityMetadata: {}
         }),
-        RouterTestingModule.withRoutes(
-          [{ path: 'recipes:/id', component: TestComponent }]
-        ),
+        RouterTestingModule.withRoutes([
+          { path: 'recipes:/id', component: TestComponent }
+        ]),
         HttpClientTestingModule,
         CustomFeatureModule
       ],
@@ -80,7 +105,7 @@ describe('RecipeEffects', () => {
         LogService,
         RecipeEntityCollectionService
       ],
-      declarations: [ TestComponent ]
+      declarations: [TestComponent]
     });
 
     effects = TestBed.get(RecipeEffects);
@@ -90,10 +115,18 @@ describe('RecipeEffects', () => {
 
   describe('totalNRecipes$', () => {
     it('should return SUCCESS action, when the server responds with a number ', () => {
-      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp);
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS as unknown as EntityOp, 1000, {tag: 'API'});
-      
-      actions$ = hot('-a---', { a: action }); 
+      const action = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown) as EntityOp
+      );
+      const completion = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_TOTAL_N_RECIPES_SUCCESS as unknown) as EntityOp,
+        1000,
+        { tag: 'API' }
+      );
+
+      actions$ = hot('-a---', { a: action });
       const response = cold('-a|', { a: 1000 });
       const expected = cold('--b', { b: completion });
 
@@ -102,7 +135,7 @@ describe('RecipeEffects', () => {
     });
 
     it('should return ERROR action, when the server responds with an error ', () => {
-      const options: RecipeFilters = { 
+      const options: RecipeFilters = {
         category: 'Bread',
         username: '',
         page: 1,
@@ -113,18 +146,29 @@ describe('RecipeEffects', () => {
         url: 'api/recipes/countFilteredRecipes'
       };
       const httpErrorRes = new HttpErrorResponse({
-        error: "Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes",
-        status : 504,
-        statusText : "Gateway Timeout",
-        url : "http://localhost:4200/api/recipes/countFilteredRecipes",
-      })
+        error:
+          'Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes',
+        status: 504,
+        statusText: 'Gateway Timeout',
+        url: 'http://localhost:4200/api/recipes/countFilteredRecipes'
+      });
 
       const err = new DataServiceError(httpErrorRes, reqData);
-     
 
-      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown as EntityOp);
-      const errorData: EntityActionDataServiceError = { error: err, originalAction: action};
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'});
+      const action = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_TOTAL_N_RECIPES as unknown) as EntityOp
+      );
+      const errorData: EntityActionDataServiceError = {
+        error: err,
+        originalAction: action
+      };
+      const completion = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_TOTAL_N_RECIPES_ERROR as unknown) as EntityOp,
+        errorData,
+        { tag: 'API' }
+      );
 
       actions$ = hot('-a---', { a: action });
       const response = cold('-#', {}, err);
@@ -138,16 +182,25 @@ describe('RecipeEffects', () => {
   describe(`queryCountFilteredRecipes$`, () => {
     it(`should return SUCCESS action, when the server responds with a number`, () => {
       const countFilteredRecipes = 101;
-      const filters: RecipeFilters = { 
+      const filters: RecipeFilters = {
         category: 'Bread',
         username: '',
         page: 1,
         itemsPerPage: 6
       };
-      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters);
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown as EntityOp, countFilteredRecipes, {tag: 'API'});
+      const action = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown) as EntityOp,
+        filters
+      );
+      const completion = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS as unknown) as EntityOp,
+        countFilteredRecipes,
+        { tag: 'API' }
+      );
 
-      actions$ = hot('-a---', {a: action});
+      actions$ = hot('-a---', { a: action });
       const response = cold('-a|', { a: countFilteredRecipes });
       const expected = cold('--b', { b: completion });
 
@@ -156,7 +209,7 @@ describe('RecipeEffects', () => {
     });
 
     it('should return ERROR action, when the server responds with an error ', () => {
-      const options: RecipeFilters = { 
+      const options: RecipeFilters = {
         category: 'Bread',
         username: '',
         page: 1,
@@ -167,21 +220,33 @@ describe('RecipeEffects', () => {
         url: 'api/recipes/countFilteredRecipes'
       };
       const httpErrorRes = new HttpErrorResponse({
-        error: "Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes",
-        status : 504,
-        statusText : "Gateway Timeout",
-        url : "http://localhost:4200/api/recipes/countFilteredRecipes",
-      })
+        error:
+          'Error occured while trying to proxy to: localhost:4200/api/recipes/countFilteredRecipes',
+        status: 504,
+        statusText: 'Gateway Timeout',
+        url: 'http://localhost:4200/api/recipes/countFilteredRecipes'
+      });
 
       const err = new DataServiceError(httpErrorRes, reqData);
-     
 
-      const action = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, options);
-      const errorData: EntityActionDataServiceError = { error: err, originalAction: action};
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown as EntityOp, errorData, {tag: 'API'});
+      const action = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown) as EntityOp,
+        options
+      );
+      const errorData: EntityActionDataServiceError = {
+        error: err,
+        originalAction: action
+      };
+      const completion = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR as unknown) as EntityOp,
+        errorData,
+        { tag: 'API' }
+      );
 
       actions$ = hot('-a---', { a: action });
-      const response = cold('-#', null,  err );
+      const response = cold('-#', null, err);
       getCountFilteredRecipesSpy.and.returnValue(response);
       const expected = cold('--b', { b: completion });
 
@@ -191,7 +256,7 @@ describe('RecipeEffects', () => {
 
   describe('navigateToRecipes$', () => {
     it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions; category case`, () => {
-      const action = {
+      const action = ({
         type: ROUTER_NAVIGATION,
         payload: {
           // The app uses CustomRouterSerializer. Therefore the payload.routerState will allways have the type of RouterStateUrl
@@ -208,26 +273,36 @@ describe('RecipeEffects', () => {
           },
           event: {}
         }
-      } as unknown as RouterNavigationAction;
+      } as unknown) as RouterNavigationAction;
 
-      const filters: RecipeFilters = { 
+      const filters: RecipeFilters = {
         category: 'desserts',
         username: null,
         page: 1,
         itemsPerPage: 6
-      }
+      };
 
-      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
-      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
-      
-      actions$ = hot('-a---', {a: action});
-      
-      const expected = cold('-(bc)', { b: completion1, c: completion2});
-      expect(effects.navigateToRecipes$).toBeObservable(expected)
+      const completion1 = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.FILTERS_UPDATED as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+      const completion2 = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+
+      actions$ = hot('-a---', { a: action });
+
+      const expected = cold('-(bc)', { b: completion1, c: completion2 });
+      expect(effects.navigateToRecipes$).toBeObservable(expected);
     });
 
     it(`should return 'FILTERS_UPDATED' actions; 'all' case`, () => {
-      const action = {
+      const action = ({
         type: ROUTER_NAVIGATION,
         payload: {
           // The app uses CustomRouterSerializer. Therefore the payload.routerState will allways have the type of RouterStateUrl
@@ -244,27 +319,37 @@ describe('RecipeEffects', () => {
           },
           event: {}
         }
-      } as unknown as RouterNavigationAction;
+      } as unknown) as RouterNavigationAction;
 
-      const filters: RecipeFilters = { 
+      const filters: RecipeFilters = {
         category: null,
         username: null,
         page: 1,
         itemsPerPage: 6
-      }
+      };
 
-      const completion = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, { tag: 'API' });
-      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
-      
-      actions$ = hot('-a---', {a: action});
-      
+      const completion = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.FILTERS_UPDATED as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+      const completion2 = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+
+      actions$ = hot('-a---', { a: action });
+
       // The navigation to route '/recipes/all' will always define filters as it is the variable `filters`;
       const expected = cold('-(bc)', { b: completion, c: completion2 });
-      expect(effects.navigateToRecipes$).toBeObservable(expected)
+      expect(effects.navigateToRecipes$).toBeObservable(expected);
     });
 
     it(`should return 'FILTERS_UPDATED' and 'QUERY_COUNT_FILTERED_RECIPES' actions; username case`, () => {
-      const action = {
+      const action = ({
         type: ROUTER_NAVIGATION,
         payload: {
           // The app uses CustomRouterSerializer. Therefore the payload.routerState will allways have the type of RouterStateUrl
@@ -281,22 +366,32 @@ describe('RecipeEffects', () => {
           },
           event: {}
         }
-      } as unknown as RouterNavigationAction;
+      } as unknown) as RouterNavigationAction;
 
-      const filters: RecipeFilters = { 
+      const filters: RecipeFilters = {
         category: null,
         username: 'rcp_user',
         page: 1,
         itemsPerPage: 6
-      }
+      };
 
-      const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters, {tag: 'API'});
-      const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters, { tag: 'API' });
-     
-      actions$ = hot('-a---', {a: action});
-      
-      const expected = cold('-(bc)', { b: completion1, c: completion2});
-      expect(effects.navigateToRecipes$).toBeObservable(expected)
+      const completion1 = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.FILTERS_UPDATED as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+      const completion2 = entityActionFactory.create(
+        'Recipe',
+        (RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown) as EntityOp,
+        filters,
+        { tag: 'API' }
+      );
+
+      actions$ = hot('-a---', { a: action });
+
+      const expected = cold('-(bc)', { b: completion1, c: completion2 });
+      expect(effects.navigateToRecipes$).toBeObservable(expected);
     });
 
     // it(`should return just 'FILTERS_UPDATED' action when oldFilters==newFilters`, () => {
@@ -339,15 +434,15 @@ describe('RecipeEffects', () => {
     //     }
     //   } as unknown as RouterNavigationAction;
 
-    //   const filters1: RecipeFilters = { 
+    //   const filters1: RecipeFilters = {
     //     category: null,
     //     username: null,
     //     page: 1,
     //     itemsPerPage: 5
     //   }
-    //   const filters2: RecipeFilters = { 
-    //     category: null, 
-    //     username: null, 
+    //   const filters2: RecipeFilters = {
+    //     category: null,
+    //     username: null,
     //     page: 2,
     //     itemsPerPage: 5
     //   }
@@ -355,17 +450,18 @@ describe('RecipeEffects', () => {
     //   const completion1 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters1, {tag: 'API'});
     //   const completion2 = entityActionFactory.create('Recipe', RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES as unknown as EntityOp, filters1, { tag: 'API' });
     //   const completion3 = entityActionFactory.create('Recipe', RecipeEntityOp.FILTERS_UPDATED as unknown as EntityOp, filters2, {tag: 'API'});
-     
-    //   actions$ =        hot('-a---------b-', {a: action, b: action2}); 
-      
+
+    //   actions$ =        hot('-a---------b-', {a: action, b: action2});
+
     //   const expected = cold('-(bc)------d', { b: completion1, c: completion2, d: {completion3}});
     //   expect(effects.navigateToRecipes$).toBeObservable(expected)
     // });
-
   });
 });
 
 @Component({
-  template: `<div>test</div>`
+  template: `
+    <div>test</div>
+  `
 })
 class TestComponent {}
