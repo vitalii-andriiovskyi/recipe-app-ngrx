@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, Observable, merge, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter, mergeMap, map, withLatestFrom, tap, catchError } from 'rxjs/operators';
-import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from 'ngrx-data';
+import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from '@ngrx/data';
 
 import { Recipe, RecipeFilters, recipeCategoryAll, FilterObserver } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator, LogService } from '@recipe-app-ngrx/utils';

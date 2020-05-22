@@ -1,5 +1,5 @@
 import { ActionReducer } from '@ngrx/store';
-import { EntityCollection, EntityAction } from 'ngrx-data';
+import { EntityCollection, EntityAction } from '@ngrx/data';
 
 import { Recipe } from '@recipe-app-ngrx/models';
 import { RecipeActionTypes, RecipeEntityOp } from './recipe.actions';

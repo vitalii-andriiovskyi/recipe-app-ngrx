@@ -13,7 +13,7 @@ import {
   RouterStateSerializer,
   routerReducer
 } from '@ngrx/router-store';
-import { storeFreeze } from 'ngrx-store-freeze';
+
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { environment } from '../environments/environment';
@@ -45,11 +45,11 @@ const routes: Routes = [
       {
         router: routerReducer
       },
-      { metaReducers: !environment.production ? [storeFreeze] : [] }
+      { metaReducers: !environment.production ? [] : [], runtimeChecks: { strictStateImmutability: true, strictActionImmutability: true } }
     ),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    StoreRouterConnectingModule,
+    StoreRouterConnectingModule.forRoot(),
     AuthStateModule,
     AuthLoginUiModule,
     FlexLayoutModule,

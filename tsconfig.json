@@ -28,7 +28,7 @@
         "libs/router-history-state/src/index.ts"
       ]
     },
-    "module": "es2015",
+    "module": "esnext",
     "rootDir": "."
   },
   "exclude": ["node_modules", "tmp"]

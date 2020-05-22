@@ -7,14 +7,14 @@ import { EffectsModule } from '@ngrx/effects';
 
 import { NxModule } from '@nrwl/angular';
 import {
-  NgrxDataModule,
+  EntityDataModule,
   EntityServices,
   ENTITY_METADATA_TOKEN,
   EntityDataService,
   EntityServicesBase,
   EntityServicesElements,
   EntityCollectionReducerRegistry
-} from 'ngrx-data';
+} from '@ngrx/data';
 
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
@@ -54,9 +54,7 @@ describe('RecipeDataService', () => {
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
-        NgrxDataModule.forRoot({
-          entityMetadata: {}
-        }),
+        EntityDataModule.forRoot({}),
         CustomFeatureModule
       ],
       // providers: [ RecipeEntityCollectionService ]

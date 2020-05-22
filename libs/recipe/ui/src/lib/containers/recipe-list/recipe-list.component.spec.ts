@@ -23,7 +23,7 @@ import { NxModule } from '@nrwl/angular';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
-import { EntityDataService, RequestData, DataServiceError } from 'ngrx-data';
+import { EntityDataService, RequestData, DataServiceError } from '@ngrx/data';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import {
@@ -104,7 +104,7 @@ describe('RecipeListComponent', () => {
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
-        StoreRouterConnectingModule,
+        StoreRouterConnectingModule.forRoot(),
         RcpEntityStoreModule
       ]
     })

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { DefaultDataService, HttpUrlGenerator } from 'ngrx-data';
+import { DefaultDataService, HttpUrlGenerator } from '@ngrx/data';
 
 import { LogService } from '@recipe-app-ngrx/utils';
 import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';

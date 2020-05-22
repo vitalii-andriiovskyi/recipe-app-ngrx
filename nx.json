@@ -20,7 +20,8 @@
       "tags": []
     },
     "recipe-app-e2e": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["recipe-app"]
     },
     "utils": {
       "tags": []

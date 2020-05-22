@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ENTITY_METADATA_TOKEN, EntityDataService } from 'ngrx-data';
+import { ENTITY_METADATA_TOKEN, EntityDataService } from '@ngrx/data';
 
 import { recipeEntityMetadata } from './recipe-entity-metadata';
 import { RecipeDataService } from './services/recipe-data.service';

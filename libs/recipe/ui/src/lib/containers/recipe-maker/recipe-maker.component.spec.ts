@@ -15,12 +15,11 @@ import { NxModule } from '@nrwl/angular';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import {
-  NgrxDataModule,
   EntityOp,
   EntityDataService,
   DataServiceError,
   RequestData
-} from 'ngrx-data';
+} from '@ngrx/data';
 import { RcpEntityStoreModule } from '@recipe-app-ngrx/rcp-entity-store';
 import {
   TemporaryIdGenerator,

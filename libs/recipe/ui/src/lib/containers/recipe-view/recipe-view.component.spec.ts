@@ -21,7 +21,7 @@ import { BehaviorSubject, of, throwError } from 'rxjs';
 import { NxModule } from '@nrwl/angular';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { EntityOp, RequestData } from 'ngrx-data';
+import { EntityOp, RequestData } from '@ngrx/data';
 
 import { RecipeViewComponent } from './recipe-view.component';
 import { Recipe } from '@recipe-app-ngrx/models';

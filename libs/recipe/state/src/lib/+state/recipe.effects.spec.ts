@@ -25,14 +25,14 @@ import {
 import {
   EntityActionFactory,
   EntityOp,
-  NgrxDataModule,
+  EntityDataModule,
   ENTITY_METADATA_TOKEN,
   EntityCollectionReducerRegistry,
   EntityDataService,
   DataServiceError,
   RequestData,
   EntityActionDataServiceError
-} from 'ngrx-data';
+} from '@ngrx/data';
 
 import { NxModule } from '@nrwl/angular';
 import { hot, cold } from '@nrwl/angular/testing';
@@ -88,9 +88,7 @@ describe('RecipeEffects', () => {
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
         StoreRouterConnectingModule,
-        NgrxDataModule.forRoot({
-          entityMetadata: {}
-        }),
+        EntityDataModule.forRoot({}),
         RouterTestingModule.withRoutes([
           { path: 'recipes:/id', component: TestComponent }
         ]),

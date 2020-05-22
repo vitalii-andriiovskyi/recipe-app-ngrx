@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, Subject, merge, of } from 'rxjs';
 import { tap, map, filter, takeUntil, shareReplay, delay, catchError } from 'rxjs/operators';
-import { ofEntityOp, EntityOp } from 'ngrx-data';
+import { ofEntityOp, EntityOp } from '@ngrx/data';
 import { MatSnackBar } from '@angular/material';
 
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';

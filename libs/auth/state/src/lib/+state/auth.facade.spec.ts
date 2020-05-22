@@ -79,7 +79,7 @@ describe('AuthFacade', () => {
           StoreModule.forRoot({}),
           EffectsModule.forRoot([]),
           CustomFeatureModule,
-          StoreRouterConnectingModule,
+          StoreRouterConnectingModule.forRoot(),
           RouterHistoryStateModule
         ]
       })

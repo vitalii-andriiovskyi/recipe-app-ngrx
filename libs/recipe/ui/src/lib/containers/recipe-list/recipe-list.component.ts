@@ -6,7 +6,7 @@ import { Observable, Subject, merge, combineLatest } from 'rxjs';
 import { takeUntil, tap, delay, map, distinctUntilChanged } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material';
-import { EntityOp, ofEntityOp } from 'ngrx-data';
+import { EntityOp, ofEntityOp } from '@ngrx/data';
 
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
 import { RecipeEntityCollectionService, RecipeEntityOp } from '@recipe-app-ngrx/recipe/state';

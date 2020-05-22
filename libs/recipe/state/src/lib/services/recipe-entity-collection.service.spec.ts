@@ -11,7 +11,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { readFirst, hot, cold, getTestScheduler } from '@nrwl/angular/testing';
 import { NxModule } from '@nrwl/angular';
 import {
-  NgrxDataModule,
+  EntityDataModule,
   EntityServices,
   ENTITY_METADATA_TOKEN,
   DefaultDataService,
@@ -23,7 +23,7 @@ import {
   EntityCollectionReducerRegistry,
   EntityOp,
   ENTITY_COLLECTION_META_REDUCERS
-} from 'ngrx-data';
+} from '@ngrx/data';
 
 import { RecipeEntityCollectionService } from './recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
@@ -98,9 +98,7 @@ describe('RecipeEntityCollectionService', () => {
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
-        NgrxDataModule.forRoot({
-          entityMetadata: {}
-        }),
+        EntityDataModule.forRoot({}),
         CustomFeatureModule
       ],
       // providers: [ RecipeEntityCollectionService ]
