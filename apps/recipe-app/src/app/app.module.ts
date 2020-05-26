@@ -45,11 +45,19 @@ const routes: Routes = [
       {
         router: routerReducer
       },
-      { metaReducers: !environment.production ? [] : [], runtimeChecks: { strictStateImmutability: true, strictActionImmutability: true } }
+      { 
+        metaReducers: !environment.production ? [] : [], 
+        runtimeChecks: { 
+          strictStateImmutability: false,
+          strictActionImmutability: false,
+        }
+      }
     ),
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    StoreRouterConnectingModule.forRoot(),
+    StoreRouterConnectingModule.forRoot({
+      serializer: CustomRouterStateSerializer
+    }),
     AuthStateModule,
     AuthLoginUiModule,
     FlexLayoutModule,
@@ -65,7 +73,6 @@ const routes: Routes = [
     })
   ],
   providers: [
-    { provide: RouterStateSerializer, useClass: CustomRouterStateSerializer },
     { provide: ENV_RCP, useValue: environment },
     LogService
   ],
