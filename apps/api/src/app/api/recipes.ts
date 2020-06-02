@@ -44,11 +44,11 @@ export class RecipesApi {
     const queryParams = req.query,
           username = queryParams.username, 
           categoryUrl = queryParams.category,
-          pageNumber = parseInt(queryParams.page, 10) || 0,
-          itemsPerPage = parseInt(queryParams.itemsPerPage, 10),
+          pageNumber = parseInt(queryParams.page as string, 10) || 0,
+          itemsPerPage = parseInt(queryParams.itemsPerPage as string, 10),
 
           queryObj = {
-            user_username: username,
+            user_username: username as string,
             'category.url': categoryUrl
           };
 
@@ -167,7 +167,7 @@ export class RecipesApi {
           categoryUrl = queryParams.category,
 
           queryObj = {
-            user_username: username,
+            user_username: username as string,
             'category.url': categoryUrl
           };
 
