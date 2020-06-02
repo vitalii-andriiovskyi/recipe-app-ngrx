@@ -43,7 +43,7 @@ import { RecipeDataService } from '../services/recipe-data.service';
 import { RecipeFilters } from '@recipe-app-ngrx/models';
 import { RecipeEntityCollectionService } from '../services/recipe-entity-collection.service';
 import { recipeEntityMetadata } from '../recipe-entity-metadata';
-import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
+import { ENV_RCP, LogService, CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 
 describe('RecipeEffects', () => {
   let actions$: Observable<any>;
@@ -87,7 +87,9 @@ describe('RecipeEffects', () => {
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
-        StoreRouterConnectingModule,
+        StoreRouterConnectingModule.forRoot({
+          serializer: CustomRouterStateSerializer
+        }),
         EntityDataModule.forRoot({}),
         RouterTestingModule.withRoutes([
           { path: 'recipes:/id', component: TestComponent }
@@ -106,9 +108,9 @@ describe('RecipeEffects', () => {
       declarations: [TestComponent]
     });
 
-    effects = TestBed.get(RecipeEffects);
-    entityActionFactory = TestBed.get(EntityActionFactory);
-    recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
+    effects = TestBed.inject(RecipeEffects);
+    entityActionFactory = TestBed.inject(EntityActionFactory);
+    recipeEntityCollectionService = TestBed.inject(RecipeEntityCollectionService);
   });
 
   describe('totalNRecipes$', () => {
