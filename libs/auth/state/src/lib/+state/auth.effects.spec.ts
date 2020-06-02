@@ -36,7 +36,7 @@ import {
   initialState as routerHistoryInitState,
   RouterHistoryUpdated
 } from '@recipe-app-ngrx/router-history-state';
-import { RouterStateUrl } from '@recipe-app-ngrx/utils';
+import { RouterStateUrl, CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 interface TestSchema {
@@ -73,7 +73,9 @@ describe('AuthEffects', () => {
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
-        StoreRouterConnectingModule,
+        StoreRouterConnectingModule.forRoot({
+          serializer: CustomRouterStateSerializer
+        }),
         RouterHistoryStateModule
       ],
       providers: [
@@ -85,10 +87,10 @@ describe('AuthEffects', () => {
       declarations: [TestComponent, PageNotFoundComponent]
     });
 
-    effects = TestBed.get(AuthEffects);
-    actions$ = TestBed.get(Actions);
-    store = TestBed.get(Store);
-    activatedRoute = TestBed.get(ActivatedRoute);
+    effects = TestBed.inject(AuthEffects);
+    actions$ = TestBed.inject(Actions);
+    store = TestBed.inject(Store);
+    activatedRoute = TestBed.inject(ActivatedRoute);
   });
 
   describe('login$', () => {
@@ -162,7 +164,7 @@ describe('AuthEffects', () => {
 
   describe('loginSuccess$', () => {
     beforeEach(() => {
-      routerService = TestBed.get(Router);
+      routerService = TestBed.inject(Router);
       spyOn(routerService, 'navigate').and.callThrough();
     });
     it('should navigate to previous route', (done: any) => {
@@ -190,7 +192,7 @@ describe('AuthEffects', () => {
 
   describe('logoutConfirm$', () => {
     beforeEach(() => {
-      routerService = TestBed.get(Router);
+      routerService = TestBed.inject(Router);
       spyOn(routerService, 'navigate').and.callThrough();
     });
     it('should reload current route', (done: any) => {
@@ -218,7 +220,7 @@ describe('AuthEffects', () => {
 
   describe(`loginRedirect$`, () => {
     beforeEach(() => {
-      routerService = TestBed.get(Router);
+      routerService = TestBed.inject(Router);
       spyOn(routerService, 'navigate').and.callThrough();
     });
 

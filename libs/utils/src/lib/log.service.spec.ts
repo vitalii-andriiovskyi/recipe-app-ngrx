@@ -23,8 +23,8 @@ describe('LogService', () => {
       ]
     });
 
-    logger = TestBed.get(LogService);
-    errorHandler = TestBed.get(ErrorHandler);
+    logger = TestBed.inject(LogService);
+    errorHandler = TestBed.inject(ErrorHandler);
 
   });
 

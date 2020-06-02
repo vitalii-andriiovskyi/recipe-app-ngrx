@@ -52,8 +52,8 @@ describe('RouterHistoryFacade', () => {
       class RootModule {}
       TestBed.configureTestingModule({ imports: [RootModule] });
 
-      store = TestBed.get(Store);
-      facade = TestBed.get(RouterHistoryFacade);
+      store = TestBed.inject(Store);
+      facade = TestBed.inject(RouterHistoryFacade);
     });
 
     /**

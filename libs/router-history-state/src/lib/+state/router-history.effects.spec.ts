@@ -34,7 +34,7 @@ describe('RouterHistoryEffects', () => {
       ]
     });
 
-    effects = TestBed.get(RouterHistoryEffects);
+    effects = TestBed.inject(RouterHistoryEffects);
   });
 
   describe('updateRouterHistory$', () => {

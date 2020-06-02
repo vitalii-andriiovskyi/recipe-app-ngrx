@@ -172,12 +172,12 @@ describe('RecipeMakerComponent', () => {
     fixture = TestBed.createComponent(TestComponent);
     testComponent = fixture.componentInstance;
     fixture.detectChanges();
-    router = TestBed.get(Router);
+    router = TestBed.inject(Router);
     deRcpMakerComponent = fixture.debugElement.query(
       By.css('rcp-recipe-maker')
     );
 
-    entityDataService = TestBed.get(EntityDataService);
+    entityDataService = TestBed.inject(EntityDataService);
     recipeDataService = entityDataService.getService('Recipe');
     loadTotalNSpy = spyOn(recipeDataService, 'getTotalNRecipes');
     getByIdSpy = spyOn(recipeDataService, 'getById');
@@ -300,7 +300,7 @@ describe('RecipeMakerComponent', () => {
         delete recipeFormValue.user_username;
 
         getHttpPostSpy.and.returnValue(of(newRecipe).pipe(delay(1000)));
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
 
@@ -357,7 +357,7 @@ describe('RecipeMakerComponent', () => {
         delete recipeFormValue.user_username;
 
         getHttpPostSpy.and.returnValue(throwError(error).pipe(delay(1000)));
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
 
@@ -400,7 +400,7 @@ describe('RecipeMakerComponent', () => {
       const path = '/edit-recipe/1001';
 
       beforeEach(async(() => {
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
         recipeEntityCollectionService.createAndDispatch(
@@ -482,7 +482,7 @@ describe('RecipeMakerComponent', () => {
         delete recipeFormValue.user_username;
 
         httpPutSpy.and.returnValue(of(updatedRecipe).pipe(delay(1000)));
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
 
@@ -542,7 +542,7 @@ describe('RecipeMakerComponent', () => {
         delete recipeFormValue.user_username;
 
         httpPutSpy.and.returnValue(throwError(error).pipe(delay(1000)));
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
 
@@ -591,7 +591,7 @@ describe('RecipeMakerComponent', () => {
       const recipe100: Recipe = { ...recipe, id: 1000 };
 
       beforeEach(async(() => {
-        recipeEntityCollectionService = TestBed.get(
+        recipeEntityCollectionService = TestBed.inject(
           RecipeEntityCollectionService
         );
       }));

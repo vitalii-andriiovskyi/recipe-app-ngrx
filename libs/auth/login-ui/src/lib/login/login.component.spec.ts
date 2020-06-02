@@ -110,7 +110,7 @@ describe('LoginComponent', () => {
         ]
       });
 
-      facade = TestBed.get(AuthFacade);
+      facade = TestBed.inject(AuthFacade);
     });
 
     beforeEach(() => {

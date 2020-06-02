@@ -43,7 +43,7 @@ describe('RecipeMaker', () => {
         RecipeMaker
       ]
     });
-    recipeMaker = TestBed.get(RecipeMaker);
+    recipeMaker = TestBed.inject(RecipeMaker);
   });
 
   it('should be created', () => {

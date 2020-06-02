@@ -79,7 +79,7 @@ describe('HeaderComponent', () => {
     component.userMenuData = userMenu;
     
     fixture.detectChanges();    
-    authFacadeSpy = TestBed.get(AuthFacade);
+    authFacadeSpy = TestBed.inject(AuthFacade) as jasmine.SpyObj<AuthFacade>;
   });
 
   it('should create', () => {
@@ -101,7 +101,8 @@ describe('HeaderComponent', () => {
   });
 
   it(`should show the button '.btn-logged-in`, fakeAsync(() => {
-    
+    tick();
+    fixture.detectChanges();
     let loginEl: DebugElement = fixture.debugElement.query(By.css('.btn-login'));
     expect(loginEl.nativeElement).toBeTruthy(`There's the button 'Log in'`);
 
@@ -119,7 +120,7 @@ describe('HeaderComponent', () => {
     expect(loggedIn).toBeTruthy(`There's button '.btn-logged-in'`);
     expect(loggedIn.nativeElement.innerHTML).toContain(user.username, user.username);
 
-    const router = TestBed.get(Router);
+    const router = TestBed.inject(Router);
     expect(router.url).toBe('/', '/ - url of current page');
 
     loginEl = fixture.debugElement.query(By.css('.btn-login'));

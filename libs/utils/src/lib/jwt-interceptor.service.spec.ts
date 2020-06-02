@@ -23,9 +23,9 @@ describe('JwtInterceptor', () => {
       ]
     });
 
-    http = TestBed.get(HttpClient);
-    httpMock = TestBed.get(HttpTestingController);
-    localStorageService = TestBed.get(LocalStorageService);
+    http = TestBed.inject(HttpClient);
+    httpMock = TestBed.inject(HttpTestingController);
+    localStorageService = TestBed.inject(LocalStorageService);
   });
   
   it('should add an Authorization header if ', () => {
