@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, Observable, merge, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter, mergeMap, map, withLatestFrom, tap, catchError } from 'rxjs/operators';
-import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from 'ngrx-data';
+import { EntityCollectionServiceBase, EntityCacheDispatcher, EntityCollectionServiceElementsFactory, EntityActionOptions, EntityOp, QueryParams } from '@ngrx/data';
 
 import { Recipe, RecipeFilters, recipeCategoryAll, FilterObserver } from '@recipe-app-ngrx/models';
 import { TemporaryIdGenerator, LogService } from '@recipe-app-ngrx/utils';
@@ -34,7 +34,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   filters$: Observable<RecipeFilters> = (this.selectors$ as any).filters$;
   countFilteredRecipes$: Observable<number> = (this.selectors$ as any).countFilteredRecipes$;
 
-  filteredEntitiesByCategory$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
+  filteredEntitiesByCategory$: Observable<[RecipeFilters, Recipe[]]> = combineLatest([this.filters$, this.entities$]).pipe(
     filter(data => !!data[0]['category'] && !data[0]['username']),
     map(data => {
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
@@ -46,7 +46,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
+  filteredEntitiesByUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest([this.filters$, this.entities$]).pipe(
     filter(data => !!data[0]['username'] && !data[0]['category']),
     map(data => {
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
@@ -58,7 +58,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByCategoryAndUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
+  filteredEntitiesByCategoryAndUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest([this.filters$, this.entities$]).pipe(
     filter(data => !!data[0]['username'] && !!data[0]['category']),
     map(data => {
       const filteredEntities: Recipe[] = data[1].filter((recipe: Recipe) => {
@@ -72,7 +72,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     })
   );
 
-  filteredEntitiesByNeitherCategoryNorUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest(this.filters$, this.entities$).pipe(
+  filteredEntitiesByNeitherCategoryNorUser$: Observable<[RecipeFilters, Recipe[]]> = combineLatest([this.filters$, this.entities$]).pipe(
     filter(data => !data[0]['username'] && !data[0]['category'])
   );
 
@@ -98,7 +98,7 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
     let id: number;
     const recipeWithoutId$: Observable<Recipe> = of(recipe).pipe(
       filter(rcp => !rcp.id),
-      mergeMap(rcp => 
+      mergeMap((rcp: Recipe): Observable<Recipe> => 
         (this.selectors$ as any).totalNRecipes$.pipe(
           map(totalNRecipes => {
             id = this.idGenerator.createId(totalNRecipes as number);
@@ -136,14 +136,14 @@ export class RecipeEntityCollectionService extends EntityCollectionServiceBase<R
   }
 
   loadRecipesByFilters(options?: EntityActionOptions): Observable<any> {
-    const selectFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
+    const selectFilteredRecipes$ = combineLatest([this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$]).pipe(
       filter(data => this._hasRecipesAccordingToFilters(data)),
       tap(() => {this.logger.log('loadRecipesByFilters() -> selectFilteredRecipes$')}),
       switchMap(data => this.filteredEntitiesByAllFilters$),
       tap(recipes => this._filteredRecipesSubject.next(recipes))
     );
 
-    const loadFilteredRecipes$ = combineLatest(this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$).pipe(
+    const loadFilteredRecipes$ = combineLatest([this.countFilteredRecipes$, this.filteredEntitiesByCategoryUserCommon$]).pipe(
       filter(data => !this._hasRecipesAccordingToFilters(data)),
       tap(() => {this.logger.log('loadRecipesByFilters() -> loadFilteredRecipes$')}),
       tap(data => {

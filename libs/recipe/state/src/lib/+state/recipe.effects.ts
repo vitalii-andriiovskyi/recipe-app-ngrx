@@ -4,7 +4,7 @@ import { ActivatedRouteSnapshot, Route } from '@angular/router';
 import { Effect, Actions, ofType } from '@ngrx/effects';
 import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
 
-import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction, DataServiceError, EntityActionDataServiceError, Logger } from 'ngrx-data';
+import { ofEntityOp, EntityActionFactory, EntityOp, EntityCache, EntityAction, DataServiceError, EntityActionDataServiceError, Logger } from '@ngrx/data';
 import { of } from 'rxjs';
 import { exhaustMap, catchError, map, filter, flatMap, tap, withLatestFrom } from 'rxjs/operators';
 

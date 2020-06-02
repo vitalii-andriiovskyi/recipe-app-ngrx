@@ -1,9 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/apps/recipe-app",
+    "outDir": "../../dist/out-tsc",
     "types": []
   },
-  "exclude": ["test.ts", "**/*.spec.ts"],
-  "include": ["**/*.ts"]
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": ["**/*.d.ts"]
 }

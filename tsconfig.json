@@ -7,49 +7,29 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@recipe-app-ngrx/utils": [
-        "libs/utils/src/index.ts"
-      ],
-      "@recipe-app-ngrx/auth/state": [
-        "libs/auth/state/src/index.ts"
-      ],
-      "@recipe-app-ngrx/models": [
-        "libs/models/src/index.ts"
-      ],
-      "@recipe-app-ngrx/auth/login-ui": [
-        "libs/auth/login-ui/src/index.ts"
-      ],
+      "@recipe-app-ngrx/utils": ["libs/utils/src/index.ts"],
+      "@recipe-app-ngrx/auth/state": ["libs/auth/state/src/index.ts"],
+      "@recipe-app-ngrx/models": ["libs/models/src/index.ts"],
+      "@recipe-app-ngrx/auth/login-ui": ["libs/auth/login-ui/src/index.ts"],
       "@recipe-app-ngrx/shared-components": [
         "libs/shared-components/src/index.ts"
       ],
       "@recipe-app-ngrx/rcp-entity-store": [
         "libs/rcp-entity-store/src/index.ts"
       ],
-      "@recipe-app-ngrx/recipe/state": [
-        "libs/recipe/state/src/index.ts"
-      ],
-      "@recipe-app-ngrx/recipe/ui": [
-        "libs/recipe/ui/src/index.ts"
-      ],
-      "@recipe-app-ngrx/core-components": [
-        "libs/core-components/src/index.ts"
-      ],
+      "@recipe-app-ngrx/recipe/state": ["libs/recipe/state/src/index.ts"],
+      "@recipe-app-ngrx/recipe/ui": ["libs/recipe/ui/src/index.ts"],
+      "@recipe-app-ngrx/core-components": ["libs/core-components/src/index.ts"],
       "@recipe-app-ngrx/router-history-state": [
         "libs/router-history-state/src/index.ts"
       ]
-    }
+    },
+    "module": "esnext",
+    "rootDir": "."
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

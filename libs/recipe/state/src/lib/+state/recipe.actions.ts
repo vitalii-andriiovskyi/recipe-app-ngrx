@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { EntityAction } from 'ngrx-data';
+import { EntityAction } from '@ngrx/data';
 
 export enum RecipeActionTypes {
   LoadTotalNRecipes = '[Create Recipe page] Load Total Number Of Recipes',

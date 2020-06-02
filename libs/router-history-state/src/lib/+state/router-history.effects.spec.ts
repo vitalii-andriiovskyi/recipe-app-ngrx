@@ -6,14 +6,12 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
 
-import { NxModule } from '@nrwl/nx';
-import { DataPersistence } from '@nrwl/nx';
-import { hot, cold } from '@nrwl/nx/testing';
+import { NxModule } from '@nrwl/angular';
+import { DataPersistence } from '@nrwl/angular';
+import { hot, cold } from '@nrwl/angular/testing';
 
 import { RouterHistoryEffects } from './router-history.effects';
-import {
-  RouterHistoryUpdated,
-} from './router-history.actions';
+import { RouterHistoryUpdated } from './router-history.actions';
 import { ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { RouterStateUrl } from '@recipe-app-ngrx/utils';
@@ -41,7 +39,7 @@ describe('RouterHistoryEffects', () => {
 
   describe('updateRouterHistory$', () => {
     it(`should return action 'RouterHistoryUpdated'`, () => {
-      const action = {
+      const action = ({
         type: ROUTER_NAVIGATION,
         payload: {
           // The app uses CustomRouterSerializer. Therefore the payload.routerState will allways have the type of RouterStateUrl
@@ -55,7 +53,7 @@ describe('RouterHistoryEffects', () => {
           },
           event: {}
         }
-      } as unknown as RouterNavigationAction;
+      } as unknown) as RouterNavigationAction;
 
       const router: RouterStateUrl = {
         url: 'recipes/desserts',
@@ -64,7 +62,7 @@ describe('RouterHistoryEffects', () => {
         routeConfig: {
           path: 'recipes/desserts'
         }
-      }
+      };
 
       actions = hot('-a---', { a: action });
       const completion = new RouterHistoryUpdated(router);

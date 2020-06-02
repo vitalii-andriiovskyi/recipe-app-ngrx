@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { tap, map, takeUntil, shareReplay, delay } from 'rxjs/operators';
 
-import { ofEntityOp, EntityOp } from 'ngrx-data';
+import { ofEntityOp, EntityOp } from '@ngrx/data';
 
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 import { AppEntityServices } from '@recipe-app-ngrx/rcp-entity-store';
@@ -37,10 +37,10 @@ export class RecipeViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.recipe$ = combineLatest(
+    this.recipe$ = combineLatest([
       this.activatedRoute.paramMap.pipe(map(paramMap => paramMap.get('id'))),
       this.recipeEntityService.entityMap$
-    ).pipe(
+    ]).pipe(
       map(([id, entityMap]) => {
         const recipe = entityMap[id];
 

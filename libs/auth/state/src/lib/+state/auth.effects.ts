@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { DataPersistence } from '@nrwl/nx';
+import { DataPersistence } from '@nrwl/angular';
 import { of } from 'rxjs';
-import { map, exhaustMap, catchError, tap, withLatestFrom, delay } from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import {
+  map,
+  exhaustMap,
+  catchError,
+  tap,
+  withLatestFrom,
+  delay
+} from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AuthPartialState } from './auth.reducer';
 import {
@@ -26,7 +33,6 @@ import { AuthFacade } from './auth.facade';
 
 @Injectable()
 export class AuthEffects {
-
   @Effect()
   login$ = this.actions$.pipe(
     ofType<Login>(AuthActionTypes.Login),
@@ -35,7 +41,10 @@ export class AuthEffects {
       this.authService.login(auth).pipe(
         tap(user => {
           if (user && user.token) {
-            this.localeStorageService.setItem('currentUser', JSON.stringify(user));
+            this.localeStorageService.setItem(
+              'currentUser',
+              JSON.stringify(user)
+            );
           }
         }),
         map(user => new LoginSuccess({ user })),
@@ -56,12 +65,7 @@ export class AuthEffects {
 
       return dialogRef.afterClosed();
     }),
-    map(
-      result =>
-        result
-          ? new LogoutConfirmation()
-          : new LogoutDismiss()
-    )
+    map(result => (result ? new LogoutConfirmation() : new LogoutDismiss()))
   );
 
   @Effect({ dispatch: false })
@@ -69,9 +73,11 @@ export class AuthEffects {
     ofType(AuthActionTypes.LogoutConfirmation),
     withLatestFrom(this.routerHistoryFacade.currentRouter$),
     tap(([action, route]) => {
-      // It's needed to reload current url in order to run 'AuthGuard' for certain components, which shouldn't be shown to unauthorized user 
+      // It's needed to reload current url in order to run 'AuthGuard' for certain components, which shouldn't be shown to unauthorized user
       // Remember to set `onSameUrlNavigation: 'reload'` if RouterModuld.forRoot() and `runGuardsAndResolvers: 'always'` in RecipeUiModule
-      this.router.navigate([ route.url.split('?')[0] ], { queryParams: route.queryParams});
+      this.router.navigate([route.url.split('?')[0]], {
+        queryParams: route.queryParams
+      });
     })
   );
 
@@ -81,7 +87,9 @@ export class AuthEffects {
     // -- maybe should load additional data for authenticated users
     withLatestFrom(this.routerHistoryFacade.previousRouter$),
     tap(([action, route]) => {
-      this.router.navigate([ route.url.split('?')[0] ], { queryParams: route.queryParams});
+      this.router.navigate([route.url.split('?')[0]], {
+        queryParams: route.queryParams
+      });
     })
   );
 
@@ -90,7 +98,7 @@ export class AuthEffects {
     ofType(AuthActionTypes.LoginRedirect),
     tap(() => this.router.navigate(['/login']))
   );
-  
+
   constructor(
     private actions$: Actions,
     private dataPersistence: DataPersistence<AuthPartialState>,

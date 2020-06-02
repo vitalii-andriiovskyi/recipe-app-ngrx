@@ -1,5 +1,5 @@
 import { recipeReducer } from './recipe.reducer';
-import { EntityCollection, EntityActionFactory, EntityOp } from 'ngrx-data';
+import { EntityCollection, EntityActionFactory, EntityOp } from '@ngrx/data';
 import { Recipe, RecipeFilters } from '@recipe-app-ngrx/models';
 import { RecipeEntityOp } from './recipe.actions';
 

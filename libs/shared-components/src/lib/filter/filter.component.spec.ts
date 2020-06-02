@@ -2,7 +2,10 @@ import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core
 import { Component, OnInit, DebugElement } from '@angular/core';
 import { By, HAMMER_LOADER } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatTooltipModule, MatInputModule, MatFormFieldModule, MatIconModule } from '@angular/material';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Subject, Observable } from 'rxjs';
 

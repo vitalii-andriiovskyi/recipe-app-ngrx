@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EntityServicesElements, EntityServicesBase } from 'ngrx-data';
+import { EntityServicesElements, EntityServicesBase } from '@ngrx/data';
 import { RecipeEntityCollectionService } from '@recipe-app-ngrx/recipe/state';
 
 @Injectable()

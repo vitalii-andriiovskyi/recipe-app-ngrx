@@ -1,6 +1,6 @@
 import { ExpressServer as server } from './app/app';
 import * as mongoose from 'mongoose';
-import * as config from './app/config';
+import config from './app/config';
 import getLogger from './app/utils/logger';
 
 const logger = getLogger(module);

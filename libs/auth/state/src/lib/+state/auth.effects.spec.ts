@@ -6,33 +6,42 @@ import { EffectsModule, Actions } from '@ngrx/effects';
 import { StoreModule, Store } from '@ngrx/store';
 import { provideMockActions } from '@ngrx/effects/testing';
 
-import { NxModule } from '@nrwl/nx';
-import { DataPersistence } from '@nrwl/nx';
-import { hot, cold } from '@nrwl/nx/testing';
+import { NxModule } from '@nrwl/angular';
+import { DataPersistence } from '@nrwl/angular';
+import { hot, cold } from '@nrwl/angular/testing';
 
 import { AuthEffects } from './auth.effects';
-import { 
+import {
   Login,
   LoginSuccess,
   LoginFailure,
   LoginRedirect,
   Logout,
   LogoutConfirmation,
-  LogoutDismiss } from './auth.actions';
+  LogoutDismiss
+} from './auth.actions';
 import { AuthService } from '../services/auth.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthUserVW, User } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Router, ActivatedRouteSnapshot, ActivatedRoute } from '@angular/router';
+import {
+  Router,
+  ActivatedRouteSnapshot,
+  ActivatedRoute
+} from '@angular/router';
 import { Component } from '@angular/core';
-import { RouterHistoryStateModule, RouterHistoryState, initialState as routerHistoryInitState, RouterHistoryUpdated } from '@recipe-app-ngrx/router-history-state';
+import {
+  RouterHistoryStateModule,
+  RouterHistoryState,
+  initialState as routerHistoryInitState,
+  RouterHistoryUpdated
+} from '@recipe-app-ngrx/router-history-state';
 import { RouterStateUrl } from '@recipe-app-ngrx/utils';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 interface TestSchema {
   routerHistoryState: RouterHistoryState;
 }
-
 
 describe('AuthEffects', () => {
   let actions$: Observable<any>;
@@ -45,32 +54,35 @@ describe('AuthEffects', () => {
   let activatedRoute: ActivatedRoute;
 
   beforeEach(() => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'login',
+      'logout'
+    ]);
     getLoginSpy = authServiceSpy.login;
     getLogoutSpy = authServiceSpy.logout;
 
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     getMatDialogOpenSpy = matDialogSpy.open;
-    
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([
-          { path: 'recipes/newest', component: TestComponent},
-          { path: '**', component: PageNotFoundComponent},
+          { path: 'recipes/newest', component: TestComponent },
+          { path: '**', component: PageNotFoundComponent }
         ]),
         NxModule.forRoot(),
         StoreModule.forRoot({}),
         EffectsModule.forRoot([]),
         StoreRouterConnectingModule,
-        RouterHistoryStateModule,
+        RouterHistoryStateModule
       ],
       providers: [
         AuthEffects,
         provideMockActions(() => actions$),
-        { provide: AuthService, useValue: authServiceSpy},
+        { provide: AuthService, useValue: authServiceSpy },
         { provide: MatDialog, useValue: matDialogSpy }
       ],
-      declarations: [ TestComponent, PageNotFoundComponent ]
+      declarations: [TestComponent, PageNotFoundComponent]
     });
 
     effects = TestBed.get(AuthEffects);
@@ -78,7 +90,6 @@ describe('AuthEffects', () => {
     store = TestBed.get(Store);
     activatedRoute = TestBed.get(ActivatedRoute);
   });
-
 
   describe('login$', () => {
     it('should return an auth.LoginSuccess action, with user information if login succeeds', () => {
@@ -106,10 +117,10 @@ describe('AuthEffects', () => {
       const authUser: AuthUserVW = { username: 'unknownUser', password: '' };
       const action = new Login({ authUser });
       const completion = new LoginFailure({
-        error: 'Invalid username or password',
+        error: 'Invalid username or password'
       });
       const error = {
-        error: 'Invalid username or password',
+        error: 'Invalid username or password'
       };
 
       actions$ = hot('-a---', { a: action });
@@ -130,7 +141,7 @@ describe('AuthEffects', () => {
       const expected = cold('-b', { b: completion });
 
       const afterClosedMethod = () => of(true);
-      getMatDialogOpenSpy.and.returnValue({afterClosed: afterClosedMethod});
+      getMatDialogOpenSpy.and.returnValue({ afterClosed: afterClosedMethod });
 
       expect(effects.logout$).toBeObservable(expected);
     });
@@ -143,7 +154,7 @@ describe('AuthEffects', () => {
       const expected = cold('-b', { b: completion });
 
       const afterClosedMethod = () => of(false);
-      getMatDialogOpenSpy.and.returnValue({afterClosed: afterClosedMethod});
+      getMatDialogOpenSpy.and.returnValue({ afterClosed: afterClosedMethod });
 
       expect(effects.logout$).toBeObservable(expected);
     });
@@ -153,7 +164,7 @@ describe('AuthEffects', () => {
     beforeEach(() => {
       routerService = TestBed.get(Router);
       spyOn(routerService, 'navigate').and.callThrough();
-    })
+    });
     it('should navigate to previous route', (done: any) => {
       const user = {
         _id: '',
@@ -165,7 +176,7 @@ describe('AuthEffects', () => {
       } as User;
 
       const action = new LoginSuccess({ user });
-      
+
       actions$ = of(action);
 
       effects.loginSuccess$.subscribe(() => {
@@ -181,7 +192,7 @@ describe('AuthEffects', () => {
     beforeEach(() => {
       routerService = TestBed.get(Router);
       spyOn(routerService, 'navigate').and.callThrough();
-    })
+    });
     it('should reload current route', (done: any) => {
       const nextUrlState: RouterStateUrl = {
         url: '/recipes/salads',
@@ -190,10 +201,10 @@ describe('AuthEffects', () => {
         routeConfig: {
           path: '/recipes/salads'
         }
-      }
+      };
       store.dispatch(new RouterHistoryUpdated(nextUrlState));
       const action = new LogoutConfirmation();
-      
+
       actions$ = of(action);
 
       effects.logoutConfirmation$.subscribe(() => {
@@ -214,13 +225,12 @@ describe('AuthEffects', () => {
     it(`should call 'router.navigate(['/login'])`, (done: any) => {
       const action = new LoginRedirect();
       actions$ = of(action);
-  
+
       effects.loginRedirect$.subscribe(() => {
         expect(routerService.navigate).toHaveBeenCalledWith(['/login']);
         done();
-      })
+      });
     });
-    
   });
   // describe('loadAuth$', () => {
   //   it('should work', () => {
@@ -232,18 +242,14 @@ describe('AuthEffects', () => {
   // });
 });
 
-
 @Component({
   selector: 'rcp-test-comp',
   template: '<p>test</p>'
 })
-class TestComponent {
-}
+class TestComponent {}
 
 @Component({
   selector: 'rcp-page-not-found',
   template: '<p>test</p>'
 })
-class PageNotFoundComponent {
-
-}
+class PageNotFoundComponent {}

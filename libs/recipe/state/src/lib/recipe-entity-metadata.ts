@@ -1,4 +1,4 @@
-import { defaultSelectId, EntityMetadataMap, PropsFilterFnFactory } from 'ngrx-data';
+import { defaultSelectId, EntityMetadataMap, PropsFilterFnFactory } from '@ngrx/data';
 import { Recipe } from '@recipe-app-ngrx/models';
 
 export const recipeEntityMetadata: EntityMetadataMap = {
