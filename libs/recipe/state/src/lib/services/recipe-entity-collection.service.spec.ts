@@ -126,8 +126,8 @@ describe('RecipeEntityCollectionService', () => {
       ]
     });
 
-    recipeEntityCollectionService = TestBed.get(RecipeEntityCollectionService);
-    entityCollectionReducerRegistry = TestBed.get(
+    recipeEntityCollectionService = TestBed.inject(RecipeEntityCollectionService);
+    entityCollectionReducerRegistry = TestBed.inject(
       EntityCollectionReducerRegistry
     );
   });

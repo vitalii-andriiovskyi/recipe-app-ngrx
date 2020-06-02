@@ -154,7 +154,7 @@ describe('RecipeViewComponent', () => {
     fixture = TestBed.createComponent(TestComponent);
     testComponent = fixture.componentInstance;
     fixture.detectChanges();
-    router = TestBed.get(Router);
+    router = TestBed.inject(Router);
 
     deRcpViewComponent = fixture.debugElement.query(By.css('rcp-recipe-maker'));
   });
@@ -163,7 +163,7 @@ describe('RecipeViewComponent', () => {
     const path = '/recipe/1001';
 
     beforeEach(async(() => {
-      recipeEntityCollectionService = TestBed.get(
+      recipeEntityCollectionService = TestBed.inject(
         RecipeEntityCollectionService
       );
       recipeEntityCollectionService.createAndDispatch(EntityOp.ADD_ONE, recipe);
@@ -228,7 +228,7 @@ describe('RecipeViewComponent', () => {
     const path = '/recipe/1001';
 
     beforeEach(async(() => {
-      recipeEntityCollectionService = TestBed.get(
+      recipeEntityCollectionService = TestBed.inject(
         RecipeEntityCollectionService
       );
     }));

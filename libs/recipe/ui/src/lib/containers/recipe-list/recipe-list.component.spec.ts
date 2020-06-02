@@ -144,9 +144,9 @@ describe('RecipeListComponent', () => {
     fixture = TestBed.createComponent(TestComponent);
     testComponent = fixture.componentInstance;
     fixture.detectChanges();
-    router = TestBed.get(Router);
+    router = TestBed.inject(Router);
 
-    entityDataService = TestBed.get(EntityDataService);
+    entityDataService = TestBed.inject(EntityDataService);
     recipeDataService = entityDataService.getService('Recipe');
 
     loadTotalNSpy = spyOn(recipeDataService, 'getTotalNRecipes');

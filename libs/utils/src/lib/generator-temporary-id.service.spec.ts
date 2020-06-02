@@ -11,7 +11,7 @@ describe('GeneratorTemporaryIdService', () => {
         TemporaryIdGenerator
       ]
     });
-    temporaryIdGenerator = TestBed.get(TemporaryIdGenerator);
+    temporaryIdGenerator = TestBed.inject(TemporaryIdGenerator);
   });
 
   it('should be created', () => {

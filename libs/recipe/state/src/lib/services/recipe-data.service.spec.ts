@@ -76,7 +76,7 @@ describe('RecipeDataService', () => {
   });
 
   it('should be created', () => {
-    const service: RecipeDataService = TestBed.get(RecipeDataService);
+    const service: RecipeDataService = TestBed.inject(RecipeDataService);
     expect(service).toBeTruthy();
   });
 });

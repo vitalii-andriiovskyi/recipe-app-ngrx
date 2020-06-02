@@ -86,8 +86,8 @@ describe('AuthFacade', () => {
       class RootModule {}
       TestBed.configureTestingModule({ imports: [RootModule] });
 
-      store = TestBed.get(Store);
-      facade = TestBed.get(AuthFacade);
+      store = TestBed.inject(Store);
+      facade = TestBed.inject(AuthFacade);
     });
 
     it('login() should return user and state with prop loggedIn == true', async done => {
@@ -249,7 +249,7 @@ describe('AuthFacade', () => {
     });
 
     it(`loginRedirect() should call router.navigate(['/login'])`, () => {
-      routerService = TestBed.get(Router);
+      routerService = TestBed.inject(Router);
       spyOn(routerService, 'navigate').and.callThrough();
       facade.loginRedirect();
 

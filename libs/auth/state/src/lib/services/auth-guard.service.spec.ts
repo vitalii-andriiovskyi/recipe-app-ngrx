@@ -72,12 +72,12 @@ describe('AuthGuard', () => {
       })
       class RootModule {}
       TestBed.configureTestingModule({ imports: [RootModule] });
-      authGuard = TestBed.get(AuthGuard);
-      store = TestBed.get(Store);
+      authGuard = TestBed.inject(AuthGuard);
+      store = TestBed.inject(Store);
     });
 
     it('should be created', () => {
-      const service: AuthGuard = TestBed.get(AuthGuard);
+      const service: AuthGuard = TestBed.inject(AuthGuard);
       expect(service).toBeTruthy();
     });
 
