@@ -51,7 +51,7 @@ describe('UserModel: MongoUserModel', () => {
 
       const responseAgain = await request.post('/api/users/create').send(userN);
       expect(responseAgain.status).toEqual(403);
-      expect(responseAgain.error.text).toBe(`Username ${userN.username} is already taken`);
+      expect(responseAgain['error']['text']).toBe(`Username ${userN.username} is already taken`);
 
       await request.delete(`/api/users/${response.body._id}`).set('Authorization', `Bearer ${response.body.token}`);
     });
@@ -96,7 +96,7 @@ describe('UserModel: MongoUserModel', () => {
       deletionRes = await request.delete(`/api/users/${response.body._id}`).set('Authorization', `Bearer ${response.body.token}`);
       expect(deletionRes.status).toEqual(403);
       console.log(deletionRes.error);
-      expect(deletionRes.error.text).toBe(`There's no user with id: ${response.body._id}`);
+      expect(deletionRes['error']['text']).toBe(`There's no user with id: ${response.body._id}`);
     });
 
     it(`should response with err 403 if user doesn't exist`, async() => {
@@ -107,7 +107,7 @@ describe('UserModel: MongoUserModel', () => {
   
       const deletionRes = await request.delete(`/api/users/${newId}`).set('Authorization', `Bearer ${response.body.token}`);
       expect(deletionRes.status).toEqual(403);
-      expect(deletionRes.error.text).toBe(`There's no user with id: ${newId}`);
+      expect(deletionRes['error']['text']).toBe(`There's no user with id: ${newId}`);
     });
 
     it(`should response with err 500 if id isn't objectID`, async() => {
@@ -142,13 +142,13 @@ describe('UserModel: MongoUserModel', () => {
     it(`should return the error 403 when the password is wrong`, async () => {
       const response = await request.post(`/api/users/authenticate`).send({username: userN.username, password: '2222'});
       expect(response.status).toBe(401);
-      expect(response.error.text).toBe(`Password is incorrect`);
+      expect(response['error']['text']).toBe(`Password is incorrect`);
     });
 
     it(`should return the error 403 when the user doesn't exist`, async () => {
       const response = await request.post(`/api/users/authenticate`).send({username: 'nobody', password: userN.password});
       expect(response.status).toBe(401);
-      expect(response.error.text).toBe(`User nobody doesn't exist`);
+      expect(response['error']['text']).toBe(`User nobody doesn't exist`);
 
     });
 
