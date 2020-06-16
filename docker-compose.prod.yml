@@ -1,0 +1,23 @@
+version: '3.8'
+
+services: 
+  recipe-api:
+    restart: always
+    environment:
+      PRODUCTION: 'true'
+
+  recipe-web:
+    restart: always
+    environment:
+      PRODUCTION: 'true'
+
+  redis:
+    restart: always
+    environment:
+      TTL: "3600"
+      
+  mongodb:
+    restart: always
+    volumes: 
+      - ./mongodb/data/db:/data/db
+      - ./mongodb/initdb.d:/docker-entrypoint-initdb.d
