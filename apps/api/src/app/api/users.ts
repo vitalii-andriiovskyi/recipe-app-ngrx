@@ -16,7 +16,36 @@ export class UsersApi {
     router.delete('/users/:id', (req: Request, res: Response, next: NextFunction) => {
       new UsersApi().delete(req, res, next);
     });
+    router.get('/users/:id', (req: Request, res: Response, next: NextFunction) => {
+      new UsersApi().get(req, res, next);
+    });
 
+  }
+
+  public get(req: Request, res: Response, next: NextFunction) {
+    const PARAM_ID = 'id';
+    if (req.params[PARAM_ID] === undefined) {
+      res.sendStatus(404);
+      next();
+      return;
+    }
+
+    const id: string = req.params[PARAM_ID];
+
+    UserModel.getUser(id).subscribe(
+      user => {
+        res.json(user);
+        next();
+      },
+      err => {
+        if (err.type && err.type === CommonErrorTypes.GettingError) {
+          res.status(403).send(err.message);
+        } else {
+          return next(err); // ???????? don't know whether is it right
+        }
+        next();
+      }
+    );
   }
 
   public create(req: Request, res: Response, next: NextFunction) {
