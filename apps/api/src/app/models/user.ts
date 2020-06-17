@@ -1,7 +1,7 @@
 import {Document, model, Model, Schema, Types} from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { from, throwError, Observable, bindNodeCallback, of } from 'rxjs';
-import { exhaustMap, switchMap, map } from 'rxjs/operators';
+import { exhaustMap, switchMap, map, catchError } from 'rxjs/operators';
 import config from '../config';
 import * as jwt from 'jsonwebtoken';
 import { CommonError, CommonErrorTypes } from '../utils/error';
@@ -58,8 +58,23 @@ UserSchema.methods.getPublicFields = function() {
     email: this.email,
     address: this.address ? this.address : {},
     phone: this.phone ? this.phone : '',
-    token: jwt.sign({ sub: this._id }, config.get('secret'))
+    // token: jwt.sign({ sub: this._id }, config.get('secret'))
   };
+};
+
+UserSchema.statics.getUser = function(id: string): Observable<any> {
+  const selfUser = this;
+
+  return bindNodeCallback(selfUser.findById).call(selfUser, id).pipe(
+    switchMap(function(user) {
+      if(user) {
+        return of(user['getPublicFields']());
+      }
+      logger.error(`User with ${id} doesn't exist`);
+      return throwError(new CommonError(`User with ${id} doesn't exist`, CommonErrorTypes.GettingError));
+    }),
+    catchError(err => throwError(new CommonError(`User with ${id} doesn't exist. Message: ${err.message}`, CommonErrorTypes.GettingError)))
+  )
 };
 
 UserSchema.statics.authenticate = function(username: string, password: string): Observable<any> {
@@ -130,6 +145,7 @@ export interface MongoUserModel extends Model<NongoUserDocument>  {
   authenticate: (username: string, password: string) => Observable<any>;
   createUser: (userParam: User) => Observable<any>;
   removeUser: (id: any) => Observable<any>;
+  getUser: (id: string) => Observable<any>;
 }
 
 export const UserModel: MongoUserModel = model<NongoUserDocument, MongoUserModel>('User', UserSchema);
