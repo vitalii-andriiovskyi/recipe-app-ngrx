@@ -3,7 +3,7 @@ import { readFirst } from '@nrwl/angular/testing';
 import { UserModel } from './user';
 import { User } from '@recipe-app-ngrx/models';
 import { CommonErrorTypes } from '../utils/error';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import config from '../config';
 import * as jwt from 'jsonwebtoken';
@@ -38,7 +38,7 @@ describe('UserModel: MongoUserModel', () => {
         const user = await readFirst(UserModel.createUser(userN));
         expect(user.username).toBe(userN.username);
         expect(user.hashedPassword).toBeFalsy();
-        expect(user.token).toBeTruthy();
+        // expect(user.token).toBeTruthy();
 
         let userModel = await UserModel.findOne({ username: userN.username });
         expect(userModel.username).toBe(userN.username);
@@ -168,8 +168,8 @@ describe('UserModel: MongoUserModel', () => {
         expect(authUser._id).toBeTruthy();
         expect(authUser.username).toBe(userN.username);
 
-        const token = jwt.sign({ sub: authUser._id }, config.get('secret'));
-        expect(authUser.token).toEqual(token);
+        // const token = jwt.sign({ sub: authUser._id }, config.get('secret'));
+        // expect(authUser.token).toEqual(token);
 
         done();
       } catch (err) {
@@ -230,7 +230,7 @@ describe('UserModel: MongoUserModel', () => {
       expect(publicUser.phone).toBe(userN.phone);
       expect(publicUser.password).toBeFalsy();
 
-      expect(publicUser.token).toBeTruthy();
+      // expect(publicUser.token).toBeTruthy();
       expect(publicUser._id).toBeTruthy();
     });
 
@@ -243,6 +243,67 @@ describe('UserModel: MongoUserModel', () => {
       userDocument.password = newPassword;
       expect(userDocument.password).toEqual(newPassword);
       expect(userDocument.hashedPassword).toEqual(`${hash}-${newPassword}`);
+    });
+  });
+
+  describe(`Static 'getUser()'`, () => {
+    const userN: User = {
+      username: 'faked_user',
+      password: '11111',
+      firstName: 'faked_user',
+      lastName: 'faked_user',
+      email: 'email@gmail.com',
+      address: {
+        street: 'string',
+        city: 'string',
+        state: 'string',
+        zip: 'string'
+      },
+      phone: '+ 380'
+    };
+
+    let user: any;
+    let userDocument: any;
+    let id: string;
+
+    beforeAll(async () => {
+      user = await readFirst(UserModel.createUser(userN));
+      userDocument = await UserModel.findOne({ username: userN.username });
+      id = user._id;
+    });
+
+    afterAll(async () => {
+      await readFirst(UserModel.removeUser(user._id));
+    });
+
+    it(`should get user with correct id`, async done => {
+      try {
+        const authUser = await readFirst(
+          UserModel.getUser(id)
+        );
+        expect(authUser.password).toBeFalsy();
+        expect(authUser._id).toBeTruthy();
+        expect(authUser.username).toBe(userN.username);
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    });
+
+    it(`should return the error while getting user with wrong id`, async done => {
+      const wrongId = 'wrongId';
+      try {
+        const auth$ = UserModel.getUser(wrongId).pipe(
+          catchError(err => of(err.type))
+        );
+        const authErr = await readFirst(auth$);
+        expect(authErr).toBe(CommonErrorTypes.GettingError);
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
     });
   });
 });
