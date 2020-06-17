@@ -2,7 +2,8 @@ export enum CommonErrorTypes {
   CommonError = 'CommonError',
   AuthError = 'AuthError',
   CreationError = 'CreationError',
-  DeletionError = 'DeletionError'
+  DeletionError = 'DeletionError',
+  GettingError = 'GettingError'
 }
 
 export class CommonError extends Error {
