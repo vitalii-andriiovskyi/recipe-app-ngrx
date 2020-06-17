@@ -35,6 +35,36 @@ describe('UserModel: MongoUserModel', () => {
     MongooseStub.disconnect(done);
   });
 
+  describe('GET /api/users/:id', () => {
+    let id: string;
+
+    beforeAll(async () => {
+      const user = await UserModel.create(userN as any); 
+      id = user.id;
+    });
+
+    afterAll(async () => {
+      const user = await UserModel.findOne({username: userN.username});
+      if (user && user.username === userN.username) {
+        await user.remove();
+      }
+    });
+
+    it(`should get the user`, async () => {
+      const response = await request.get(`/api/users/${id}`);
+      expect(response.body.username).toBe(userN.username);
+      expect(response.body.hashedPassword).toBeFalsy();
+    });
+
+    it(`should return the error 403 when id is wrong`, async () => {
+      const wrongId = 'wrongId';
+      const response = await request.get(`/api/users/${wrongId}`);
+      expect(response.status).toBe(403);
+      expect(response['error']['text']).toContain(`User with ${wrongId} doesn't exist`);
+    });
+   
+  });
+
   describe('POST /api/users/create', () => {
 
     it('should create the user', async() => {
@@ -95,7 +125,7 @@ describe('UserModel: MongoUserModel', () => {
 
       deletionRes = await request.delete(`/api/users/${response.body._id}`).set('Authorization', `Bearer ${response.body.token}`);
       expect(deletionRes.status).toEqual(403);
-      console.log(deletionRes.error);
+      // console.log(deletionRes.error);
       expect(deletionRes['error']['text']).toBe(`There's no user with id: ${response.body._id}`);
     });
 
@@ -122,7 +152,7 @@ describe('UserModel: MongoUserModel', () => {
   describe('POST /api/users/authenticate', () => {
 
     beforeAll(async () => {
-      await UserModel.create(userN); 
+      await UserModel.create(userN as any); 
     });
 
     afterAll(async () => {
