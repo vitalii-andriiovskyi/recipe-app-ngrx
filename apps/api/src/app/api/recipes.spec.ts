@@ -192,21 +192,25 @@ describe(`RecipesApi`, () => {
   });
 
   describe(`POST '/recipe'`, () => {
-    let response: any;
+    let response: any,
+        token: string,
+        id: string;
 
     beforeAll(async () => {
-      user = await new UserModel(userN);
+      const newUser = await request.post(`/api/users/create`).send(userN);
+      const userAuth = await request.post(`/api/users/authenticate`).send({username: userN.username, password: userN.password});
+      token = newUser.body.token || userAuth.body.token;
+      id = newUser.body.userId || userAuth.body.userId;
     });
 
-    afterAll(async done => {
-      await user.remove();
-      done();
+    afterAll(async () => {
+      await request.delete(`/api/users/${id}`).set('Authorization', `Bearer ${token}`);
     });
 
     it(`should create new recipe`, async () => {
       response = await request
         .post('/api/recipe')
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(recipe);
       const newRecipe = response.body;
 
@@ -222,17 +226,22 @@ describe(`RecipesApi`, () => {
 
       response = await request
         .post('/api/recipe')
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(fakedRecipe);
       expect(response.status).toBe(500);
     });
   });
 
   describe(`PUT '/recipe/:id'`, () => {
-    let response: any;
+    let response: any,
+        token: string,
+        id: string;
 
     beforeAll(async () => {
-      user = await new UserModel(userN);
+      const newUser = await request.post(`/api/users/create`).send(userN);
+      const userAuth = await request.post(`/api/users/authenticate`).send({username: userN.username, password: userN.password});
+      token = newUser.body.token || userAuth.body.token;
+      id = newUser.body.userId || userAuth.body.userId;
     });
 
     beforeEach(async () => {
@@ -244,10 +253,10 @@ describe(`RecipesApi`, () => {
       await recipeDoc.remove();
     });
 
-    afterAll(async done => {
-      await user.remove();
-      done();
+    afterAll(async () => {
+      await request.delete(`/api/users/${id}`).set('Authorization', `Bearer ${token}`);
     });
+   
 
     it(`should update the recipe`, async () => {
       const updatedRecipe: Recipe = {
@@ -259,7 +268,7 @@ describe(`RecipesApi`, () => {
 
       response = await request
         .put(`/api/recipe/${recipeDoc.id}`)
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedRecipe);
       const returnedRecipe = response.body;
       expect(returnedRecipe.title).toBe(updatedRecipe.title);
@@ -278,7 +287,7 @@ describe(`RecipesApi`, () => {
 
       response = await request
         .put(`/api/recipe/${updatedRecipe.id}`)
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedRecipe);
       const returnedRecipe = response.body;
       expect(returnedRecipe.id).toBe(10);
@@ -299,7 +308,7 @@ describe(`RecipesApi`, () => {
 
       response = await request
         .put(`/api/recipe/${updatedRecipe.id}`)
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
         .send(updatedRecipe);
       // expect(response.status).toBe(500);
       const returnedRecipe = response.body;
@@ -312,15 +321,19 @@ describe(`RecipesApi`, () => {
   });
 
   describe(`DELETE '/recipe/:id'`, () => {
-    let response: any;
+    let response: any,
+        token: string,
+        id: string;
 
     beforeAll(async () => {
-      user = await new UserModel(userN);
+      const newUser = await request.post(`/api/users/create`).send(userN);
+      const userAuth = await request.post(`/api/users/authenticate`).send({username: userN.username, password: userN.password});
+      token = newUser.body.token || userAuth.body.token;
+      id = newUser.body.userId || userAuth.body.userId;
     });
 
-    afterAll(async done => {
-      await user.remove();
-      done();
+    afterAll(async () => {
+      await request.delete(`/api/users/${id}`).set('Authorization', `Bearer ${token}`);
     });
 
     it(`should remove user`, async () => {
@@ -329,7 +342,7 @@ describe(`RecipesApi`, () => {
 
       response = await request
         .delete(`/api/recipe/${recipeDoc.id}`)
-        .set('Authorization', `Bearer ${user.token}`);
+        .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body.title).toBe(recipe.title);
 
@@ -340,7 +353,7 @@ describe(`RecipesApi`, () => {
     it(`should return 'null' after trial of removing unexisting user`, async () => {
       response = await request
         .delete(`/api/recipe/10`)
-        .set('Authorization', `Bearer ${user.token}`);
+        .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toBeFalsy();
     });
