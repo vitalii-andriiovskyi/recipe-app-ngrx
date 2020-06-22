@@ -95,3 +95,9 @@ RUN yarn config set unsafe-perm true && yarn
   environment:
     MONGODB_URI: mongodb://vit:secret@mongodb:27017/rcp
 ```
+
+### Testing backend with Redis
+
+To test methods that use Redis API, we can use `redisClient` declared anywhere in the code. But to make sure it can reconnect from the test, add listener to the event `error`. Details are here [How to reconnect redis connection?](https://stackoverflow.com/questions/10879426/how-to-reconnect-redis-connection).
+
+Also I faced the case when the Redis had connected to db, but test failed due to running too fast. So there was no connection while testing were running. The line `await new Promise(resolve => setTimeout(resolve, 4000));` solved the problem.
