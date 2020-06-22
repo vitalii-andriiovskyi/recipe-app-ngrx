@@ -1,0 +1,41 @@
+version: '3.8'
+
+services: 
+  recipe-api:
+    container_name: recipe-api
+    build:
+      context: ./
+      target: recipe-api
+    command: ng serve api
+    volumes: 
+      - ./libs:/usr/src/recipe-api/libs
+      - ./apps:/usr/src/recipe-api/apps
+
+  # # api1
+  # api1:
+  #   container_name: api1
+  #   build:
+  #     context: ./
+  #     target: recipe-app-api
+  #   command: ng serve api
+  #   working_dir: /usr/src/recipe-app-api
+  #   environment:
+  #     MONGODB_URI: mongodb://vit:secret@127.0.0.1:27017/rcp
+  #   ports:
+  #     - "3032:3030"
+  #   volumes: 
+  #     - ./:/usr/src/recipe-app-api
+  
+  # db mongodb
+  mongodb:
+    container_name: mongodb
+    build: 
+      context: ./
+      target: mongo-db
+
+  recipe-web:
+    container_name: recipe-web
+    build: 
+      context: ./
+      target: recipe-web
+    

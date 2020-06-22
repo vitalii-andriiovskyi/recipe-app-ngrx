@@ -1,0 +1,47 @@
+version: '3.8'
+
+services: 
+  recipe-api:
+    image: example/my_web_app:latest
+    working_dir: /usr/src/recipe-api
+    environment:
+      MONGODB_URI: mongodb://vit:secret@mongodb:27017/rcp
+      REDIS_URI: redis://redis:6379
+    networks:
+      - recipe_net
+    ports:
+      - "3030:3030"
+    depends_on:
+      - mongodb
+      - redis
+  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: vit
+      MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_DATABASE: rcp
+    networks:
+      - recipe_net
+    ports:
+      - "27017:27017"
+  
+  recipe-web:
+    image: example/my_recipe_app:latest
+    ports: 
+      - "80:80"
+    networks:
+      - recipe_net
+    depends_on:
+      - recipe-api
+
+  redis:
+    image: redis:latest
+    ports: 
+      - "6379:6379"
+    networks:
+      - recipe_net
+
+networks:
+  recipe_net:

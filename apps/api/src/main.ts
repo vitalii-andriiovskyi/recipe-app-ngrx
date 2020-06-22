@@ -9,7 +9,8 @@ const PORT = config.get('port');
 const HOSTNAME =  process.env.NODE_ENV === 'production' ? config.get('hostname') : 'localhost';
 
 // connect to mongoose
-mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'), () => {
+// mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'), (data) => {
+mongoose.connect(process.env.MONGODB_URI, config.get('mongoose:options'), (data) => {
   logger.info('Connected to MongoDB');
 });
 mongoose.connection.on("error", error => {
