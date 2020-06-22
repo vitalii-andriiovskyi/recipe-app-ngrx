@@ -1,6 +1,11 @@
 import { NextFunction, Response, Request, Router } from "express";
 import { UserModel } from '../models/user';
-import { CommonErrorTypes, HttpError } from "../utils/error";
+import { CommonErrorTypes } from '../utils/error';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
+import { StrCallback, getToken, setToken } from '../redis';
+import { createJWT } from '../utils';
+import { SuccessAuth } from '@recipe-app-ngrx/models';
 
 export class UsersApi {
 
@@ -65,37 +70,52 @@ export class UsersApi {
     //   phone: '+ 380',
     // }
     // UserModel.createUser(userN).subscribe(
-    UserModel.createUser(req.body).subscribe(
-      user => {
-        res.json(user);
-        next();
-      },
-      err => {
-        if (err.type && err.type === CommonErrorTypes.CreationError) {
-          res.status(403).send(err.message);
-        } else {
-          return next(err); // ???????? don't know whether it is right
+    UserModel.createUser(req.body)
+      .pipe(
+        switchMap(user => this.createSession(user))
+      )
+      .subscribe(
+        (successAuth: SuccessAuth | string) => {
+          res.json(successAuth);
+          next();
+        },
+        err => {
+          if (err.type && err.type === CommonErrorTypes.CreationError) {
+            res.status(403).send(err.message);
+          } else {
+            return next(err); // ???????? don't know whether it is right
+          }
+          next();
         }
-        next();
-      }
     );
   }
 
   public authenticate(req: Request, res: Response, next: NextFunction) {
-    UserModel.authenticate(req.body.username, req.body.password).subscribe(
-      user => {
-        res.json(user);
-        next();
-      },
-      err => {
-        if (err.type && (err.type === CommonErrorTypes.AuthError || err.type === CommonErrorTypes.CommonError)) {
-          res.status(401).send(err.message);
-        } else {
-          return next(err); // ???????? don't know whether it is right
+    const { username, password } = req.body;
+    if (!username || !password ) {
+      res.status(500).send('Incorrect form submission');
+    }
+
+    const { authorization } = req.headers;
+
+    return authorization ? this.getAuthTokenId(req, res) : UserModel.authenticate(username, password)
+      .pipe(
+        switchMap(user => this.createSession(user))
+      )
+      .subscribe(
+        (successAuth: SuccessAuth | string) => {
+          res.json(successAuth);
+          next();
+        },
+        err => {
+          if (err.type && (err.type === CommonErrorTypes.AuthError || err.type === CommonErrorTypes.CommonError)) {
+            res.status(401).send(err.message);
+          } else {
+            return next(err); // ???????? don't know whether it is right
+          }
+          next();
         }
-        next();
-      }
-    );
+      );
   }
 
   public delete(req: Request, res: Response, next: NextFunction) {
@@ -121,6 +141,33 @@ export class UsersApi {
         next();
       }
     );
+  }
+
+  getAuthTokenId(req: Request, res: Response): boolean {
+    const { authorization } = req.headers;
+    const authToken = authorization.split(' ')[1];
+    return getToken(authToken, this.getTokenCallback(res));
+  }
+
+  getTokenCallback = (res: Response): StrCallback => (err, reply) => {
+    if (err || !reply) {
+      return res.status(400).send('Unauthorized');
+    }
+    return res.json({userId: reply});
+  }
+
+  createSession({_id, username}): Observable<SuccessAuth | string> {
+    
+    return setToken( createJWT(username), `${_id}`).pipe(
+      map((res): SuccessAuth => ({ success: true, ...res })),
+      catchError((err): string | Observable<never> => {
+        if (err.type && (err.type === CommonErrorTypes.SetTokenError)) {
+          console.log(err.message);
+          return err.message;
+        }
+        return throwError(err);
+      })
+    )
   }
 
 }

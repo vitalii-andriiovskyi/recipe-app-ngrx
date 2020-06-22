@@ -11,6 +11,7 @@ import { sendHttpError } from './middleware/sendHttpError';
 import { expressErrorHandler } from './middleware/expressErrorHandler';
 import { UsersApi } from './api/users';
 import { RecipesApi } from './api/recipes';
+import { redisClient } from './redis';
 
 const DIST_FOLDER = join(process.cwd(), 'dist');
 
@@ -89,15 +90,18 @@ export class ExpressServer {
         const headerAuth = req.headers.authorization as string;
 
         if (headerAuth && headerAuth.split(' ')[0] === 'Bearer') {
-            return headerAuth.split(' ')[1];
-        } else if (req.query && req.query.token) {
-            return req.query.token;
+            const token = headerAuth.split(' ')[1];
+            const authenticated = redisClient.get(token);
+            return authenticated ? token : null;
         }
+        // } else if (req.query && req.query.token) {
+        //     return req.query.token;
+        // }
         return null;
       }
     }).unless({ 
       path: [
-        /\/api/,
+        // /\/api/,
         /\/api\/users\/authenticate/,
         /\/api\/users\/create/,
         /\/api\/recipes\/totalN/,
