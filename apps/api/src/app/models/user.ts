@@ -79,6 +79,9 @@ UserSchema.statics.getUser = function(id: string): Observable<any> {
 
 UserSchema.statics.authenticate = function(username: string, password: string): Observable<any> {
   const selfUser = this;
+  if (!username || !password ) {
+    return throwError(new CommonError(`Incorrect form submission`, CommonErrorTypes.CommonError))
+  }
 
   // return from(selfUser.findOne({username: username})).pipe(
   return bindNodeCallback(selfUser.findOne).call(selfUser, {username: username}).pipe(
