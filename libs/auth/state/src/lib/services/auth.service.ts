@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { AuthUserVW, User } from '@recipe-app-ngrx/models';
+import { AuthUserVW, User, SessionData } from '@recipe-app-ngrx/models';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login({ username, password }: AuthUserVW): Observable<User> {
-    return this.http.post<User>(this.API_PATH, { username: username, password: password });
+  login({ username, password }: AuthUserVW): Observable<SessionData> {
+    return this.http.post<SessionData>(this.API_PATH, { username: username, password: password });
   }
 
   logout() {

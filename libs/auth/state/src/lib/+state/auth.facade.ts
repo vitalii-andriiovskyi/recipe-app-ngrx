@@ -13,6 +13,7 @@ export class AuthFacade {
   loggedIn$ = this.store.pipe(select(authQuery.getLoggedIn));
   error$ = this.store.pipe(select(authQuery.getAuthError));
   pending$ = this.store.pipe(select(authQuery.getAuthPending));
+  session$ = this.store.pipe(select(authQuery.getSession));
 
   constructor(private store: Store<AuthPartialState>) {}
 

@@ -39,15 +39,15 @@ export class AuthEffects {
     map(action => action.payload.authUser),
     exhaustMap((auth: AuthUserVW) =>
       this.authService.login(auth).pipe(
-        tap(user => {
-          if (user && user.token) {
+        tap(session => {
+          if (session && session.token) {
             this.localeStorageService.setItem(
               'currentUser',
-              JSON.stringify(user)
+              JSON.stringify(session)
             );
           }
         }),
-        map(user => new LoginSuccess({ user })),
+        map(session => new LoginSuccess({ session })),
         catchError(error => of(new LoginFailure({ error: error.error })))
       )
     )

@@ -1,5 +1,5 @@
 import { AuthAction, AuthActionTypes } from './auth.actions';
-import { User } from '@recipe-app-ngrx/models';
+import { User, SessionData } from '@recipe-app-ngrx/models';
 
 export const AUTH_FEATURE_KEY = 'auth';
 
@@ -15,6 +15,7 @@ export const AUTH_FEATURE_KEY = 'auth';
 export interface AuthState {
   loggedIn: boolean;
   user: User | null;
+  session: SessionData | null;
   pending: boolean;
   error: string | null; // last none error (if any)
 }
@@ -27,7 +28,8 @@ export const initialState: AuthState = {
   loggedIn: false,
   user: null,
   error: null,
-  pending: false
+  pending: false,
+  session: null
 };
 
 export function authReducer(
@@ -48,7 +50,7 @@ export function authReducer(
       state = {
         ...state,
         loggedIn: true,
-        user: action.payload.user,
+        session: action.payload.session,
         error: null,
         pending: false,
       };

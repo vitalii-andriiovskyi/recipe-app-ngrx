@@ -6,6 +6,7 @@ export const selectionMethods: any = {
   getUser: (state: AuthState) => state.user,
   getError: (state: AuthState) => state.error,
   getPending: (state: AuthState) => state.pending,
+  getSession: (state: AuthState) => state.session,
 }
 
 // Lookup the 'Auth' feature state managed by NgRx
@@ -15,10 +16,12 @@ export const getUser = createSelector(selectAuthState, selectionMethods.getUser)
 export const getLoggedIn = createSelector(selectAuthState, selectionMethods.getLoggedIn);
 export const getAuthError = createSelector(selectAuthState, selectionMethods.getError);
 export const getAuthPending = createSelector(selectAuthState, selectionMethods.getPending);
+export const getSession = createSelector(selectAuthState, selectionMethods.getSession);
 
 export const authQuery = {
   getUser,
   getLoggedIn,
   getAuthError,
-  getAuthPending
+  getAuthPending,
+  getSession
 };
