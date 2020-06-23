@@ -22,7 +22,7 @@ import {
 } from './auth.actions';
 import { AuthService } from '../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthUserVW, User } from '@recipe-app-ngrx/models';
+import { AuthUserVW, SessionData } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
   Router,
@@ -96,19 +96,16 @@ describe('AuthEffects', () => {
   describe('login$', () => {
     it('should return an auth.LoginSuccess action, with user information if login succeeds', () => {
       const authUser: AuthUserVW = { username: 'test', password: '' };
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const session: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
       const action = new Login({ authUser });
-      const completion = new LoginSuccess({ user });
+      const completion = new LoginSuccess({ session });
 
       actions$ = hot('-a---', { a: action });
-      const response = cold('-a|', { a: user });
+      const response = cold('-a|', { a: session });
       const expected = cold('--b', { b: completion });
 
       getLoginSpy.and.returnValue(response);
@@ -168,16 +165,13 @@ describe('AuthEffects', () => {
       spyOn(routerService, 'navigate').and.callThrough();
     });
     it('should navigate to previous route', (done: any) => {
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const session: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
 
-      const action = new LoginSuccess({ user });
+      const action = new LoginSuccess({ session });
 
       actions$ = of(action);
 

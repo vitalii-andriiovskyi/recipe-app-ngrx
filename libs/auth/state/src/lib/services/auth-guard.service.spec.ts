@@ -14,7 +14,7 @@ import { AuthEffects } from '../+state/auth.effects';
 import { AuthFacade } from '../+state/auth.facade';
 import { AuthService } from './auth.service';
 import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
-import { User } from '@recipe-app-ngrx/models';
+import { User, SessionData } from '@recipe-app-ngrx/models';
 import { cold } from 'jasmine-marbles';
 import { LoginSuccess } from '../+state/auth.actions';
 
@@ -34,6 +34,12 @@ describe('AuthGuard', () => {
     lastName: '',
     email: ''
   } as User;
+
+  const session: SessionData = {
+    userId: '5c18cb336a07d64bac65fddb',
+    token: 'token',
+    success: true
+  }
 
   describe('used in NgModule', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
@@ -88,7 +94,7 @@ describe('AuthGuard', () => {
     });
 
     it(`should return 'true' if the user is loggedIn`, () => {
-      store.dispatch(new LoginSuccess({ user }));
+      store.dispatch(new LoginSuccess({ session }));
 
       const expected = cold('(a|)', { a: true });
       expect(authGuard.canActivate()).toBeObservable(expected);

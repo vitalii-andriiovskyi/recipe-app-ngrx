@@ -1,5 +1,6 @@
 import { AuthState } from './auth.reducer';
 import { authQuery } from './auth.selectors';
+import { SessionData } from '@recipe-app-ngrx/models';
 
 describe('Auth Selectors', () => {
   const ERROR_MSG = 'No Error Available';
@@ -20,6 +21,11 @@ describe('Auth Selectors', () => {
         },
         pending: true,
         error: ERROR_MSG,
+        session: {
+          userId: '5c18cb336a07d64bac65fddb',
+          token: 'token',
+          success: true
+        }
       }
     };
   });
@@ -47,6 +53,13 @@ describe('Auth Selectors', () => {
       const pending = authQuery.getAuthPending(storeState);
 
       expect(pending).toBeTruthy('is pending');
+    });
+    it("getSession() should return the session data", () => {
+      const session = authQuery.getSession(storeState) as SessionData;
+      const { userId, token } = session;
+
+      expect(userId).toBe(storeState.auth.session.userId);
+      expect(token).toBe(storeState.auth.session.token);
     });
   });
 });
