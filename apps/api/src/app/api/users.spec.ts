@@ -212,9 +212,9 @@ describe('UserModel: MongoUserModel', () => {
 
       });
 
-      it(`should return the error 500 when only the username is sent`, async () => {
+      it(`should return the error 401 when only the username is sent`, async () => {
         const response = await request.post(`/api/users/authenticate`).send({username: userN.username});
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(401);
       });
 
     
