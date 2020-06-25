@@ -18,7 +18,7 @@ import {
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { environment } from '../environments/environment';
 
-import { CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
+import { CustomRouterStateSerializer, JwtInterceptorProvider } from '@recipe-app-ngrx/utils';
 import { AuthStateModule } from '@recipe-app-ngrx/auth/state';
 import { AuthLoginUiModule } from '@recipe-app-ngrx/auth/login-ui';
 import { SharedComponentsModule } from '@recipe-app-ngrx/shared-components';
@@ -30,6 +30,7 @@ import { ENV_RCP, LogService } from '@recipe-app-ngrx/utils';
 import { CoreComponentsModule } from '@recipe-app-ngrx/core-components';
 import { RecipeUiModule } from '@recipe-app-ngrx/recipe/ui';
 import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
+import { UserStateModule } from '@recipe-app-ngrx/user/state';
 
 const routes: Routes = [
   // { path: '**', component: PageNotFoundComponent }
@@ -65,6 +66,7 @@ const routes: Routes = [
     RcpEntityStoreModule,
     RouterHistoryStateModule,
     RecipeUiModule,
+    UserStateModule,
     // CoreComponentsModule has the route { path: '**', component: PageNotFoundComponent }. Therefore in must be imported after all modules with Routes
     CoreComponentsModule,
     RouterModule.forRoot(routes, {
@@ -74,7 +76,8 @@ const routes: Routes = [
   ],
   providers: [
     { provide: ENV_RCP, useValue: environment },
-    LogService
+    LogService,
+    JwtInterceptorProvider
   ],
   bootstrap: [AppComponent]
 })
