@@ -24,7 +24,8 @@ import {
   AuthActionTypes
 } from './auth.actions';
 import { AuthUserVW } from '@recipe-app-ngrx/models';
-import { LocalStorageService } from '@recipe-app-ngrx/utils';
+import { SessionStorageService } from '@recipe-app-ngrx/utils';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 import { AuthService } from '../services/auth.service';
 import { LogoutConfirmationDialogComponent } from '@recipe-app-ngrx/auth/login-ui';
 import { Router } from '@angular/router';
@@ -41,9 +42,9 @@ export class AuthEffects {
       this.authService.login(auth).pipe(
         tap(session => {
           if (session && session.token) {
-            this.localeStorageService.setItem(
+            this.sessionStorageService.setItem(
               'currentUser',
-              JSON.stringify(session)
+              session
             );
           }
         }),
@@ -85,6 +86,7 @@ export class AuthEffects {
   loginSuccess$ = this.actions$.pipe(
     ofType(AuthActionTypes.LoginSuccess),
     // -- maybe should load additional data for authenticated users
+    tap(() => this.userFacadeService.loadUser()),
     withLatestFrom(this.routerHistoryFacade.previousRouter$),
     tap(([action, route]) => {
       this.router.navigate([route.url.split('?')[0]], {
@@ -103,9 +105,10 @@ export class AuthEffects {
     private actions$: Actions,
     private dataPersistence: DataPersistence<AuthPartialState>,
     private authService: AuthService,
-    private localeStorageService: LocalStorageService,
+    private sessionStorageService: SessionStorageService,
     private dialog: MatDialog,
     private router: Router,
-    private routerHistoryFacade: RouterHistoryFacade
+    private routerHistoryFacade: RouterHistoryFacade,
+    private userFacadeService: UserFacade
   ) {}
 }
