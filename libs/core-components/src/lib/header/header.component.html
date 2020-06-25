@@ -9,7 +9,7 @@
         <button class="btn-logged-in" *ngIf="loggedIn$ | async" mat-button
           [matMenuTriggerFor]="userMenu" role="button">
           <mat-icon>how_to_reg</mat-icon>
-          <span>{{(user$ | async).username}}</span>
+          <span>{{(user$ | async)?.username}}</span>
         </button>
 
         <mat-menu #userMenu="matMenu">
