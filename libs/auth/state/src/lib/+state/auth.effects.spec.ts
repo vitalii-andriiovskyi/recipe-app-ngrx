@@ -38,6 +38,7 @@ import {
 } from '@recipe-app-ngrx/router-history-state';
 import { RouterStateUrl, CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 
 interface TestSchema {
   routerHistoryState: RouterHistoryState;
@@ -64,6 +65,12 @@ describe('AuthEffects', () => {
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     getMatDialogOpenSpy = matDialogSpy.open;
 
+    const userFacadeSpy = jasmine.createSpyObj('UserFacade', [
+      'loadUser'
+    ]);
+    const loadUserSpy: jasmine.Spy = userFacadeSpy.loadUser;
+    loadUserSpy.and.returnValue('');
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([
@@ -82,7 +89,8 @@ describe('AuthEffects', () => {
         AuthEffects,
         provideMockActions(() => actions$),
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: MatDialog, useValue: matDialogSpy }
+        { provide: MatDialog, useValue: matDialogSpy },
+        { provide: UserFacade, useValue: userFacadeSpy }
       ],
       declarations: [TestComponent, PageNotFoundComponent]
     });
