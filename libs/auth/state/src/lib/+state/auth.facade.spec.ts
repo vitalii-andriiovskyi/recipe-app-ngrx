@@ -22,6 +22,7 @@ import { AuthService } from '../services/auth.service';
 import { User, SessionData } from '@recipe-app-ngrx/models';
 import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
 import { Session } from 'inspector';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 
 interface TestSchema {
   auth: AuthState;
@@ -61,6 +62,12 @@ describe('AuthFacade', () => {
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     getMatDialogOpenSpy = matDialogSpy.open;
 
+    const userFacadeSpy = jasmine.createSpyObj('UserFacade', [
+      'loadUser'
+    ]);
+    const loadUserSpy: jasmine.Spy = userFacadeSpy.loadUser;
+    loadUserSpy.and.returnValue('');
+
     beforeEach(() => {
       @NgModule({
         imports: [
@@ -73,7 +80,8 @@ describe('AuthFacade', () => {
         providers: [
           AuthFacade,
           { provide: AuthService, useValue: authServiceSpy },
-          { provide: MatDialog, useValue: matDialogSpy }
+          { provide: MatDialog, useValue: matDialogSpy },
+          { provide: UserFacade, useValue: userFacadeSpy }
         ],
         declarations: [PageNotFoundComponent]
       })

@@ -17,6 +17,7 @@ import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state'
 import { User, SessionData } from '@recipe-app-ngrx/models';
 import { cold } from 'jasmine-marbles';
 import { LoginSuccess } from '../+state/auth.actions';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 
 interface TestSchema {
   auth: AuthState;
@@ -48,6 +49,12 @@ describe('AuthGuard', () => {
     ]);
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
+    const userFacadeSpy = jasmine.createSpyObj('UserFacade', [
+      'loadUser'
+    ]);
+    const loadUserSpy: jasmine.Spy = userFacadeSpy.loadUser;
+    loadUserSpy.and.returnValue('');
+
     beforeEach(() => {
       @NgModule({
         imports: [
@@ -60,7 +67,8 @@ describe('AuthGuard', () => {
         providers: [
           AuthFacade,
           { provide: AuthService, useValue: authServiceSpy },
-          { provide: MatDialog, useValue: matDialogSpy }
+          { provide: MatDialog, useValue: matDialogSpy },
+          { provide: UserFacade, useValue: userFacadeSpy }
         ],
         declarations: [PageNotFoundComponent]
       })
