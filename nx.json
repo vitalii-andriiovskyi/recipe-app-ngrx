@@ -55,6 +55,9 @@
     },
     "router-history-state": {
       "tags": []
+    },
+    "user-state": {
+      "tags": []
     }
   }
 }

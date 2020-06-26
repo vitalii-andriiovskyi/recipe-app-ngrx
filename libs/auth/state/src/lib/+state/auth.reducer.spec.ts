@@ -5,7 +5,7 @@ import {
   LogoutConfirmation
 } from './auth.actions';
 import { AuthState, initialState, authReducer } from './auth.reducer';
-import { User, AuthUserVW } from '@recipe-app-ngrx/models';
+import { User, AuthUserVW, SessionData } from '@recipe-app-ngrx/models';
 
 describe('AuthReducer', () => {
   describe('unknown action', () => {
@@ -33,23 +33,21 @@ describe('AuthReducer', () => {
 
   describe('LOGIN_SUCCESS', () => {
     it('should add a user, set \'loggedIn\' to true, and have no error and no \'pending\' state', () => {
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const sessionData: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
 
-      const createAction = new LoginSuccess({ user });
+      const createAction = new LoginSuccess({ session: sessionData });
 
       const result = authReducer(initialState, createAction);
+      const { loggedIn, session: { userId }, pending, error } = result;
 
-      expect(result.loggedIn).toBeTruthy('state.loggedIn = true');
-      expect(result.user.username).toBe('test_name');
-      expect(result.pending).toBeFalsy('pending is false');
-      expect(result.error).toBeFalsy('no error');
+      expect(loggedIn).toBeTruthy('state.loggedIn = true');
+      expect(userId).toBe(sessionData.userId);
+      expect(pending).toBeFalsy('pending is false');
+      expect(error).toBeFalsy('no error');
     });
   });
 
@@ -59,9 +57,9 @@ describe('AuthReducer', () => {
       const createAction = new LoginFailure({ error });
 
       const result = authReducer(initialState, createAction);
-
+      
       expect(result.loggedIn).toBeFalsy('state.loggedIn = false');
-      expect(result.user).toBeFalsy('there\'s no user');
+      expect(result.session).toBeFalsy('there\'s no session');
       expect(result.pending).toBeFalsy('pending is false');
       expect(result.error).toBe('login failed');
     });
@@ -69,28 +67,27 @@ describe('AuthReducer', () => {
 
   describe('LOGOUT_CONFIRMATION', () => {
     it('should logout a user', () => {
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const sessionData: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
 
-      const createActionSuccess = new LoginSuccess({ user });
+      const createActionSuccess = new LoginSuccess({ session: sessionData });
       const resultSuccess = authReducer(initialState, createActionSuccess);
+      const { loggedIn, session: { userId }, pending, error } = resultSuccess;
 
-      expect(resultSuccess.loggedIn).toBeTruthy('state.loggedIn = true');
-      expect(resultSuccess.user.username).toBe('test_name');
-      expect(resultSuccess.pending).toBeFalsy('pending is false');
-      expect(resultSuccess.error).toBeFalsy('no error');
+
+      expect(loggedIn).toBeTruthy('state.loggedIn = true');
+      expect(userId).toBe(sessionData.userId);
+      expect(pending).toBeFalsy('pending is false');
+      expect(error).toBeFalsy('no error');
 
       const createAction = new LogoutConfirmation();
       const result = authReducer(resultSuccess, createAction);
 
       expect(result.loggedIn).toBeFalsy('user is logged out');
-      expect(result.user).toBeFalsy('user is null');
+      expect(result.session).toBeFalsy('session is closed');
       expect(result.pending).toBeFalsy('pending is false');
       expect(result.error).toBeFalsy('no error');
     });

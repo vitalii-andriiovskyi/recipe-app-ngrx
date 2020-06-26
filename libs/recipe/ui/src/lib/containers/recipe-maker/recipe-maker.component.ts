@@ -86,7 +86,7 @@ export class RecipeMakerComponent implements OnInit, OnDestroy {
 
     this.recipeEntityService.loadTotalNRecipes('RecipeMakerComponent');
     this.authFacade.authencticatedUser$.pipe(
-      tap(user => this.username = user['username']),
+      tap(user => this.username = user?.username),
       takeUntil(this.destroy$)
     ).subscribe();
   }

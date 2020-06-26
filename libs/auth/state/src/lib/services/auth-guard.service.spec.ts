@@ -14,9 +14,10 @@ import { AuthEffects } from '../+state/auth.effects';
 import { AuthFacade } from '../+state/auth.facade';
 import { AuthService } from './auth.service';
 import { RouterHistoryStateModule } from '@recipe-app-ngrx/router-history-state';
-import { User } from '@recipe-app-ngrx/models';
+import { User, SessionData } from '@recipe-app-ngrx/models';
 import { cold } from 'jasmine-marbles';
 import { LoginSuccess } from '../+state/auth.actions';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 
 interface TestSchema {
   auth: AuthState;
@@ -35,12 +36,24 @@ describe('AuthGuard', () => {
     email: ''
   } as User;
 
+  const session: SessionData = {
+    userId: '5c18cb336a07d64bac65fddb',
+    token: 'token',
+    success: true
+  }
+
   describe('used in NgModule', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
       'login',
       'logout'
     ]);
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+
+    const userFacadeSpy = jasmine.createSpyObj('UserFacade', [
+      'loadUser'
+    ]);
+    const loadUserSpy: jasmine.Spy = userFacadeSpy.loadUser;
+    loadUserSpy.and.returnValue('');
 
     beforeEach(() => {
       @NgModule({
@@ -54,7 +67,8 @@ describe('AuthGuard', () => {
         providers: [
           AuthFacade,
           { provide: AuthService, useValue: authServiceSpy },
-          { provide: MatDialog, useValue: matDialogSpy }
+          { provide: MatDialog, useValue: matDialogSpy },
+          { provide: UserFacade, useValue: userFacadeSpy }
         ],
         declarations: [PageNotFoundComponent]
       })
@@ -88,7 +102,7 @@ describe('AuthGuard', () => {
     });
 
     it(`should return 'true' if the user is loggedIn`, () => {
-      store.dispatch(new LoginSuccess({ user }));
+      store.dispatch(new LoginSuccess({ session }));
 
       const expected = cold('(a|)', { a: true });
       expect(authGuard.canActivate()).toBeObservable(expected);

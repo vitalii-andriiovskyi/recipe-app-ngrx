@@ -22,7 +22,7 @@ import {
 } from './auth.actions';
 import { AuthService } from '../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthUserVW, User } from '@recipe-app-ngrx/models';
+import { AuthUserVW, SessionData } from '@recipe-app-ngrx/models';
 import { RouterTestingModule } from '@angular/router/testing';
 import {
   Router,
@@ -38,6 +38,7 @@ import {
 } from '@recipe-app-ngrx/router-history-state';
 import { RouterStateUrl, CustomRouterStateSerializer } from '@recipe-app-ngrx/utils';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
 
 interface TestSchema {
   routerHistoryState: RouterHistoryState;
@@ -64,6 +65,12 @@ describe('AuthEffects', () => {
     const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     getMatDialogOpenSpy = matDialogSpy.open;
 
+    const userFacadeSpy = jasmine.createSpyObj('UserFacade', [
+      'loadUser'
+    ]);
+    const loadUserSpy: jasmine.Spy = userFacadeSpy.loadUser;
+    loadUserSpy.and.returnValue('');
+
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule.withRoutes([
@@ -82,7 +89,8 @@ describe('AuthEffects', () => {
         AuthEffects,
         provideMockActions(() => actions$),
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: MatDialog, useValue: matDialogSpy }
+        { provide: MatDialog, useValue: matDialogSpy },
+        { provide: UserFacade, useValue: userFacadeSpy }
       ],
       declarations: [TestComponent, PageNotFoundComponent]
     });
@@ -96,19 +104,16 @@ describe('AuthEffects', () => {
   describe('login$', () => {
     it('should return an auth.LoginSuccess action, with user information if login succeeds', () => {
       const authUser: AuthUserVW = { username: 'test', password: '' };
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const session: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
       const action = new Login({ authUser });
-      const completion = new LoginSuccess({ user });
+      const completion = new LoginSuccess({ session });
 
       actions$ = hot('-a---', { a: action });
-      const response = cold('-a|', { a: user });
+      const response = cold('-a|', { a: session });
       const expected = cold('--b', { b: completion });
 
       getLoginSpy.and.returnValue(response);
@@ -168,16 +173,13 @@ describe('AuthEffects', () => {
       spyOn(routerService, 'navigate').and.callThrough();
     });
     it('should navigate to previous route', (done: any) => {
-      const user = {
-        _id: '',
-        username: 'test_name',
-        password: '',
-        firstName: '',
-        lastName: '',
-        email: ''
-      } as User;
+      const session: SessionData = {
+        userId: '5c18cb336a07d64bac65fddb',
+        token: 'token',
+        success: true
+      }
 
-      const action = new LoginSuccess({ user });
+      const action = new LoginSuccess({ session });
 
       actions$ = of(action);
 
@@ -206,7 +208,7 @@ describe('AuthEffects', () => {
       };
       store.dispatch(new RouterHistoryUpdated(nextUrlState));
       const action = new LogoutConfirmation();
-
+      getLogoutSpy.and.returnValue(of(true));
       actions$ = of(action);
 
       effects.logoutConfirmation$.subscribe(() => {

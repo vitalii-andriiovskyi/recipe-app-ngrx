@@ -7,30 +7,32 @@ import { HttpClient } from '@angular/common/http';
 
 import { JwtInterceptorProvider } from './jwt-interceptor.service';
 import { LocalStorageService } from './local-storage.service';
+import { SessionStorageService } from './session-storage.service';
 
 describe('JwtInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
   const URI = '/api/auth';
-  let localStorageService: LocalStorageService;
+  let sessionStorageService: SessionStorageService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule ],
       providers: [ 
         JwtInterceptorProvider,
-        LocalStorageService      
+        LocalStorageService,
+        SessionStorageService    
       ]
     });
 
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
-    localStorageService = TestBed.inject(LocalStorageService);
+    sessionStorageService = TestBed.inject(SessionStorageService);
   });
   
   it('should add an Authorization header if ', () => {
-    localStorageService.setItem('currentUser', {token: 'token'});
-    const user = localStorageService.getItem('currentUser');
+    sessionStorageService.setItem('currentUser', {token: 'token'});
+    const user = sessionStorageService.getItem('currentUser');
     expect(user.token).toBe('token');
 
     http.get<any>(URI).subscribe(response => {

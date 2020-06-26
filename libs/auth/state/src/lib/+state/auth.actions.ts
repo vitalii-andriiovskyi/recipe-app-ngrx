@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { User, AuthUserVW } from '@recipe-app-ngrx/models';
+import { User, AuthUserVW, SessionData } from '@recipe-app-ngrx/models';
 
 export enum AuthActionTypes {
   Login = '[Login Page] Login',
@@ -20,7 +20,7 @@ export class Login implements Action {
 export class LoginSuccess implements Action {
   readonly type = AuthActionTypes.LoginSuccess;
 
-  constructor(public payload: { user: User }) {}
+  constructor(public payload: { session: SessionData }) {}
 }
 
 export class LoginFailure implements Action {

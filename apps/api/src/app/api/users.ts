@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { StrCallback, getToken, setToken } from '../redis';
 import { createJWT } from '../utils';
-import { SuccessAuth } from '@recipe-app-ngrx/models';
+import { SessionData } from '@recipe-app-ngrx/models';
 
 export class UsersApi {
 
@@ -75,7 +75,7 @@ export class UsersApi {
         switchMap(user => this.createSession(user))
       )
       .subscribe(
-        (successAuth: SuccessAuth | string) => {
+        (successAuth: SessionData | string) => {
           res.json(successAuth);
           next();
         },
@@ -92,10 +92,6 @@ export class UsersApi {
 
   public authenticate(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
-    if (!username || !password ) {
-      res.status(500).send('Incorrect form submission');
-    }
-
     const { authorization } = req.headers;
 
     return authorization ? this.getAuthTokenId(req, res) : UserModel.authenticate(username, password)
@@ -103,7 +99,7 @@ export class UsersApi {
         switchMap(user => this.createSession(user))
       )
       .subscribe(
-        (successAuth: SuccessAuth | string) => {
+        (successAuth: SessionData | string) => {
           res.json(successAuth);
           next();
         },
@@ -146,20 +142,20 @@ export class UsersApi {
   getAuthTokenId(req: Request, res: Response): boolean {
     const { authorization } = req.headers;
     const authToken = authorization.split(' ')[1];
-    return getToken(authToken, this.getTokenCallback(res));
+    return getToken(authToken, this.getTokenCallback(authToken, res));
   }
 
-  getTokenCallback = (res: Response): StrCallback => (err, reply) => {
+  getTokenCallback = (token: string, res: Response): StrCallback => (err, reply) => {
     if (err || !reply) {
       return res.status(400).send('Unauthorized');
     }
-    return res.json({userId: reply});
+    return res.json({userId: reply, success: true, token: token});
   }
 
-  createSession({_id, username}): Observable<SuccessAuth | string> {
+  createSession({_id, username}): Observable<SessionData | string> {
     
     return setToken( createJWT(username), `${_id}`).pipe(
-      map((res): SuccessAuth => ({ success: true, ...res })),
+      map((res): SessionData => ({ success: true, ...res })),
       catchError((err): string | Observable<never> => {
         if (err.type && (err.type === CommonErrorTypes.SetTokenError)) {
           console.log(err.message);

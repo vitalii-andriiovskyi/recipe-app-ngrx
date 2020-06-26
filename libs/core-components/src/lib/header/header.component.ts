@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthFacade } from '@recipe-app-ngrx/auth/state';
+import { UserFacade } from '@recipe-app-ngrx/user/state';
+import { Observable } from 'rxjs';
+import { User } from '@recipe-app-ngrx/models';
 
 @Component({
   selector: 'rcp-header',
@@ -13,11 +16,13 @@ export class HeaderComponent implements OnInit {
   ];
   
   loggedIn$ = this.authFacade.loggedIn$;
-  user$ = this.authFacade.authencticatedUser$;
+  user$: Observable<User> = this.userFacade.getUser$;
 
-  constructor(private authFacade: AuthFacade) { }
+  constructor(private authFacade: AuthFacade,
+              private userFacade: UserFacade) { }
 
   ngOnInit() {
+    this.userFacade.loadUser(); // maybe this should be at the AppComponent. Anyway HeaderComponent loads contstantly.
   }
 
   logout() {

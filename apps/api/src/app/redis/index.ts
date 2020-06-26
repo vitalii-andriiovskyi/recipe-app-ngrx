@@ -5,8 +5,9 @@ import getLogger from '../utils/logger';
 import { Observable, of, throwError } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CommonError, CommonErrorTypes } from '../utils/error';
+import { SessionData } from '@recipe-app-ngrx/models';
 
-export type StrCallback = (err: Error | null, res: string) => Response<string | any>;
+export type StrCallback = (err: Error | null, res: string) => Response<SessionData>;
 
 const logger = getLogger(module);
 export const redisClient: RedisClient = redis.createClient(process.env.REDIS_URI);
