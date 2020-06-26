@@ -1,6 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject, BehaviorSubject } from 'rxjs';
 
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -13,10 +13,19 @@ import * as UserActions from './user.actions';
 import { User } from '@recipe-app-ngrx/models';
 import { SessionStorageService } from '@recipe-app-ngrx/utils';
 import { UserService } from '../services';
+import { AuthFacade } from '@recipe-app-ngrx/auth/state';
+import { Store } from '@ngrx/store';
+import { UserState } from './user.reducer';
+
+interface TestSchema {
+  user: UserState;
+}
 
 describe('UserEffects', () => {
+  let store: Store<TestSchema>;
   let actions: Observable<any>;
   let effects: UserEffects;
+  let authFacade: AuthFacade;
   const userTest = {
     _id: '5c18cb336a07d64bac65fddb',
     username: 'test_name',
@@ -32,7 +41,9 @@ describe('UserEffects', () => {
     success: true
   }
 
-  let mockGetItem: jest.Mock, mockLoadUser: jest.Mock;
+  let mockGetItem: jest.Mock, mockLoadUser: jest.Mock, mockLoginSuccess: jest.Mock;
+  const loggedIn$ = new BehaviorSubject<boolean>(false);
+
 
   beforeEach(() => {
     mockGetItem = jest.fn();
@@ -43,7 +54,12 @@ describe('UserEffects', () => {
     const mockUserService = {
       loadUser: mockLoadUser
     }
-   
+
+    mockLoginSuccess = jest.fn();
+    const mockAuthFacade = {
+      loggedIn$: loggedIn$.asObservable(),
+      loginSuccess: mockLoginSuccess
+    }
     
     TestBed.configureTestingModule({
       imports: [NxModule.forRoot()],
@@ -52,11 +68,14 @@ describe('UserEffects', () => {
         provideMockActions(() => actions),
         provideMockStore(),
         { provide: SessionStorageService, useValue: mockSessionStorageService },
-        { provide: UserService, useValue: mockUserService }
+        { provide: UserService, useValue: mockUserService },
+        { provide: AuthFacade, useValue: mockAuthFacade }
       ],
     });
 
     effects = TestBed.inject(UserEffects);
+    store = TestBed.inject(Store);
+    authFacade = TestBed.inject(AuthFacade);
   });
 
   describe('loadUser$', () => {
@@ -102,5 +121,20 @@ describe('UserEffects', () => {
 
       expect(effects.loadUser$).toBeObservable(expected);
     });
+  });
+
+  describe('loadUserSuccess$', () => {
+    it(`should call the AuthFacade.loginSuccess with obj sessionData`, (done) => {
+      expect.assertions(1);
+      mockGetItem.mockReturnValue(sessionData);
+      loggedIn$.next(false);
+      
+      const action = UserActions.loadUserSuccess({user: userTest})
+      actions = of(action);
+      effects.loadUserSuccess$.subscribe(() => {
+        expect(mockLoginSuccess).toBeCalledWith(sessionData);
+        done();
+      })
+    })
   });
 });

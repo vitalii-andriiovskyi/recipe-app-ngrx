@@ -17,8 +17,9 @@ import { User } from '@recipe-app-ngrx/models';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserService } from '../services';
 import { SessionStorageService } from '@recipe-app-ngrx/utils';
-import { of } from 'rxjs';
+import { of, BehaviorSubject } from 'rxjs';
 import * as utils from '@recipe-app-ngrx/utils';
+import { AuthFacade } from '@recipe-app-ngrx/auth/state';
 
 interface TestSchema {
   user: UserState;
@@ -41,8 +42,8 @@ describe('UserFacade', () => {
     success: true
   };
 
-  let mockGetItem: jest.Mock, mockLoadUser: jest.Mock;
-  
+  let mockGetItem: jest.Mock, mockLoadUser: jest.Mock, mockLoginSucces: jest.Mock;
+  const loggedIn$ = new BehaviorSubject<boolean>(false);
   beforeEach(() => {});
 
   describe('used in NgModule', () => {
@@ -56,6 +57,12 @@ describe('UserFacade', () => {
         loadUser: mockLoadUser
       }
 
+      mockLoginSucces = jest.fn();
+      const mockAuthFacade = {
+        loggedIn$: loggedIn$.asObservable(),
+        loginSuccess: mockLoginSucces
+      }
+
       @NgModule({
         imports: [
           StoreModule.forFeature(USER_FEATURE_KEY, reducer),
@@ -67,7 +74,8 @@ describe('UserFacade', () => {
           // UserService,
           // SessionStorageService
           { provide: UserService, useValue: mockUserService},
-          { provide: SessionStorageService, useValue: mockSessionStorageService}
+          { provide: SessionStorageService, useValue: mockSessionStorageService},
+          { provide: AuthFacade, useValue: mockAuthFacade }
         ],
       })
       class CustomFeatureModule {}
