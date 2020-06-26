@@ -3,6 +3,7 @@ import * as supertest from 'supertest';
 import { MongooseStub } from '../../testing/mongoose-stub';
 import { User } from '@recipe-app-ngrx/models';
 import { UserModel } from '../models/user';
+import { redisClient } from '../redis';
 
 const app = server.bootstrap().app;
 const request: supertest.SuperTest<supertest.Test> = supertest(app);
@@ -247,7 +248,7 @@ describe('UserModel: MongoUserModel', () => {
         expect(token).toBeTruthy();
         expect(success).toBeTruthy();
 
-        token = token.slice(0, -1) + 'A';
+        token = token.slice(0, -4) + 'AAAA';
 
         response = await request
           .post(`/api/users/authenticate`)
@@ -270,6 +271,51 @@ describe('UserModel: MongoUserModel', () => {
     //              -> if didn't allow, return error AuthError.
     
   });
+
+  describe('DELETE /api/users/logout', () => {
+    // if authorization
+    //     test response success
+    // else
+    //     test 400
+
+    // set token -> then remove token
+
+    it(`should logout the user | request contains authorization header`, async() => {
+      let response = await request.post('/api/users/create').send(userN);
+      const { userId, token, success } = response.body;
+
+      expect(success).toBeTruthy();
+      expect(userId).toBeTruthy();
+      expect(token).toBeTruthy();
+
+      // test logout
+      response = await request.delete('/api/users/logout').set('Authorization', `Bearer ${token}`);
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('removed');
+
+      redisClient.del(token);
+      await request.delete(`/api/users/${userId}`).set('Authorization', `Bearer ${token}`);
+
+    });
+
+    it(`shouldn't logout the user | request doesn't contain authorization header`, async() => {
+      let response = await request.post('/api/users/create').send(userN);
+      const { userId, token, success } = response.body;
+
+      expect(success).toBeTruthy();
+      expect(userId).toBeTruthy();
+      expect(token).toBeTruthy();
+
+      // test logout
+      response = await request.delete('/api/users/logout');
+      expect(response.status).toBe(500);
+      // expect(response.text).toContain('removed');
+     
+      redisClient.del(token);
+      await request.delete(`/api/users/${userId}`).set('Authorization', `Bearer ${token}`);
+
+    });
+  })
 
 });
 
