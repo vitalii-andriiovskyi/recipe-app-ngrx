@@ -209,7 +209,7 @@ describe('AuthFacade', () => {
 
         const afterClosedMethod = () => of(true);
         getMatDialogOpenSpy.and.returnValue({ afterClosed: afterClosedMethod });
-
+        getLogoutSpy.and.returnValue(of(true));
         facade.logout();
 
         loggedIn = await readFirst(facade.loggedIn$);
@@ -230,7 +230,7 @@ describe('AuthFacade', () => {
       }
     });
 
-    it(`should cancel loggout() and return session, user and state with prop loggedIn == true`, async done => {
+    it(`should cancel logout() and return session, user and state with prop loggedIn == true`, async done => {
       try {
         let loggedIn = await readFirst(facade.loggedIn$);
         let user = await readFirst(facade.authencticatedUser$);

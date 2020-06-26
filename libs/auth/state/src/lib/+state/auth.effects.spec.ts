@@ -208,7 +208,7 @@ describe('AuthEffects', () => {
       };
       store.dispatch(new RouterHistoryUpdated(nextUrlState));
       const action = new LogoutConfirmation();
-
+      getLogoutSpy.and.returnValue(of(true));
       actions$ = of(action);
 
       effects.logoutConfirmation$.subscribe(() => {
