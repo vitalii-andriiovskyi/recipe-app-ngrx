@@ -2,8 +2,8 @@ import { NextFunction, Response, Request, Router } from "express";
 import { UserModel } from '../models/user';
 import { CommonErrorTypes } from '../utils/error';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
-import { StrCallback, getToken, setToken } from '../redis';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { StrCallback, getToken, setToken, removeToken } from '../redis';
 import { createJWT } from '../utils';
 import { SessionData } from '@recipe-app-ngrx/models';
 
@@ -16,6 +16,9 @@ export class UsersApi {
 
     router.post('/users/authenticate', (req: Request, res: Response, next: NextFunction) => {
       new UsersApi().authenticate(req, res, next);
+    });
+    router.delete('/users/logout', (req: Request, res: Response, next: NextFunction) => {
+      new UsersApi().logout(req, res);
     });
 
     router.delete('/users/:id', (req: Request, res: Response, next: NextFunction) => {
@@ -112,6 +115,19 @@ export class UsersApi {
           next();
         }
       );
+  }
+
+  public logout(req: Request, res: Response) {
+    const { authorization } = req.headers;
+    const authToken = authorization.split(' ')[1];
+
+    if (authToken) {
+      removeToken(authToken).pipe(
+        tap(() => res.json('Token removed succesfully'))
+      ).subscribe();
+    } else {
+      res.status(400).json(`There's no token to remove`);
+    }
   }
 
   public delete(req: Request, res: Response, next: NextFunction) {
