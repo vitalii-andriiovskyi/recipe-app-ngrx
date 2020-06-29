@@ -1,6 +1,6 @@
 import { response } from 'express';
 import { readFirst } from '@nrwl/angular/testing';
-import { setToken, getToken } from './index';
+import { setToken, getToken, removeToken } from './index';
 import { redisClient } from './index';
 
 describe(`Redis methods`, () => {
@@ -36,7 +36,7 @@ describe(`Redis methods`, () => {
     redisClient.quit(done);
   })
 
-  describe('setToken() method', () => {
+  describe('setToken() function', () => {
     it(`should set token in the redis db`, async done => {
       await new Promise(resolve => setTimeout(resolve, 4000));
       try {
@@ -52,7 +52,9 @@ describe(`Redis methods`, () => {
         done.fail(err);
       }
     });
+  });
 
+  describe('getToken() function', () => {
     it(`should get token from redis db`, async done => {
       expect.assertions(4);
       await new Promise(resolve => setTimeout(resolve, 4000));
@@ -79,7 +81,34 @@ describe(`Redis methods`, () => {
         done.fail(err);
       }
     })
+  });
+  describe('removeToken() function', () => {
+    it(`should remove token from the redis db`, async done => {
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      try {
+        const token = 'someToken';
+        const value = 'someId'
+        const authData = await readFirst(setToken(token, value)).catch(err => console.log(err));
+        expect(authData.token).toBe(token);
+        expect(authData.userId).toBe(value);
 
-  })
+        const removeTokenSucces = await readFirst(removeToken(token));
+        expect(removeTokenSucces).toBeTruthy();
+
+        const removedToken = await new Promise(resolve => {
+          return getToken(token, (err, res) => {
+            expect(res).toBe(null);
+            resolve(res);
+            return response;
+          });
+        });
+        expect(removedToken).toBeFalsy();
+
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    });
+  });
 
 })

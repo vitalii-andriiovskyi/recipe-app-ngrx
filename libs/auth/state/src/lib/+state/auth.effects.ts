@@ -72,7 +72,7 @@ export class AuthEffects {
   @Effect({ dispatch: false })
   logoutConfirmation$ = this.actions$.pipe(
     ofType(AuthActionTypes.LogoutConfirmation),
-    exhaustMap(this.authService.logout),
+    exhaustMap(() => this.authService.logout().pipe()),
     withLatestFrom(this.routerHistoryFacade.currentRouter$),
     tap(([action, route]) => {
       // It's needed to reload current url in order to run 'AuthGuard' for certain components, which shouldn't be shown to unauthorized user

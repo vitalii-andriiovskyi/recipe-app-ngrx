@@ -31,3 +31,7 @@ export const setToken = (key: string, value: string): Observable<any> => {
 export const getToken = (key: string, func?: StrCallback): boolean => {
   return redisClient.get(key, func);
 }
+
+export const removeToken = (token: string): Observable<boolean> => {
+  return of(redisClient.del(token));
+}
