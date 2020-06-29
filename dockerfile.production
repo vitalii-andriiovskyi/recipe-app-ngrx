@@ -20,5 +20,4 @@ COPY --from=base-node /usr/src/recipe-app-ngrx/dist/apps/api .
 # RUN yarn config set unsafe-perm true && yarn
 # RUN npm install -g @angular/cli --unsafe-perm && ng config -g cli.packageManager yarn
 EXPOSE 3030
-RUN npm install nodemon -g
-CMD ["nodemon", "main.js"]
+CMD ["node", "main.js"]
