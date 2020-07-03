@@ -6,6 +6,7 @@ services:
     build:
       context: ./
       target: recipe-api
+    working_dir: /usr/src/recipe-api
     command: ng serve api
     volumes: 
       - ./libs:/usr/src/recipe-api/libs

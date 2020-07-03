@@ -2,8 +2,7 @@ version: '3.8'
 
 services: 
   recipe-api:
-    image: example/my_web_app:latest
-    working_dir: /usr/src/recipe-api
+    image: 2467100/recipe-api:latest
     environment:
       MONGODB_URI: mongodb://vit:secret@mongodb:27017/rcp
       REDIS_URI: redis://redis:6379
@@ -16,7 +15,7 @@ services:
       - redis
   
   mongodb:
-    image: mongo:latest
+    image: 2467100/recipe-surf-db
     container_name: mongodb
     environment: 
       MONGO_INITDB_ROOT_USERNAME: vit
@@ -28,7 +27,7 @@ services:
       - "27017:27017"
   
   recipe-web:
-    image: example/my_recipe_app:latest
+    image: 2467100/recipe-web:latest
     ports: 
       - "80:80"
     networks:
