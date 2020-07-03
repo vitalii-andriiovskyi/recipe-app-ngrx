@@ -18,3 +18,13 @@ db.createUser({
     { role: 'readWrite', db: 'test_rcp' }
   ],
 });
+
+db = db.getSiblingDB('surf')
+
+db.createUser({
+  user: 'vit',
+  pwd: 'secret',
+  roles: [
+    { role: 'readWrite', db: 'surf' }
+  ],
+});
