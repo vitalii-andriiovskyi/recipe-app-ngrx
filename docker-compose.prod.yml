@@ -23,14 +23,6 @@ services:
         source: dbdata
         target: /data/db
 
-  surf-api:
-    restart: always
-    image: 2467100/surf-ssr:latest
-    environment:
-      MONGO_DB_URI: mongodb://vit:secret@mongodb:27017/surf
-    depends_on: 
-      - mongodb
-
 volumes:
   dbdata:
 
