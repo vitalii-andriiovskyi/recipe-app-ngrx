@@ -7,5 +7,57 @@
     "tslint.json": "*",
     "nx.json": "*"
   },
-  "projects": {}
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
+    }
+  },
+  "projects": {
+    "recipe-app": {
+      "tags": []
+    },
+    "recipe-app-e2e": {
+      "tags": [],
+      "implicitDependencies": ["recipe-app"]
+    },
+    "utils": {
+      "tags": []
+    },
+    "auth-state": {
+      "tags": []
+    },
+    "models": {
+      "tags": []
+    },
+    "auth-login-ui": {
+      "tags": []
+    },
+    "api": {
+      "tags": []
+    },
+    "shared-components": {
+      "tags": []
+    },
+    "rcp-entity-store": {
+      "tags": []
+    },
+    "recipe-state": {
+      "tags": []
+    },
+    "recipe-ui": {
+      "tags": []
+    },
+    "core-components": {
+      "tags": []
+    },
+    "router-history-state": {
+      "tags": []
+    },
+    "user-state": {
+      "tags": []
+    }
+  }
 }

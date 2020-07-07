@@ -1,0 +1,18 @@
+<mat-card class="recipe-preview-card">
+  <img mat-card-image src="assets/plate.jpg" title="" alt="recipe">
+  <!-- should be this line, but saving images and data about them isn't realized
+    <img mat-card-image [src]="recipe.images[0].url" title="recipe.images[0].titleText" alt="recipe.images[0].altText"> -->
+  <mat-card-header>
+    <mat-card-title>{{recipe.title | titlecase}}</mat-card-title>
+    <mat-card-subtitle>By: <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a></mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngIf="recipe.description; else descriptionFallback">{{recipe.description}}</p>
+    <ng-template #descriptionFallback>
+      <p>{{recipe.title}} is awesome and tasty.</p>
+    </ng-template>
+  </mat-card-content>
+  <mat-card-actions>
+    <a mat-flat-button color="accent" [routerLink]="['/recipe', recipe.id, recipe.title_slugged]">View recipe</a>
+  </mat-card-actions>
+</mat-card>

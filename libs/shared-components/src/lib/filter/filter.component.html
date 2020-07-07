@@ -1,0 +1,6 @@
+<div>
+  <mat-form-field color="accent">
+    <input matInput placeholder="{{filterPlaceholder}}" [formControl]="filter">
+    <mat-icon matSuffix matTooltip="Clear filter" *ngIf="filter.value" (click)="clear()" color="warn">close</mat-icon>
+  </mat-form-field>
+</div>

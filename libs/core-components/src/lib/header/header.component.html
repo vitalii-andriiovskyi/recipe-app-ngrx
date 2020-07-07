@@ -1,0 +1,33 @@
+<mat-toolbar color="accent">
+  <div class="container">
+    <div class="header-content" fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="15px" fxFlexFill>
+
+      <a routerLink="/" class="nav-logo">{{logoName}}</a>
+  
+      <div class="top-menu-wrapper">
+        <a class="btn-login" routerLink="/login" *ngIf="!(loggedIn$ | async)" mat-button role="button">Log in</a>
+        <button class="btn-logged-in" *ngIf="loggedIn$ | async" mat-button
+          [matMenuTriggerFor]="userMenu" role="button">
+          <mat-icon>how_to_reg</mat-icon>
+          <span>{{(user$ | async)?.username}}</span>
+        </button>
+
+        <mat-menu #userMenu="matMenu">
+          <ng-container  *ngFor="let menuItem of userMenuData">
+            <a [routerLink]="menuItem.url" mat-menu-item>
+              <span>{{menuItem.itemText}}</span>
+            </a>
+          </ng-container>
+
+          <mat-divider></mat-divider>
+
+          <button mat-menu-item class="logout" (click)="logout()" >
+            <span>Logout</span>
+            <mat-icon>directions_walk</mat-icon>
+          </button>
+        </mat-menu>
+
+      </div> <!-- /.top-menu-wrapper -->
+    </div> <!-- /.header-content -->
+  </div> <!-- /.container -->
+</mat-toolbar>

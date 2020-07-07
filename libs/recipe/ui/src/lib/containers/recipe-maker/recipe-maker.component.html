@@ -1,0 +1,14 @@
+<div class="content-wrapper">
+  <p class="error" *ngIf="error$ | async as errMessage; else loadShowRecipe">{{errMessage}}</p>
+  <ng-template #loadShowRecipe>
+    <div class="recipe-editor-wrapper">
+      <mat-spinner *ngIf="loading$ | async; else rcpEditor" diameter="70" strokeWidth="5" mode="indeterminate"></mat-spinner>
+      <ng-template #rcpEditor>
+    
+    <rcp-recipe-editor *ngIf="!(paramMapId && !(recipe$ | async))" 
+                             [recipe$]="recipe$" 
+                             (createdRecipe)="manageByCreatedRecipe($event)"></rcp-recipe-editor>
+      </ng-template>
+    </div>
+  </ng-template>
+</div>

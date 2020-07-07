@@ -1,0 +1,1 @@
+{"_id":{"$oid":"5c18cb336a07d64bac65fddb"},"username":"rcp_user","hashedPassword":"$2b$10$xvxgXnjvOZJK0/cC5o3reeDEDMTYu7wAhx5GybtJHTerkmQAhvxd6","firstName":"rcp_user","lastName":"rcp_user","email":"domovik0712@gmail.com","address":{"street":"string","city":"string","zip":"string","state":"string"},"phone":"+ 380","__v":{"$numberInt":"0"}}

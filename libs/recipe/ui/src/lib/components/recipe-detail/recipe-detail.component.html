@@ -1,0 +1,89 @@
+<header class="recipe-item-header">
+  <div *ngIf="loggedIn" fxLayout="row" fxLayoutAlign="end" class="edit-btn-wrapper">
+    <a [routerLink]="['/edit-recipe', recipe.id]" 
+        mat-mini-fab color="accent" matTooltip="Edit recipe" color="primary">
+      <mat-icon>edit</mat-icon>
+    </a>
+  </div>
+
+  <h1 class="mat-h1">{{recipe.title}}</h1>
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-between">
+    <div fxFlexOrder="1" fxFlexOrder.lt-sm="2">
+      <span>Recipe by: </span> <a [routerLink]="['/recipes', recipe.user_username]">{{recipe.user_username}}</a>
+    </div>
+    <div fxFlexOrder="2" fxFlexOrder.lt-sm="1"><time [dateTime]="recipe.date_created">{{recipe.date_created | date}}</time></div>
+  </div>
+</header> <!-- /.recipe-item-header -->
+
+<div class="recipe-item-body">
+  <section *ngIf="recipe.description">
+    <p>{{recipe.description}}</p>
+  </section>
+
+  <section class="ingredients-section">
+    <header>
+      <h2 class="mat-h2">Ingredients</h2>
+      <div fxLayout="row" fxLayoutAlign="start center" *ngIf="recipe.servingsNumber" 
+          class="icon-and-text-1line icon-wrapper-prepend">
+        <div><mat-icon color="primary">bubble_chart</mat-icon></div>
+        <div><span  class="fw-400">{{recipe.servingsNumber}}</span> servings</div>
+      </div>
+    </header>
+
+    <table mat-table [dataSource]="recipe.ingredients">
+
+      <!-- Ingredient Name Column -->
+      <ng-container matColumnDef="ingredientName">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let ingredient">{{ingredient.name}}</td>
+      </ng-container>
+
+      <!-- Ingredient Quantity Column -->
+      <ng-container matColumnDef="ingredientQuantity">
+        <th mat-header-cell *matHeaderCellDef>Quantity</th>
+        <td mat-cell *matCellDef="let ingredient">{{ingredient.quantity}} {{ingredient.unit | lowercase}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </section> <!-- ingredients section -->
+
+  <section>
+    <header>
+      <h2 class="mat-h2">Directions</h2>
+      <div fxLayout="row" fxLayoutAlign="start center"
+           *ngIf="recipe.preparationTime || recipe.cookTime" class="cooking-time-info icon-wrapper-prepend">
+        <div><mat-icon color="primary">access_time</mat-icon></div>
+        
+        <div *ngIf="recipe.preparationTime">
+          <span>Prep</span>
+          <span><span class="fw-400">{{recipe.preparationTime}}</span> m</span>
+        </div>
+        
+        <div *ngIf="recipe.cookTime">
+          <span>Cook</span>
+          <span><span class="fw-400">{{recipe.cookTime}}</span> m</span>
+        </div>
+        
+        <div *ngIf="recipe.preparationTime && recipe.cookTime">
+          <span>Ready in</span>
+          <span><span class="fw-400">{{recipe.preparationTime + recipe.cookTime}}</span> m</span>
+        </div>
+
+      </div> <!-- /.cooking-time-info -->
+    </header>
+
+    <ul class="steps list-numbered-markers">
+      <li *ngFor="let step of recipe.steps">{{step}}</li>
+    </ul>
+  </section>
+
+  <section *ngIf="recipe.nutritionFacts">
+    <header>
+      <h2 class="mat-h2">Nutriotion Facts</h2>
+    </header>
+    <p>{{recipe.nutritionFacts}}</p>
+  </section>
+  <p *ngIf="recipe.footnotes"><u>Footnotes</u>: <br>{{recipe.footnotes}}</p>
+</div> <!-- /.recipe-item-body -->

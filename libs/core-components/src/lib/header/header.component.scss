@@ -1,0 +1,63 @@
+.mat-toolbar-single-row {
+  height: auto;
+  padding: 0;
+}
+.nav-logo {
+  color: #fff;
+  text-decoration: none;
+  &:hover {
+    text-decoration: none;
+    color: #fff;
+  }
+}
+.container {
+  box-sizing: border-box;
+  padding: 10px 15px;
+}
+
+.top-menu-wrapper {
+  // margin-top: -10px;
+  // button {
+  //   mat-icon {
+  //     vertical-align: -5px;
+  //   }
+  // }
+  > a, button {
+    color: #fff;  
+  }
+}
+.btn-logged-in {
+  vertical-align: 4px;
+  span {
+    margin-left: 8px;
+    vertical-align: -3px;
+  }
+}
+
+.menu-loggout {
+  mat-icon {
+    margin-right: 0;
+    vertical-align: -2px;
+  }
+}
+
+@media screen and (max-width: 959px) {
+  .header-content {
+    > a {
+      font-size: 0.9em;
+    }
+  }
+}
+
+@media screen and (max-width: 599px) {
+  .container {
+    padding: 5px 15px;
+  }
+  .top-menu-wrapper {
+    > a {
+      vertical-align: middle;
+    }
+  }
+}
+
+

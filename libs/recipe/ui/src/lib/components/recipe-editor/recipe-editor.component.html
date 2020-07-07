@@ -1,0 +1,141 @@
+<form [formGroup]="recipeForm" (ngSubmit)="saveRecipe()" @fadeInUp>
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput [errorStateMatcher]="matcher" 
+              placeholder="Title of recipe" formControlName="title" required>
+      <mat-error *ngIf="title.errors?.required">Title is required</mat-error>
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <mat-select placeholder="Category" [errorStateMatcher]="matcher" 
+                  formControlName="category" required>
+        <mat-option *ngFor="let cat of categories" [value]="cat.url">{{cat.value}}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="category.errors?.required">Category is required</mat-error>
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent">
+      <textarea type="text" matInput formControlName="description" [errorStateMatcher]="matcher"
+             placeholder="Description of recipe" cdkTextareaAutosize
+             cdkTextareaMinRows="1" cdkTextareaMaxRows="6"></textarea>
+    </mat-form-field>
+  </p>
+  
+  <div class="ingredients" formArrayName="ingredients">
+    <h3>Ingredients</h3>
+    <div class="ingredient-wrapper" *ngFor="let ingredient of ingredients.controls; let i=index">
+      
+      <div class="heading" fxLayout="row" fxLayoutAlign="space-between">
+        <span>{{i+1}}</span>
+        <button mat-mini-fab color="warn" 
+              *ngIf="ingredients.controls.length > 1" (click)="removeIngredient(i)">
+          <mat-icon>delete forever</mat-icon>
+        </button>  
+      </div> <!-- /.heading -->
+
+      <ng-container [formGroupName]="i">
+        <input type="hidden" formControlName="id">
+        <mat-form-field color="accent">
+          <input type="text" matInput formControlName="name" placeholder="Name of ingredient"
+                 [errorStateMatcher]="matcher" required>
+          <mat-error *ngIf="ingredient.get('name').errors?.required">Name is required</mat-error>
+        </mat-form-field>
+       
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between" fxLayoutGap="30px" fxLayoutGap.xs="0">
+
+          <mat-form-field color="accent">
+            <input type="number" matInput formControlName="quantity" placeholder="Quantity"
+                    [errorStateMatcher]="matcher" required>
+            <mat-error *ngIf="ingredient.get('quantity').errors?.required">Quantity is required</mat-error>
+          </mat-form-field>
+    
+          <mat-form-field color="accent">
+            <mat-select placeholder="Unit" formControlName="unit" [errorStateMatcher]="matcher" required>
+              <mat-optgroup *ngFor="let unitGroup of units" [label]="unitGroup.name" [disabled]="unitGroup.disabled">
+                <mat-option *ngFor="let unit of unitGroup.units" [value]="unit.value">{{unit.value}}</mat-option>
+              </mat-optgroup>
+            </mat-select>
+            <mat-error *ngIf="ingredient.get('unit').errors?.required">Unit is required</mat-error>
+          </mat-form-field>
+        </div>
+
+      </ng-container>
+          
+    </div> <!-- /.ingredient-wrapper -->
+    <div class="button-wrapper" fxLayout="row" fxLayoutAlign="end">
+      <button type="button" mat-flat-button (click)="addIngredient()" color="accent">Add new ingredient</button>
+    </div>
+  </div> <!-- /.ingredients -->
+  
+  <div class="steps" formArrayName="steps">
+    <h3>Steps</h3>
+    <div class="step-wrapper" *ngFor="let step of steps.controls; let i=index">
+      
+      <div class="heading" fxLayout="row" fxLayoutAlign="space-between">
+          <span>{{i+1}}</span>
+          <button mat-mini-fab color="warn"
+                  *ngIf="steps.controls.length > 1" (click)="removeStep(i)">
+            <mat-icon>delete forever</mat-icon>
+          </button>
+        </div> <!-- /.heading -->
+
+      <mat-form-field color="accent">
+        <textarea matInput placeholder="Description of step" required [errorStateMatcher]="matcher"
+                  cdkTextareaAutosize
+                  cdkTextareaMinRows="1" cdkTextareaMaxRows="6" [formControlName]="i" required ></textarea>
+        <mat-error *ngIf="step.errors?.required">Step is required</mat-error> 
+      </mat-form-field>
+
+    </div> <!-- /.step-wrapper" -->
+    <div class="button-wrapper" fxLayout="row" fxLayoutAlign="end">
+      <button mat-flat-button type="button" (click)="addStep()" color="accent">Add new step</button>
+    </div>
+  </div> <!-- /.steps-->
+  
+  <h3>Additional information</h3>
+  <p>
+    <mat-form-field color="accent" hintLabel="(minutes)">
+      <mat-label>Preparation time</mat-label>
+      <input type="number" matInput formControlName="preparationTime" [errorStateMatcher]="matcher">
+    </mat-form-field>
+  </p>
+  
+  <p>
+    <mat-form-field color="accent" hintLabel="(minutes)">
+      <mat-label>Cook time</mat-label>
+      <input type="number" matInput formControlName="cookTime" [errorStateMatcher]="matcher">
+    </mat-form-field>
+  </p>
+ 
+  <p>
+    <mat-form-field color="accent" hintLabel="(number)">
+      <mat-label>Servings</mat-label>
+      <input type="number" matInput formControlName="servingsNumber" [errorStateMatcher]="matcher">
+    </mat-form-field> 
+  </p>
+
+  <p>
+    <mat-form-field color="accent">
+      <mat-label>Nutrition facts</mat-label>
+      <textarea type="text" matInput formControlName="nutritionFacts" [errorStateMatcher]="matcher"
+      cdkTextareaAutosize
+      cdkTextareaMinRows="1" cdkTextareaMaxRows="6"></textarea>
+    </mat-form-field>
+  </p>
+    
+  
+  <p>
+    <mat-form-field color="accent">
+      <input type="text" matInput formControlName="footnotes" [errorStateMatcher]="matcher"
+             placeholder="Footnotes">
+    </mat-form-field>
+  </p>
+  
+  <div fxLayout="row" fxLayoutAlign="end">
+    <button type="submit" mat-flat-button color="accent" [disabled]="disabled$ | async">Save recipe</button>
+  </div>
+</form>

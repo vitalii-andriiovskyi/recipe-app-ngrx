@@ -1,0 +1,39 @@
+<mat-card>
+  <mat-card-title>Login</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <p>
+        <mat-form-field color="accent">
+          <input type="text" matInput [errorStateMatcher]="matcher" placeholder="Username" formControlName="username">
+          <mat-error *ngIf="username.errors?.required">
+            Username is required
+          </mat-error>
+          <mat-error *ngIf="(username.invalid && (username.dirty || username.touched)) && username.errors.minlength">
+            Username must be at least 4 characters long
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field color="accent">
+          <input type="password" matInput placeholder="Password" formControlName="password" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="password.errors?.required">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="(password.invalid && (password.dirty || password.touched)) && password.errors.minlength">
+            Password must be at least 4 characters long.
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p *ngIf="errorMessage" class="loginError">
+        {{ errorMessage }}
+      </p>
+
+      <p class="loginButtons">
+        <button type="submit" mat-flat-button color="accent">Login</button>
+      </p>
+
+    </form>
+  </mat-card-content>
+</mat-card>
