@@ -11,7 +11,7 @@ Type=oneshot
 RemainAfterExit=yes
 # match the below to wherever you copied your docker-compose.yml
 WorkingDirectory=/srv/docker
-ExecStart=/usr/local/bin/docker-compose up -d
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ExecStop=/usr/local/bin/docker-compose down
 TimeoutStartSec=0
 
