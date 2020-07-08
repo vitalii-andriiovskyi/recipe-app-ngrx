@@ -4,4 +4,3 @@ docker-compose*
 README.md
 .vscode
 .git
-yarn.lock

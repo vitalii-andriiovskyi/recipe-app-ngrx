@@ -17,10 +17,11 @@ CMD ["nginx", "-g", "daemon off;"]
 FROM node:12 AS recipe-api
 WORKDIR /usr/src/recipe-api
 COPY --from=base-node /usr/src/recipe-app-ngrx/dist/apps/api .
-RUN yarn config set unsafe-perm true && yarn
+COPY package.json yarn.lock ./
+RUN yarn config set unsafe-perm true && yarn --pure-lockfile
 # RUN npm install -g @angular/cli --unsafe-perm && ng config -g cli.packageManager yarn
 EXPOSE 3030
-CMD ["/bin/bash"]
+CMD ["node", "main.js"]
 
 # CMD ["node", "api/main.js"]
 
