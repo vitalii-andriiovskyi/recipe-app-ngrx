@@ -27,7 +27,7 @@ services:
     restart: always
     image: 2467100/surf-ssr:latest
     ports:
-      - 4040:4040
+      - "4040:4040"
     environment:
       PRODUCTION: 'true'
       MONGO_DB_URI: mongodb://vit:secret@mongodb:27017/surf
