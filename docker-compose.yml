@@ -30,6 +30,7 @@ services:
     image: 2467100/recipe-web:latest
     ports: 
       - "80:80"
+      - "8080:8080"
     networks:
       - recipe_net
     depends_on:
