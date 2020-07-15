@@ -1,6 +1,6 @@
 <div class="content-wrapper">
 
-  <div class="error" *ngIf="sumError$ | async as errMessage; else loadShowRecipes">{{errMessage}}</div>
+  <div class="error" *ngIf="sumError$ | async as errMessage; else loadShowRecipes">There's no recipes for this case yet</div>
   
   <ng-template #loadShowRecipes>
     <div class="recipe-list-wrapper">
