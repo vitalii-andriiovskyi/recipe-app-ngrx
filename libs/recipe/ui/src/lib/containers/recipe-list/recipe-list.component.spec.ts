@@ -187,7 +187,7 @@ describe('RecipeListComponent', () => {
       fixture.detectChanges();
 
       expect(rcpListComponent.paginator.length).toBe(countFilteredRecipes);
-      tick(50);
+      tick(500);
     }));
 
     it(`should load ${pageSize} recipes from the server after creation the component and getting value from countFilteredRecipes$; category='all'`, fakeAsync(() => {
@@ -209,7 +209,23 @@ describe('RecipeListComponent', () => {
       rcpListComponent.pageSize = pageSize;
       tick(1);
       fixture.detectChanges();
-      tick(1);
+      // tick(501);
+      // fixture.detectChanges();
+
+      // deRcpListComponent = fixture.debugElement.query(
+      //   By.css('rcp-recipe-list')
+      // );
+      // let matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
+      // expect(matSpinner).toBeTruthy('mat-spinner shows loading (1)');
+      // let error = deRcpListComponent.query(By.css('.error'));
+      // expect(error).toBeFalsy(`there's no .error Element`);
+      // deRcpPreviewComponents = deRcpListComponent.queryAll(
+      //   By.css('rcp-recipe-preview')
+      // );
+      // expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
+
+      // Wait for response from the server. The response contains countFilteredRecipes
+      tick(501);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -224,24 +240,8 @@ describe('RecipeListComponent', () => {
       );
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
-      // Wait for response from the server. The response contains countFilteredRecipes
-      tick(501);
-      fixture.detectChanges();
-
-      deRcpListComponent = fixture.debugElement.query(
-        By.css('rcp-recipe-list')
-      );
-      matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
-      expect(matSpinner).toBeTruthy('mat-spinner shows loading');
-      error = deRcpListComponent.query(By.css('.error'));
-      expect(error).toBeFalsy(`there's no .error Element`);
-      deRcpPreviewComponents = deRcpListComponent.queryAll(
-        By.css('rcp-recipe-preview')
-      );
-      expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
-
       // Wait for response from the server. The response contains `recipes`
-      tick(101);
+      tick(1001);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -309,7 +309,7 @@ describe('RecipeListComponent', () => {
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
       // Wait for response from the server. The response contains `recipes`
-      tick(101);
+      tick(501);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -370,7 +370,7 @@ describe('RecipeListComponent', () => {
       fixture.detectChanges();
 
       // Wait for response from the server. The response contains `recipes`
-      tick(101);
+      tick(501);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -492,7 +492,7 @@ describe('RecipeListComponent', () => {
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
       // Wait for response from the server. The response contains `recipes`
-      tick(101);
+      tick(501);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -577,7 +577,7 @@ describe('RecipeListComponent', () => {
         By.css('rcp-recipe-list')
       );
       let matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
-      expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+      expect(matSpinner).toBeFalsy(`there's no mat-spinner shows loading`);
       let error = deRcpListComponent.query(By.css('.error'));
       expect(error).toBeFalsy(`there's no .error Element`);
       deRcpPreviewComponents = deRcpListComponent.queryAll(
@@ -586,23 +586,23 @@ describe('RecipeListComponent', () => {
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
       // Wait for response from the server. The response contains countFilteredRecipes
-      tick(501);
-      fixture.detectChanges();
+      // tick(501);
+      // fixture.detectChanges();
 
-      deRcpListComponent = fixture.debugElement.query(
-        By.css('rcp-recipe-list')
-      );
-      matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
-      expect(matSpinner).toBeTruthy('mat-spinner shows loading');
-      error = deRcpListComponent.query(By.css('.error'));
-      expect(error).toBeFalsy(`there's no .error Element`);
-      deRcpPreviewComponents = deRcpListComponent.queryAll(
-        By.css('rcp-recipe-preview')
-      );
-      expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
+      // deRcpListComponent = fixture.debugElement.query(
+      //   By.css('rcp-recipe-list')
+      // );
+      // matSpinner = deRcpListComponent.query(By.css('.mat-spinner'));
+      // expect(matSpinner).toBeTruthy('mat-spinner shows loading');
+      // error = deRcpListComponent.query(By.css('.error'));
+      // expect(error).toBeFalsy(`there's no .error Element`);
+      // deRcpPreviewComponents = deRcpListComponent.queryAll(
+      //   By.css('rcp-recipe-preview')
+      // );
+      // expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
-      // Wait for response from the server. The response contains `recipes`
-      tick(101);
+      // Wait for response from the server. The response contains error
+      tick(601);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -613,8 +613,8 @@ describe('RecipeListComponent', () => {
       error = deRcpListComponent.query(By.css('.error'));
       expect(error).toBeTruthy(`there's .error Element`);
       expect(error.nativeElement.innerHTML).toContain(
-        httpErrorRes.error,
-        httpErrorRes.error
+        `There's no recipes for this case yet`,
+        `There's no recipes for this case yet`
       );
       deRcpPreviewComponents = deRcpListComponent.queryAll(
         By.css('rcp-recipe-preview')
@@ -657,7 +657,7 @@ describe('RecipeListComponent', () => {
 
       // Wait for response from the server. The response contains countFilteredRecipes
       // Wait for response from the server. The response contains `recipes`
-      tick(601);
+      tick(1001);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -695,7 +695,7 @@ describe('RecipeListComponent', () => {
       );
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
-      tick(101);
+      tick(601);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -706,8 +706,8 @@ describe('RecipeListComponent', () => {
       error = deRcpListComponent.query(By.css('.error'));
       expect(error).toBeTruthy(`there's .error Element`);
       expect(error.nativeElement.innerHTML).toContain(
-        httpErrorRes.error,
-        httpErrorRes.error
+        `There's no recipes for this case yet`,
+        `There's no recipes for this case yet`
       );
       deRcpPreviewComponents = deRcpListComponent.queryAll(
         By.css('rcp-recipe-preview')
@@ -763,7 +763,7 @@ describe('RecipeListComponent', () => {
       rcpListComponent.pageSize = pageSize;
 
       // Wait for response from server; response contains 'countFilteredRecipes' and 'recipes'
-      tick(602);
+      tick(1002);
       fixture.detectChanges();
 
       deRcpListComponent = fixture.debugElement.query(
@@ -812,7 +812,7 @@ describe('RecipeListComponent', () => {
       expect(deRcpPreviewComponents.length).toBe(0, '0 rcp-recipe-preview');
 
       // Wait for response from server; response contains 'countFilteredRecipes' and 'recipes'
-      tick(501);
+      tick(901);
       fixture.detectChanges();
 
       // Now recipes should be loading. But the old value of 'countFilteredRecipes' > 0 and
