@@ -86,6 +86,7 @@ export class ExpressServer {
     // use JWT auth to secure the api, the token can be passed in the authorization header or querystring
     this.app.use(expressJwt({
       secret: config.get('secret'),
+      algorithms: ['HS256'],
       getToken: function (req: express.Request) {
         const headerAuth = req.headers.authorization as string;
 
