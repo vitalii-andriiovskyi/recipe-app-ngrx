@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, HostBinding } f
 import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
-import { Observable, Subject, merge, combineLatest } from 'rxjs';
-import { takeUntil, tap, delay, map, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subject, merge, combineLatest, of } from 'rxjs';
+import { takeUntil, tap, delay, map, distinctUntilChanged, delayWhen } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { EntityOp, ofEntityOp } from '@ngrx/data';
@@ -74,6 +74,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.countFilteredRecipes$ = this.recipeEntityService.countFilteredRecipes$;
     this.loading$ = this.recipeEntityService.loading$.pipe(
       delay(1),
+      delayWhen(value => value ? of(value) : of(value).pipe(delay(400))),
       takeUntil(this._destroy$)
     );
 
@@ -85,7 +86,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
       // takeUntil(this._destroy$)
     );
 
-    this.sumError$ = combineLatest(this.error$, this.filteredRecipes$).pipe(
+    this.sumError$ = combineLatest([this.error$, this.filteredRecipes$]).pipe(
       map(([error, recipes]) => {
         const isErrorCase = error && recipes.length === 0;
         return isErrorCase ? error : '';

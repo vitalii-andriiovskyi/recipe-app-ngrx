@@ -184,6 +184,12 @@ describe('RecipeMakerComponent', () => {
   });
 
   describe(`loggedIn='false'; user isn't authenticated`, () => {
+    beforeEach(async(() => {
+      loggedIn$.next(false);
+      authencticatedUser$.next(null);
+      loadTotalNSpy.and.returnValue(of(5));
+    }));
+    
     it(`shouldn't create RecipeMakerComponent; route='/create-recipe'`, fakeAsync(() => {
       const path = '/create-recipe';
       expect(deRcpMakerComponent).toBeFalsy(
@@ -216,6 +222,7 @@ describe('RecipeMakerComponent', () => {
       expect(deRcpMakerComponent).toBeFalsy(
         `there's no the RecipeMakerComponent`
       );
+      tick(300);
     }));
   });
 
