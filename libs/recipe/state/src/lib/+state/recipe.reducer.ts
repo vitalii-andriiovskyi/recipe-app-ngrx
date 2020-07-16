@@ -17,20 +17,20 @@ const methods = {
   [RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES]: (state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> => {
     return {
       ...state,
-      loading: true,
+      // loading: true,
     }
   },
   [RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_SUCCESS]: (state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> => {
     return {
       ...state,
-      loading: false,
+      // loading: false,
       ...{ countFilteredRecipes: action.payload.data },
     }
   },
   [RecipeEntityOp.QUERY_COUNT_FILTERED_RECIPES_ERROR]: (state: EntityCollection<Recipe>, action: EntityAction): EntityCollection<Recipe> => {
     return {
       ...state,
-      loading: false,
+      // loading: false,
       ...{ countFilteredRecipes: state.ids.length }, // not sure about state.ids.length; don't know how to get in effects the min number of filtered elements
     }
   },
