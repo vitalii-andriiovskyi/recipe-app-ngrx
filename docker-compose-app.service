@@ -12,7 +12,7 @@ RemainAfterExit=yes
 # match the below to wherever you copied your docker-compose.yml
 WorkingDirectory=/srv/docker
 ExecStart=/usr/local/bin/docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-ExecStop=/usr/local/bin/docker-compose down
+ExecStop=/usr/local/bin/docker-compose down --remove-orphans
 TimeoutStartSec=0
 
 [Install]
