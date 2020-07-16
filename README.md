@@ -105,6 +105,12 @@ To install this project:
 To run the `api` use command `ng serve api` (now it's done in docker).  
 To run the `recipe-app` use command `ng serve recipe-app`.
 
+To test `api`:
+
+* `docker-compose up -d`
+* `docker-compose exec recipe-api bash`
+* `ng test api`
+
 ## To generate and publish docker images for production
 
 `docker build -f dockerfile.production --target mongo-db -t 2467100/recipe-surf-db:latest -t 2467100/recipe-api:version .`  
