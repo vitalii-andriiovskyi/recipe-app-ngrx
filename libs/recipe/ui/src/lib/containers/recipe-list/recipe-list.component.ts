@@ -86,7 +86,7 @@ export class RecipeListComponent implements OnInit, OnDestroy, AfterViewInit {
       // takeUntil(this._destroy$)
     );
 
-    this.sumError$ = combineLatest(this.error$, this.filteredRecipes$).pipe(
+    this.sumError$ = combineLatest([this.error$, this.filteredRecipes$]).pipe(
       map(([error, recipes]) => {
         const isErrorCase = error && recipes.length === 0;
         return isErrorCase ? error : '';
